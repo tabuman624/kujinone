@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js 移植パッケージ
 
-## Getting Started
+このフォルダの中身を、`kujinone/` プロジェクトの **同じパス** にコピー上書きすると、プロトタイプのデザインが反映されます。
 
-First, run the development server:
+## 上書き／追加するファイル
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+| パス | 種類 | 内容 |
+|---|---|---|
+| `app/globals.css` | 上書き | アニメーション CSS と `.kuji-prose--article` を追加 |
+| `app/layout.tsx` | 上書き | スマホ用ボトムナビを `<BottomNav />` に差し替え |
+| `app/template.tsx` | 新規 | ルート切替ごとに `anim-page` を再生 |
+| `app/components/BottomNav.tsx` | 新規 | スライドする赤インジケーター付きナビ（Client Component） |
+| `app/page.tsx` | 上書き | シンプルなヒーロー＋番号付きコラムリスト |
+| `app/schedule/page.tsx` | 上書き | スタガード演出を追加 |
+| `app/kuji/[id]/page.tsx` | 上書き | スタガード演出と CTA の影 |
+| `app/calc/page.tsx` | 上書き | ライブ計算・ステッパー・チップ選択（Client Component） |
+| `app/blog/page.tsx` | 上書き | Featured カード＋番号付きリスト |
+| `app/blog/[slug]/page.tsx` | 上書き | ライトヘッダー＋赤縦バー見出し |
+| `app/blog/[slug]/ReadingProgress.tsx` | 新規 | スクロール連動の読書プログレスバー（Client） |
+| `app/howto/page.tsx` | 上書き | 縦タイムライン |
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 触っていないファイル
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `app/terms/page.tsx`、`app/privacy/page.tsx`、`app/lib/supabase.ts`、`posts/*.md` などはそのままで OK です。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## メモ
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 既存の `app/calc/page.tsx` で使われていた `useState`/`useEffect`/`Suspense` の構造はそのまま継承しています。
+- `app/template.tsx` を新規追加することでハッシュルーター時代と同じ「ページ遷移アニメ」が機能します。不要なら削除して構いません。
+- アニメーション系のクラス（`.anim-fade-up` `.anim-pop` `.anim-result` 等）はすべて `globals.css` に定義済みです。
