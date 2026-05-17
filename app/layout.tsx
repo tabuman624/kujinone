@@ -60,6 +60,7 @@ export default function RootLayout({
                 { href: "/howto", label: "使い方" },
                 { href: "/terms", label: "利用規約" },
                 { href: "/privacy", label: "プライバシー" },
+                { href: "/contact", label: "お問い合わせ" },
               ].map(item => (
                 <Link key={item.href} href={item.href} className="text-xs text-gray-400 hover:text-red-500 transition-colors">
                   {item.label}
