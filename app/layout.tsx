@@ -12,6 +12,9 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: "くじのね | 一番くじ期待値計算",
   description: "一番くじの期待値を計算して、賢くくじを引こう",
+  verification: {
+    google: "Sjo1gHcZIajNjfXIWQqWzgsLlCAT19ePlb3SnTbUwZ4",
+  },
 };
 
 export default function RootLayout({
