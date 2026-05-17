@@ -245,7 +245,7 @@ function CalcContent() {
           </div>
 
           <p className="text-[11px] text-gray-400 mt-3 mb-5 flex items-center gap-1">
-            <span>ℹ</span> 残数は店頭で確認した本数を入力してください
+            <span>ℹ</span> 残数の初期値は賞の種類数です。店頭で実際の残数を確認して修正してください
           </p>
         </div>
 
