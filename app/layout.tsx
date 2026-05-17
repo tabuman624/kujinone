@@ -27,9 +27,7 @@ export default function RootLayout({
         <div className="hidden md:flex md:fixed md:inset-y-0 md:left-0 md:w-60 md:flex-col md:bg-white md:border-r md:border-gray-200 md:shadow-sm">
           <div className="px-5 py-5 border-b border-gray-100">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                <span className="text-white text-xs font-black">く</span>
-              </div>
+              <img src="/logo.png" alt="くじのね" className="w-8 h-8 rounded-lg object-cover" />
               <div>
                 <div className="text-sm font-black text-gray-900 leading-tight">くじのね</div>
                 <div className="text-xs text-gray-400 leading-tight">期待値計算ツール</div>
