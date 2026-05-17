@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   verification: {
     google: "Sjo1gHcZIajNjfXIWQqWzgsLlCAT19ePlb3SnTbUwZ4",
   },
+  other: {
+    "google-adsense-account": "ca-pub-9006140407795306",
+  },
 };
 
 export default function RootLayout({
@@ -24,6 +27,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className={geistSans.variable}>
+      <head>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9006140407795306" crossOrigin="anonymous"></script>
+      </head>
       <body className="min-h-full bg-gray-100 text-gray-900">
 
         {/* PC: サイドナビ */}
