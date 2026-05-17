@@ -32,13 +32,13 @@ export default function BlogPage() {
   return (
     <main style={{ background: '#fafafa' }}>
       {/* Light header */}
-      <div className="px-6 pt-6 pb-6 bg-white border-b border-gray-100">
+      <div className="px-6 pt-6 pb-6 bg-gray-900">
         <div className="flex items-baseline justify-between mb-2">
-          <p className="text-[11px] font-bold tracking-[0.18em] text-red-600">COLUMN</p>
+          <p className="text-[11px] font-bold tracking-[0.18em] text-red-400">COLUMN</p>
           <span className="text-[11px] text-gray-400" style={{ fontVariantNumeric: 'tabular-nums' }}>{posts.length} ARTICLES</span>
         </div>
-        <h1 className="text-2xl font-black text-gray-900 mb-1">コラム</h1>
-        <p className="text-xs text-gray-500">一番くじをもっと賢く楽しむためのガイド</p>
+        <h1 className="text-2xl font-black text-white mb-1">コラム</h1>
+        <p className="text-xs text-gray-400">一番くじをもっと賢く楽しむためのガイド</p>
       </div>
 
       {/* Featured */}

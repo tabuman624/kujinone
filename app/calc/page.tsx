@@ -195,10 +195,10 @@ function CalcContent() {
     const selectedCount = prizes.filter(p => p.checked).length
     return (
       <main style={{ background: "#fafafa" }}>
-        <div className="px-6 pt-6 pb-5 bg-white border-b border-gray-100">
-          <button onClick={() => router.back()} className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-red-600 mb-3 press">← 戻る</button>
-          <p className="text-[11px] font-bold tracking-[0.18em] text-red-600 mb-1">CALCULATOR</p>
-          <h1 className="text-2xl font-black text-gray-900">期待値を計算</h1>
+        <div className="px-6 pt-6 pb-5 bg-gray-900">
+          <button onClick={() => router.back()} className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-red-400 mb-3 press">← 戻る</button>
+          <p className="text-[11px] font-bold tracking-[0.18em] text-red-400 mb-1">CALCULATOR</p>
+          <h1 className="text-2xl font-black text-white">期待値を計算</h1>
         </div>
 
         <div className="px-5 pt-5">
@@ -271,10 +271,10 @@ function CalcContent() {
   const pricePresets = [700, 800, 850, 1000]
   return (
     <main style={{ background: "#fafafa" }}>
-      <div className="px-6 pt-6 pb-5 bg-white border-b border-gray-100">
-        <p className="text-[11px] font-bold tracking-[0.18em] text-red-600 mb-1">CALCULATOR</p>
-        <h1 className="text-2xl font-black text-gray-900">期待値を計算</h1>
-        <p className="text-xs text-gray-500 mt-1">情報を入力して期待値を算出</p>
+      <div className="px-6 pt-6 pb-5 bg-gray-900">
+        <p className="text-[11px] font-bold tracking-[0.18em] text-red-400 mb-1">CALCULATOR</p>
+        <h1 className="text-2xl font-black text-white">期待値を計算</h1>
+        <p className="text-xs text-gray-400 mt-1">情報を入力して期待値を算出</p>
       </div>
 
       <div className="px-5 pt-5">

@@ -9,10 +9,10 @@ const steps = [
 export default function HowtoPage() {
   return (
     <main style={{ background: '#fafafa' }}>
-      <div className="px-6 pt-6 pb-6 bg-white border-b border-gray-100">
-        <p className="text-[11px] font-bold tracking-[0.18em] text-red-600 mb-1">HOW TO USE</p>
-        <h1 className="text-2xl font-black text-gray-900">使い方</h1>
-        <p className="text-xs text-gray-500 mt-1">3ステップで賢くくじを楽しむ</p>
+      <div className="px-6 pt-6 pb-6 bg-gray-900">
+        <p className="text-[11px] font-bold tracking-[0.18em] text-red-400 mb-1">HOW TO USE</p>
+        <h1 className="text-2xl font-black text-white">使い方</h1>
+        <p className="text-xs text-gray-400 mt-1">3ステップで賢くくじを楽しむ</p>
       </div>
 
       <div className="px-6 pt-8 pb-4">
