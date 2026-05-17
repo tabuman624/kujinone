@@ -27,7 +27,7 @@ export default function BottomNav() {
   const activeIdx = navItems.findIndex(n => n.href === activeHref);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden shadow-lg z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden shadow-lg z-50" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
       {/* Animated indicator */}
       <div
         aria-hidden
