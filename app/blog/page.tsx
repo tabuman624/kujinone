@@ -34,7 +34,7 @@ export default function BlogPage() {
       {/* Light header */}
       <div className="px-6 pt-6 pb-6 bg-gray-900">
         <div className="flex items-baseline justify-between mb-2">
-          <p className="text-[11px] font-bold tracking-[0.18em] text-red-400">COLUMN</p>
+          <p className="text-[11px] font-bold tracking-[0.18em] text-gray-400">COLUMN</p>
           <span className="text-[11px] text-gray-400" style={{ fontVariantNumeric: 'tabular-nums' }}>{posts.length} ARTICLES</span>
         </div>
         <h1 className="text-2xl font-black text-white mb-1">コラム</h1>
