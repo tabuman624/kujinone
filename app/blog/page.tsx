@@ -27,7 +27,7 @@ export default function BlogPage() {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   const featured = posts[0]
-  const rest = posts.slice(1)
+  const rest = posts.slice(1).reverse()
 
   return (
     <main style={{ background: '#fafafa' }}>
