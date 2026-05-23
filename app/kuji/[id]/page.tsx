@@ -92,7 +92,7 @@ export default async function KujiDetail({
             <span className="text-sm">↗</span>
           </a>
           {/* tracking pixel */}
-          <img border="0" width="1" height="1" alt="" src="https://ad.linksynergy.com/fs-bin/show?id=txstqLlFvt4&bids=1366097.2&type=3&subid=0" />
+          <img width={1} height={1} alt="" src="https://ad.linksynergy.com/fs-bin/show?id=txstqLlFvt4&bids=1366097.2&type=3&subid=0" />
         </div>
 
         {isReleased && (
