@@ -41,6 +41,7 @@ export default function ScheduleList({ kujiList }: { kujiList: Kuji[] }) {
           <button
             key={month}
             onClick={() => setSelected(month)}
+            draggable={false}
             className={`flex-shrink-0 px-4 py-3 text-sm font-bold transition-colors border-b-2 -mb-px ${
               selected === month
                 ? 'text-red-600 border-red-600'
