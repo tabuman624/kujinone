@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
-import json
 
 SUPABASE_URL = "https://jydztbogaxevxjsdjohy.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZHp0Ym9nYXhldnhqc2Rqb2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDg5NzQsImV4cCI6MjA5NDI4NDk3NH0.9X1C_EwKKXk0h_g0ONNLT53BZctO9zu7o-2oLlZbl2s"
@@ -15,17 +14,15 @@ SB_HEADERS = {
     "Prefer": "return=representation"
 }
 
-def scrape_list():
-    res = requests.get("https://1kuji.com/products", headers=HEADERS)
+def scrape_list_for_url(url):
+    res = requests.get(url, headers=HEADERS)
     soup = BeautifulSoup(res.text, "html.parser")
-    items = soup.select("ul.itemList li a")
     results = []
-    for item in items:
+    for item in soup.select("ul.itemList li a"):
         name_el = item.select_one("p.itemName")
         title = name_el.text.strip() if name_el else ""
-        date_els = item.select("p.date")
         release_at = None
-        for d in date_els:
+        for d in item.select("p.date"):
             m = re.search(r'(\d{4})年(\d{2})月(\d{2})日', d.text)
             if m:
                 release_at = f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
@@ -41,6 +38,31 @@ def scrape_list():
                 "source_url": f"https://1kuji.com/products/{product_id}",
                 "product_id": product_id,
             })
+    return soup, results
+
+def scrape_list():
+    # 当月ページを取得し、ナビに表示されている全月を収集
+    base_url = "https://1kuji.com/products"
+    soup, results = scrape_list_for_url(base_url)
+
+    seen_products = {r["product_id"] for r in results}
+    months = []
+    for a in soup.select(".monthList a"):
+        href = a.get("href", "")
+        m = re.search(r'sale_month=(\d+)&sale_year=(\d+)', href)
+        if m:
+            months.append((int(m.group(2)), int(m.group(1))))
+
+    for year, month in months:
+        time.sleep(1)
+        url = f"{base_url}?sale_year={year}&sale_month={month}"
+        _, month_results = scrape_list_for_url(url)
+        for r in month_results:
+            if r["product_id"] not in seen_products:
+                results.append(r)
+                seen_products.add(r["product_id"])
+        print(f"  {year}年{month}月: {len(month_results)}件")
+
     return results
 
 def scrape_detail(url):
@@ -80,7 +102,7 @@ def scrape_detail(url):
 
 def upsert_kuji(kuji_data):
     res = requests.post(
-        f"{SUPABASE_URL}/rest/v1/kuji",
+        f"{SUPABASE_URL}/rest/v1/kuji?on_conflict=product_id",
         headers={**SB_HEADERS, "Prefer": "resolution=merge-duplicates,return=representation"},
         json=kuji_data
     )
@@ -91,12 +113,10 @@ def upsert_kuji(kuji_data):
         return None
 
 def insert_prizes(kuji_id, prizes):
-    # 既存の賞を削除
     requests.delete(
         f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}",
         headers=SB_HEADERS
     )
-    # 新規登録
     prize_data = [{"kuji_id": kuji_id, **p} for p in prizes]
     res = requests.post(
         f"{SUPABASE_URL}/rest/v1/prizes",
@@ -107,13 +127,13 @@ def insert_prizes(kuji_id, prizes):
         print(f"  prizes登録エラー: {res.text}")
 
 def main():
-    print("一番くじ情報を取得中...")
+    print("一番くじ情報を取得中（全月）...")
     kuji_list = scrape_list()
-    print(f"{len(kuji_list)}件取得")
+    print(f"\n合計 {len(kuji_list)}件取得")
 
     for kuji in kuji_list:
         print(f"\n処理中: {kuji['title']}")
-        time.sleep(1)  # サーバー負荷軽減
+        time.sleep(1)
 
         detail = scrape_detail(kuji["source_url"])
         kuji["price"] = detail["price"] or 800
