@@ -8,11 +8,14 @@ function fmtDate(d: string) {
 }
 
 export default async function Home() {
+  const today = new Date().toISOString().slice(0, 10)
   const { data: kujiList } = await supabase
     .from('kuji')
     .select('*')
     .eq('is_active', true)
+    .gte('release_at', today)
     .order('release_at', { ascending: true })
+    .limit(5)
 
   // Hard-coded featured columns on the home page (same 3 as the original)
   const featuredPosts = [
@@ -112,6 +115,23 @@ export default async function Home() {
             </Link>
           ))}
         </div>
+      </div>
+
+      {/* フッターリンク（スマホのみ、PCはサイドナビに表示済み） */}
+      <div className="md:hidden px-5 pb-8 pt-2 border-t border-gray-100">
+        <div className="flex flex-wrap gap-x-4 gap-y-2 mb-2">
+          {[
+            { href: '/privacy', label: 'プライバシーポリシー' },
+            { href: '/terms', label: '利用規約' },
+            { href: '/howto', label: '使い方' },
+            { href: '/contact', label: 'お問い合わせ' },
+          ].map(item => (
+            <Link key={item.href} href={item.href} className="text-xs text-gray-400 hover:text-red-500 transition-colors">
+              {item.label}
+            </Link>
+          ))}
+        </div>
+        <p className="text-xs text-gray-300">© 2026 くじのね</p>
       </div>
     </main>
   )

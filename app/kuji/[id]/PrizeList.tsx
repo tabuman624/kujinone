@@ -51,21 +51,23 @@ export default function PrizeList({ prizes }: { prizes: Prize[] }) {
 
       {active && (
         <div
-          className="fixed inset-0 z-50 bg-black/80 flex flex-col items-center justify-center px-6"
+          className="fixed inset-0 z-50 bg-black/80 overflow-y-auto"
           onClick={() => setActive(null)}
         >
-          <div className="anim-pop">
-            <Image
-              src={active.url}
-              alt={active.name}
-              width={480}
-              height={480}
-              className="rounded-2xl object-contain"
-              style={{ width: 'auto', height: 'auto', maxWidth: '85vw', maxHeight: '65vh' }}
-            />
+          <div className="min-h-full flex flex-col items-center justify-center px-6 py-10">
+            <div className="anim-pop">
+              <Image
+                src={active.url}
+                alt={active.name}
+                width={480}
+                height={480}
+                className="rounded-2xl object-contain"
+                style={{ width: 'auto', height: 'auto', maxWidth: '85vw', maxHeight: '65vh' }}
+              />
+            </div>
+            <p className="text-white text-sm font-bold mt-4 text-center">{active.name}</p>
+            <p className="text-white/50 text-xs mt-2">タップして閉じる</p>
           </div>
-          <p className="text-white text-sm font-bold mt-4 text-center">{active.name}</p>
-          <p className="text-white/50 text-xs mt-2">タップして閉じる</p>
         </div>
       )}
     </>
