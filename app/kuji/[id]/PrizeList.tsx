@@ -44,7 +44,7 @@ export default function PrizeList({ prizes }: { prizes: Prize[] }) {
               <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${gradeColors[prize.grade] || 'bg-gray-100 text-gray-700'}`}>{prize.grade}</span>
               <p className="text-sm text-gray-800 font-medium mt-0.5 truncate">{prize.name}</p>
             </div>
-            <span className="text-xs text-gray-400 flex-shrink-0">{prize.total}本</span>
+            <span className="text-xs text-gray-400 flex-shrink-0">{prize.total}種</span>
           </div>
         ))}
       </div>
