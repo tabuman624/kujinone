@@ -45,9 +45,10 @@ export default async function Home() {
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      {/* Hero — minimal: headline + single CTA */}
-      <div className="bg-gray-900 px-6 text-white" style={{ paddingTop: 56, paddingBottom: 52 }}>
-        <h1 className="text-[28px] font-black leading-[1.25] mb-6 anim-fade-up" style={{ animationDelay: '60ms', textWrap: 'balance' as React.CSSProperties['textWrap'] }}>
+      {/* Hero */}
+      <div className="bg-gray-900 px-6 text-white flex flex-col items-center text-center" style={{ paddingTop: 48, paddingBottom: 48 }}>
+        <Image src="/logo.png" alt="くじのね" width={160} height={160} className="mb-5 anim-fade-up" style={{ animationDelay: '40ms' }} priority />
+        <h1 className="text-[24px] font-black leading-[1.25] mb-6 anim-fade-up" style={{ animationDelay: '100ms', textWrap: 'balance' as React.CSSProperties['textWrap'] }}>
           くじを引く前に、<br />期待値を確認。
         </h1>
         <Link
