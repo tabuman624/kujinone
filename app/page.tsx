@@ -47,7 +47,7 @@ export default async function Home() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Hero */}
       <div className="bg-gray-900 px-6 text-white flex flex-col items-center text-center" style={{ paddingTop: 48, paddingBottom: 48 }}>
-        <Image src="/logo.png" alt="くじのね" width={240} height={240} className="mb-6 anim-fade-up" style={{ animationDelay: '40ms' }} priority />
+        <Image src="/logo.png" alt="くじのね" width={400} height={400} className="w-full max-w-sm mb-6 anim-fade-up" style={{ animationDelay: '40ms' }} priority />
         <Link
           href="/schedule"
           className="inline-flex items-center gap-2 bg-red-600 text-white text-sm font-bold px-5 py-2.5 rounded-full hover:bg-red-700 press anim-fade-up"
