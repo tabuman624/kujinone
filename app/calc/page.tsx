@@ -114,6 +114,10 @@ function ResultCard({ expected, times, detail }: { expected: number; times: numb
 }
 
 function AffiliateLinks({ title }: { title: string }) {
+  useEffect(() => {
+    (window as any).a8linkmgr?.({ config_id: 'xLVEUKG6qLmgP54TvR6L' })
+  }, [title])
+
   const links = [
     { href: `https://jp.mercari.com/search?keyword=${encodeURIComponent(title)}`, label: "メルカリで相場を見る", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600" },
     { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(title)}`, label: "駿河屋で相場を見る", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600" },
