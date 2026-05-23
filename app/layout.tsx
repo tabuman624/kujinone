@@ -8,6 +8,7 @@ import A8Script from "./components/A8Script";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
