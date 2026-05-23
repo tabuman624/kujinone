@@ -1,11 +1,12 @@
 "use client"
 
+import Image from "next/image"
 import { useEffect, useMemo, useRef, useState, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { supabase } from "../lib/supabase"
 
-type Kuji = { id: number; title: string; price: number; total: number; release_at: string }
+type Kuji = { id: number; title: string; price: number; total: number; release_at: string; image_url: string | null }
 type Prize = { id: number; name: string; grade: string; total: number }
 type PrizeWithInput = Prize & { checked: boolean; remaining: string }
 
@@ -209,8 +210,10 @@ function CalcContent() {
         <div className="px-5 pt-5">
           <div className="bg-white border border-gray-200 rounded-2xl p-4 anim-fade-up" style={{ animationDelay: "40ms" }}>
             <div className="flex items-start gap-3">
-              <div className="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                <KujiIcon />
+              <div className="w-11 h-11 bg-red-50 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0">
+                {kuji.image_url
+                  ? <Image src={kuji.image_url} alt={kuji.title} width={44} height={44} className="w-full h-full object-cover" />
+                  : <KujiIcon />}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[10px] text-gray-400 tracking-[0.15em] font-bold mb-1">SELECTED</p>
@@ -254,7 +257,7 @@ function CalcContent() {
 
           <div className="mt-3 mb-5 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-start gap-2">
             <span className="text-amber-500 text-sm flex-shrink-0 mt-0.5">⚠️</span>
-            <p className="text-xs text-amber-800 font-medium leading-relaxed">店頭の残数シートを見て、各賞の残数を実際の数に更新してください。初期値は賞の種類数（目安）です。</p>
+            <p className="text-xs text-amber-800 font-medium leading-relaxed">店頭で残数を確認し、各賞の数値を更新してください。<br />初期値は賞の種類数（目安）です。</p>
           </div>
         </div>
 
