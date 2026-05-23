@@ -76,6 +76,9 @@ def scrape_detail(url):
             if m:
                 price = int(m.group(1))
                 break
+    banner_el = soup.select_one("section.mvCol img")
+    banner_url = banner_el["src"] if banner_el else None
+
     prizes = []
     for i, item in enumerate(soup.select("div.itemColList")):
         name_el = item.select_one("h4.name.pc") or item.select_one("h4.name.sp")
@@ -98,7 +101,7 @@ def scrape_detail(url):
         img_el = item.select_one("div.itemColGallery ul.slider-item li img")
         image_url = img_el["src"] if img_el else None
         prizes.append({"grade": grade, "name": item_name, "total": total, "sort_order": i, "image_url": image_url})
-    return {"price": price, "prizes": prizes}
+    return {"price": price, "banner_url": banner_url, "prizes": prizes}
 
 def upsert_kuji(kuji_data):
     res = requests.post(
@@ -139,6 +142,8 @@ def main():
         kuji["price"] = detail["price"] or 800
         kuji["total"] = 0
         kuji["is_active"] = True
+        if detail.get("banner_url"):
+            kuji["image_url"] = detail["banner_url"]
 
         kuji_id = upsert_kuji(kuji)
         if kuji_id:
