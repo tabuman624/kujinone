@@ -47,14 +47,11 @@ export default async function Home() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Hero */}
       <div className="bg-gray-900 px-6 text-white flex flex-col items-center text-center" style={{ paddingTop: 48, paddingBottom: 48 }}>
-        <Image src="/logo.png" alt="くじのね" width={160} height={160} className="mb-5 anim-fade-up" style={{ animationDelay: '40ms' }} priority />
-        <h1 className="text-[24px] font-black leading-[1.25] mb-6 anim-fade-up" style={{ animationDelay: '100ms', textWrap: 'balance' as React.CSSProperties['textWrap'] }}>
-          くじを引く前に、<br />期待値を確認。
-        </h1>
+        <Image src="/logo.png" alt="くじのね" width={240} height={240} className="mb-6 anim-fade-up" style={{ animationDelay: '40ms' }} priority />
         <Link
           href="/schedule"
           className="inline-flex items-center gap-2 bg-red-600 text-white text-sm font-bold px-5 py-2.5 rounded-full hover:bg-red-700 press anim-fade-up"
-          style={{ animationDelay: '180ms', boxShadow: '0 6px 16px rgba(220,38,38,0.4)' }}
+          style={{ animationDelay: '120ms', boxShadow: '0 6px 16px rgba(220,38,38,0.4)' }}
         >
           計算する
           <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
