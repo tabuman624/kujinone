@@ -41,9 +41,9 @@ export default async function KujiDetail({
         <Link href="/schedule" className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-white mb-3 transition-colors press">
           ← 戻る
         </Link>
-        {kuji.image_url && (
+        {(kuji.banner_url || kuji.image_url) && (
           <div className="mb-4 rounded-xl overflow-hidden w-full">
-            <Image src={kuji.image_url} alt={kuji.title} width={600} height={400} className="w-full h-auto" />
+            <Image src={kuji.banner_url || kuji.image_url} alt={kuji.title} width={600} height={400} className="w-full h-auto" />
           </div>
         )}
         <span className="inline-block text-xs bg-red-600 text-white px-2 py-0.5 rounded-full font-semibold mb-2">{kuji.release_at.split('-').slice(1).map(Number).join('月')}日発売</span>
