@@ -36,7 +36,7 @@ export default function ScheduleList({ kujiList }: { kujiList: Kuji[] }) {
   return (
     <>
       {/* 月タブ */}
-      <div className="flex overflow-x-auto border-b border-gray-200 px-4 gap-1 sticky top-0 bg-white z-10 select-none">
+      <div className="flex flex-wrap border-b border-gray-200 px-4 sticky top-0 bg-white z-10 select-none">
         {months.map(month => (
           <button
             key={month}
