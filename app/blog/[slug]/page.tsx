@@ -7,7 +7,7 @@ import ReadingProgress from './ReadingProgress'
 
 function fmt(d: string) {
   const dt = new Date(d)
-  return `${dt.getFullYear()}.${String(dt.getMonth() + 1).padStart(2, '0')}.${String(dt.getDate()).padStart(2, '0')}`
+  return `${dt.getMonth() + 1}月${dt.getDate()}日`
 }
 
 export default async function BlogDetailPage({
@@ -29,7 +29,7 @@ export default async function BlogDetailPage({
 
       <div className="px-6 pt-5 pb-7 bg-white border-b border-gray-100">
         <Link href="/blog" className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-red-600 mb-4 press">
-          ← コラム一覧
+          ← 戻る
         </Link>
         <div className="flex items-center gap-2 mb-3">
           <span className="text-[10px] font-bold tracking-[0.18em] text-red-600">COLUMN</span>

@@ -4,7 +4,12 @@ import { supabase } from './lib/supabase'
 
 function fmtDate(d: string) {
   const dt = new Date(d)
-  return `${dt.getFullYear()}.${String(dt.getMonth() + 1).padStart(2, '0')}.${String(dt.getDate()).padStart(2, '0')}`
+  return `${dt.getMonth() + 1}月${dt.getDate()}日`
+}
+
+function fmtRelease(d: string) {
+  const [, m, day] = d.split('-')
+  return `${parseInt(m)}月${parseInt(day)}日`
 }
 
 export default async function Home() {
@@ -70,7 +75,7 @@ export default async function Home() {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-semibold">{kuji.release_at}発売</span>
+                <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-semibold">{fmtRelease(kuji.release_at)}発売</span>
                 <p className="text-sm font-bold text-gray-900 mt-0.5 truncate">{kuji.title}</p>
                 <p className="text-xs text-gray-500">{kuji.price}円/回{kuji.total ? ` · 全${kuji.total}本` : ''}</p>
               </div>

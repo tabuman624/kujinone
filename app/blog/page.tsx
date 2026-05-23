@@ -5,7 +5,7 @@ import matter from 'gray-matter'
 
 function fmt(d: string) {
   const dt = new Date(d)
-  return `${dt.getFullYear()}.${String(dt.getMonth() + 1).padStart(2, '0')}.${String(dt.getDate()).padStart(2, '0')}`
+  return `${dt.getMonth() + 1}月${dt.getDate()}日`
 }
 
 export default function BlogPage() {

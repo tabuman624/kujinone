@@ -72,7 +72,7 @@ export default function ScheduleList({ kujiList }: { kujiList: Kuji[] }) {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-semibold">{kuji.release_at}発売</span>
+              <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-semibold">{kuji.release_at.split('-').slice(1).map(Number).join('月')}日発売</span>
               <p className="text-sm font-bold text-gray-900 mt-0.5 truncate">{kuji.title}</p>
               <p className="text-xs text-gray-500">{kuji.price}円/回{kuji.total ? ` · 全${kuji.total}本` : ''}</p>
             </div>

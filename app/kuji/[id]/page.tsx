@@ -24,14 +24,14 @@ export default async function KujiDetail({
     <main>
       <div className="bg-gray-900 px-6 py-8 text-white">
         <Link href="/schedule" className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-white mb-3 transition-colors press">
-          ← スケジュール
+          ← 戻る
         </Link>
         {kuji.image_url && (
           <div className="mb-4 rounded-xl overflow-hidden w-full" style={{ maxHeight: 200 }}>
             <Image src={kuji.image_url} alt={kuji.title} width={600} height={200} className="w-full object-cover" />
           </div>
         )}
-        <span className="inline-block text-xs bg-red-600 text-white px-2 py-0.5 rounded-full font-semibold mb-2">{kuji.release_at}発売</span>
+        <span className="inline-block text-xs bg-red-600 text-white px-2 py-0.5 rounded-full font-semibold mb-2">{kuji.release_at.split('-').slice(1).map(Number).join('月')}日発売</span>
         <h1 className="text-lg font-black leading-snug">{kuji.title}</h1>
         <div className="flex gap-2 mt-2">
           <span className="text-xs bg-white/10 text-gray-300 px-2 py-0.5 rounded-full">{kuji.price}円/回</span>
