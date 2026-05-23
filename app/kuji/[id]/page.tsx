@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 
@@ -32,6 +33,11 @@ export default async function KujiDetail({
         <Link href="/schedule" className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-white mb-3 transition-colors press">
           ← スケジュール
         </Link>
+        {kuji.image_url && (
+          <div className="mb-4 rounded-xl overflow-hidden w-full" style={{ maxHeight: 200 }}>
+            <Image src={kuji.image_url} alt={kuji.title} width={600} height={200} className="w-full object-cover" />
+          </div>
+        )}
         <span className="inline-block text-xs bg-red-600 text-white px-2 py-0.5 rounded-full font-semibold mb-2">{kuji.release_at}発売</span>
         <h1 className="text-lg font-black leading-snug">{kuji.title}</h1>
         <div className="flex gap-2 mt-2">
