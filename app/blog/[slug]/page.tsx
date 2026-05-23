@@ -71,6 +71,19 @@ export default async function BlogDetailPage({
     url: `https://kujinone.com/blog/${slug}`,
   }
 
+  // 同カテゴリの関連記事（最大3件、自記事除く）
+  const postsDir = path.join(process.cwd(), 'posts')
+  const allFiles = fs.readdirSync(postsDir).filter(f => f.endsWith('.md'))
+  const relatedPosts = allFiles
+    .map(f => {
+      const s = f.replace('.md', '')
+      const { data: d } = matter(fs.readFileSync(path.join(postsDir, f), 'utf-8'))
+      return { slug: s, title: String(d.title), category: String(d.category || ''), date: String(d.date) }
+    })
+    .filter(p => p.slug !== slug && p.category === String(data.category))
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 3)
+
   const faqItems = extractFAQ(content)
   const faqJsonLd = faqItems.length > 0 ? {
     '@context': 'https://schema.org',
@@ -108,6 +121,27 @@ export default async function BlogDetailPage({
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </div>
+
+      {relatedPosts.length > 0 && (
+        <div className="px-5 pb-6 border-t border-gray-100 pt-6">
+          <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">関連コラム / RELATED</h2>
+          <div className="space-y-0">
+            {relatedPosts.map((post, i) => (
+              <Link
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                className="flex items-center gap-3 py-3 border-t border-gray-100 group press"
+              >
+                <span className="text-[13px] font-black text-gray-200" style={{ minWidth: 24 }}>{String(i + 1).padStart(2, '0')}</span>
+                <p className="flex-1 text-[13px] font-bold text-gray-800 leading-snug group-hover:text-red-600 transition-colors">{post.title}</p>
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-gray-300 flex-shrink-0 group-hover:text-red-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="px-5 pb-8 space-y-3 border-t border-gray-100 pt-6">
         <Link href="/schedule" className="flex items-center justify-center gap-2 w-full py-3 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 press" style={{ boxShadow: '0 6px 16px rgba(220,38,38,0.35)' }}>
