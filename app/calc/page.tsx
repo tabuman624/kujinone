@@ -129,8 +129,8 @@ function AffiliateLinks({ title }: { title: string }) {
       <h2 className="text-sm font-black text-gray-900 mb-3 anim-fade-up">オンラインで参加する</h2>
       <a href="https://click.linksynergy.com/fs-bin/click?id=txstqLlFvt4&offerid=1366097.2&type=3&subid=0" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 border rounded-xl bg-purple-50 border-purple-200 text-purple-700 press anim-fade-up">
         <div className="flex-1">
-          <p className="text-sm font-bold">一番くじONLINEで引く</p>
-          <p className="text-xs opacity-70">自宅でオンラインくじに参加</p>
+          <p className="text-sm font-bold">一番くじONLINEはこちら</p>
+          <p className="text-xs opacity-70">PR</p>
         </div>
         <span className="text-sm">↗</span>
       </a>
