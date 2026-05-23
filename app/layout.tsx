@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Link from "next/link";
-import Script from "next/script";
 import "./globals.css";
 import BottomNav from "./components/BottomNav";
+import A8Script from "./components/A8Script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -107,11 +107,7 @@ export default function RootLayout({
         {/* スマホ: ボトムナビ */}
         <BottomNav />
 
-        <Script
-          src="https://statics.a8.net/a8link/a8linkmgr.js"
-          strategy="afterInteractive"
-          onLoad={() => { (window as any).a8linkmgr({ config_id: 'xLVEUKG6qLmgP54TvR6L' }) }}
-        />
+        <A8Script />
 
       </body>
     </html>
