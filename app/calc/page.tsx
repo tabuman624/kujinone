@@ -169,17 +169,21 @@ function CalcContent() {
   const toggleCheck = (id: number) => setPrizes(prev => prev.map(p => p.id === id ? { ...p, checked: !p.checked } : p))
   const updateRemaining = (id: number, value: string) => setPrizes(prev => prev.map(p => p.id === id ? { ...p, remaining: value } : p))
 
+  const totalRemaining = useMemo(() =>
+    prizes.reduce((sum, p) => { const v = parseInt(p.remaining); return sum + (isNaN(v) ? p.total : v) }, 0),
+    [prizes]
+  )
+
   const liveResult = useMemo(() => {
     if (!kuji) return null
     const checked = prizes.filter(p => p.checked)
     if (checked.length === 0) return null
-    const totalRemaining = prizes.reduce((sum, p) => { const v = parseInt(p.remaining); return sum + (isNaN(v) ? p.total : v) }, 0)
     const targetCount = checked.reduce((sum, p) => { const v = parseInt(p.remaining); return sum + (isNaN(v) ? p.total : v) }, 0)
     if (targetCount === 0 || totalRemaining === 0) return null
     const times = Math.round((totalRemaining + 1) / (targetCount + 1))
     const expected = times * kuji.price
-    return { expected, times, totalRemaining, targetCount, gradeStr: checked.map(p => p.grade).join("・") }
-  }, [prizes, kuji])
+    return { expected, times, targetCount, gradeStr: checked.map(p => p.grade).join("・") }
+  }, [prizes, kuji, totalRemaining])
 
   const manualLive = useMemo(() => {
     const total = parseInt(manualTotal)
@@ -213,7 +217,11 @@ function CalcContent() {
                 <p className="text-sm font-black text-gray-900 leading-snug mb-2">{kuji.title}</p>
                 <div className="flex gap-1.5 flex-wrap">
                   <span className="text-[11px] bg-gray-900 text-white px-2 py-0.5 rounded-full font-semibold" style={{ fontVariantNumeric: "tabular-nums" }}>{kuji.price}円/回</span>
-                  {kuji.total && <span className="text-[11px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full" style={{ fontVariantNumeric: "tabular-nums" }}>全{kuji.total}本</span>}
+                  {kuji.total > 0 && <span className="text-[11px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full" style={{ fontVariantNumeric: "tabular-nums" }}>全{kuji.total}本</span>}
+                </div>
+                <div className="mt-3 bg-gray-800 rounded-xl px-4 py-2.5 flex items-center justify-between">
+                  <span className="text-xs text-gray-400 font-bold tracking-wide">総残数</span>
+                  <span className="text-2xl font-black text-white" style={{ fontVariantNumeric: "tabular-nums" }}>{totalRemaining}<span className="text-sm font-normal text-gray-400 ml-1">本</span></span>
                 </div>
               </div>
             </div>
@@ -244,9 +252,10 @@ function CalcContent() {
             ))}
           </div>
 
-          <p className="text-[11px] text-gray-400 mt-3 mb-5 flex items-center gap-1">
-            <span>ℹ</span> 残数の初期値は賞の種類数です。店頭で実際の残数を確認して修正してください
-          </p>
+          <div className="mt-3 mb-5 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-start gap-2">
+            <span className="text-amber-500 text-sm flex-shrink-0 mt-0.5">⚠️</span>
+            <p className="text-xs text-amber-800 font-medium leading-relaxed">店頭の残数シートを見て、各賞の残数を実際の数に更新してください。初期値は賞の種類数（目安）です。</p>
+          </div>
         </div>
 
         <div className="px-5 pb-6">
@@ -255,7 +264,7 @@ function CalcContent() {
               <ResultCard
                 expected={liveResult.expected}
                 times={liveResult.times}
-                detail={`残数${liveResult.totalRemaining}本 / ${liveResult.gradeStr}${liveResult.targetCount}本 / ${kuji.price}円 × ${liveResult.times}回`}
+                detail={`残数${totalRemaining}本 / ${liveResult.gradeStr}${liveResult.targetCount}本 / ${kuji.price}円 × ${liveResult.times}回`}
               />
               <AffiliateLinks title={kuji.title} />
             </>
