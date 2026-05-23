@@ -22,6 +22,30 @@ function fmt(d: string) {
   return `${dt.getMonth() + 1}月${dt.getDate()}日`
 }
 
+function extractFAQ(content: string): { q: string; a: string }[] {
+  const lines = content.split('\n')
+  const items: { q: string; a: string }[] = []
+  let i = 0
+  while (i < lines.length) {
+    const qMatch = lines[i].match(/^###\s+Q[.．]\s*(.+)/)
+    if (qMatch) {
+      const question = qMatch[1].trim()
+      const answerLines: string[] = []
+      i++
+      while (i < lines.length && !lines[i].match(/^###/)) {
+        const line = lines[i].trim()
+        if (line) answerLines.push(line)
+        i++
+      }
+      const answer = answerLines.join(' ').replace(/^A[.．]\s*/, '').replace(/[*_`#]/g, '').trim()
+      if (answer) items.push({ q: question, a: answer })
+    } else {
+      i++
+    }
+  }
+  return items
+}
+
 export default async function BlogDetailPage({
   params,
 }: {
@@ -47,9 +71,21 @@ export default async function BlogDetailPage({
     url: `https://kujinone.com/blog/${slug}`,
   }
 
+  const faqItems = extractFAQ(content)
+  const faqJsonLd = faqItems.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a },
+    })),
+  } : null
+
   return (
     <main style={{ background: '#fff' }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      {faqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />}
       <ReadingProgress />
 
       <div className="px-6 pt-5 pb-7 bg-white border-b border-gray-100">
