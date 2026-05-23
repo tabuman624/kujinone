@@ -77,9 +77,18 @@ export default async function KujiDetail({
                   className={`flex items-center gap-3 px-4 py-3 anim-fade-up ${i !== prizes.length - 1 ? 'border-b border-gray-100' : ''}`}
                   style={{ animationDelay: `${220 + i * 60}ms` }}
                 >
-                  <span className={`text-xs font-bold w-8 text-center py-0.5 rounded ${gradeColors[prize.grade] || 'bg-gray-100 text-gray-700'}`}>{prize.grade}</span>
-                  <span className="flex-1 text-sm text-gray-800 font-medium">{prize.name}</span>
-                  <span className="text-xs text-gray-400">{prize.total}本</span>
+                  {prize.image_url ? (
+                    <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-50">
+                      <Image src={prize.image_url} alt={prize.name} width={48} height={48} className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 rounded-lg bg-gray-50 flex-shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${gradeColors[prize.grade] || 'bg-gray-100 text-gray-700'}`}>{prize.grade}</span>
+                    <p className="text-sm text-gray-800 font-medium mt-0.5 truncate">{prize.name}</p>
+                  </div>
+                  <span className="text-xs text-gray-400 flex-shrink-0">{prize.total}本</span>
                 </div>
               ))}
             </div>

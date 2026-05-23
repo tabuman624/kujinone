@@ -73,7 +73,9 @@ def scrape_detail(url):
             if m2:
                 total = int(m2.group(1))
                 break
-        prizes.append({"grade": grade, "name": item_name, "total": total, "sort_order": i})
+        img_el = item.select_one("div.itemColGallery ul.slider-item li img")
+        image_url = img_el["src"] if img_el else None
+        prizes.append({"grade": grade, "name": item_name, "total": total, "sort_order": i, "image_url": image_url})
     return {"price": price, "prizes": prizes}
 
 def upsert_kuji(kuji_data):
