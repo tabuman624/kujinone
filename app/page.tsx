@@ -24,8 +24,8 @@ export default async function Home() {
 
   // Hard-coded featured columns on the home page (same 3 as the original)
   const featuredPosts = [
-    { slug: 'ichiban-kuji-toha', title: '一番くじとは？初心者向けに仕組みをわかりやすく解説', date: '2026-05-01', summary: '一番くじの基本的な仕組みや賞の種類、どこで買えるのかを初心者向けにわかりやすく解説します。' },
     { slug: 'kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説', date: '2026-05-01', summary: '一番くじで目当ての賞を引くまでに平均いくらかかるかを示す「期待値」の計算方法を解説します。' },
+    { slug: 'ichiban-kuji-toha', title: '一番くじとは？初心者向けに仕組みをわかりやすく解説', date: '2026-05-01', summary: '一番くじの基本的な仕組みや賞の種類、どこで買えるのかを初心者向けにわかりやすく解説します。' },
     { slug: 'kuji-vs-mercari', title: '一番くじ vs メルカリ どちらがお得？', date: '2026-05-01', summary: '一番くじを引くのとフリマアプリで購入するのと、どちらがお得かを比較・解説します。' },
   ]
 

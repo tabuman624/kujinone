@@ -11,8 +11,24 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://kujinone.com'),
   title: "くじのね | 一番くじ期待値計算",
   description: "一番くじの期待値を計算して、賢くくじを引こう",
+  openGraph: {
+    title: "くじのね | 一番くじ期待値計算",
+    description: "一番くじの期待値を計算して、賢くくじを引こう",
+    url: "https://kujinone.com",
+    siteName: "くじのね",
+    images: [{ url: "/logo.png", width: 1024, height: 1024, alt: "くじのね" }],
+    locale: "ja_JP",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "くじのね | 一番くじ期待値計算",
+    description: "一番くじの期待値を計算して、賢くくじを引こう",
+    images: ["/logo.png"],
+  },
   verification: {
     google: "Sjo1gHcZIajNjfXIWQqWzgsLlCAT19ePlb3SnTbUwZ4",
   },
