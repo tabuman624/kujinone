@@ -39,6 +39,16 @@ export default async function KujiDetail({
 
   if (!kuji) return <div className="p-6 text-sm text-gray-400">くじが見つかりません</div>
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: 'https://kujinone.com' },
+      { '@type': 'ListItem', position: 2, name: '発売スケジュール', item: 'https://kujinone.com/schedule' },
+      { '@type': 'ListItem', position: 3, name: kuji.title, item: `https://kujinone.com/kuji/${id}` },
+    ],
+  }
+
   const isReleased = kuji.release_at <= today
   const searchKeyword = kuji.title.split(/\s+/).slice(0, 2).join(' ')
 
@@ -50,6 +60,7 @@ export default async function KujiDetail({
 
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <div className="bg-gray-900 px-6 py-8 text-white">
         <Link href="/schedule" className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-white mb-3 transition-colors press">
           ← 戻る

@@ -32,8 +32,18 @@ export default function BlogPage() {
   const featured = featuredIdx >= 0 ? posts[featuredIdx] : posts[0]
   const rest = posts.filter(p => p.slug !== featured.slug)
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: 'https://kujinone.com' },
+      { '@type': 'ListItem', position: 2, name: 'コラム', item: 'https://kujinone.com/blog' },
+    ],
+  }
+
   return (
     <main style={{ background: '#fafafa' }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <div className="px-6 pt-6 pb-6 bg-gray-900">
         <div className="flex items-baseline justify-between mb-2">
           <p className="text-[11px] font-bold tracking-[0.18em] text-gray-400">COLUMN</p>

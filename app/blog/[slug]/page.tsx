@@ -97,6 +97,16 @@ export default async function BlogDetailPage({
     .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, 3)
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: 'https://kujinone.com' },
+      { '@type': 'ListItem', position: 2, name: 'コラム', item: 'https://kujinone.com/blog' },
+      { '@type': 'ListItem', position: 3, name: String(data.title), item: `https://kujinone.com/blog/${slug}` },
+    ],
+  }
+
   const faqItems = extractFAQ(content)
   const faqJsonLd = faqItems.length > 0 ? {
     '@context': 'https://schema.org',
@@ -111,6 +121,7 @@ export default async function BlogDetailPage({
   return (
     <main style={{ background: '#fff' }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       {faqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />}
       <ReadingProgress />
 
