@@ -11,9 +11,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const filePath = path.join(process.cwd(), 'posts', `${slug}.md`)
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { data } = matter(raw)
+  const description = String(data.summary || '')
   return {
     title: `${data.title} | くじのね`,
-    description: String(data.summary || ''),
+    description,
+    openGraph: {
+      title: `${data.title} | くじのね`,
+      description,
+      url: `https://kujinone.com/blog/${slug}`,
+      images: [{ url: '/logo.png', alt: 'くじのね' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${data.title} | くじのね`,
+      description,
+      images: ['/logo.png'],
+    },
   }
 }
 

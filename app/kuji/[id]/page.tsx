@@ -6,11 +6,24 @@ import PrizeList from './PrizeList'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
-  const { data: kuji } = await supabase.from('kuji').select('title, price').eq('id', id).single()
+  const { data: kuji } = await supabase.from('kuji').select('title, price, banner_url, image_url').eq('id', id).single()
   if (!kuji) return {}
+  const ogImage = kuji.banner_url || kuji.image_url || '/logo.png'
   return {
     title: `${kuji.title} 期待値 | くじのね`,
     description: `${kuji.title}の期待値を計算。1回${kuji.price}円のくじを引く前に、目当ての賞が当たるまでの平均費用を確認しよう。`,
+    openGraph: {
+      title: `${kuji.title} 期待値 | くじのね`,
+      description: `${kuji.title}の期待値を計算。1回${kuji.price}円のくじを引く前に、目当ての賞が当たるまでの平均費用を確認しよう。`,
+      url: `https://kujinone.com/kuji/${id}`,
+      images: [{ url: ogImage, alt: kuji.title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${kuji.title} 期待値 | くじのね`,
+      description: `${kuji.title}の期待値を計算。1回${kuji.price}円のくじを引く前に、目当ての賞が当たるまでの平均費用を確認しよう。`,
+      images: [ogImage],
+    },
   }
 }
 
