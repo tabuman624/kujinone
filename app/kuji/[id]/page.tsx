@@ -76,7 +76,7 @@ export default async function KujiDetail({
             <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">相場を確認・購入する / MARKET</h2>
             <div className="space-y-2">
               {[
-                { href: `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM`, label: "メルカリで相場を見る", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600" },
+                { href: `https://jp.mercari.com/search?keyword=${encodeURIComponent(searchKeyword)}`, label: "メルカリで相場を見る", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600" },
                 { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(searchKeyword)}`, label: "駿河屋で相場を見る", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600" },
                 { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502`, label: "Yahoo!ショッピングで見る", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600" },
                 { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621`, label: "楽天市場で見る", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600" },
