@@ -27,8 +27,8 @@ export default async function KujiDetail({
           ← 戻る
         </Link>
         {kuji.image_url && (
-          <div className="mb-4 rounded-xl overflow-hidden w-full" style={{ maxHeight: 200 }}>
-            <Image src={kuji.image_url} alt={kuji.title} width={600} height={200} className="w-full object-cover" />
+          <div className="mb-4 rounded-xl overflow-hidden w-full">
+            <Image src={kuji.image_url} alt={kuji.title} width={600} height={400} className="w-full h-auto" />
           </div>
         )}
         <span className="inline-block text-xs bg-red-600 text-white px-2 py-0.5 rounded-full font-semibold mb-2">{kuji.release_at.split('-').slice(1).map(Number).join('月')}日発売</span>
