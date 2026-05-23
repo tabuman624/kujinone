@@ -148,6 +148,29 @@ export default async function KujiDetail({
         >
           この商品の期待値を計算する →
         </Link>
+
+        <div className="mt-8 pt-6 border-t border-gray-100">
+          <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">関連コラム / COLUMN</h2>
+          <div className="space-y-0">
+            {[
+              { href: '/blog/kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説' },
+              { href: '/blog/ichiban-kuji-toha', title: '一番くじとは？初心者向けに仕組みをわかりやすく解説' },
+              { href: '/blog/kuji-vs-mercari', title: '一番くじ vs メルカリ どちらがお得？賢い選び方を解説' },
+            ].map((post, i) => (
+              <Link
+                key={post.href}
+                href={post.href}
+                className="flex items-center gap-3 py-3 border-t border-gray-100 group press"
+              >
+                <span className="text-[13px] font-black text-gray-200" style={{ minWidth: 24 }}>{String(i + 1).padStart(2, '0')}</span>
+                <p className="flex-1 text-[13px] font-bold text-gray-800 leading-snug group-hover:text-red-600 transition-colors">{post.title}</p>
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-gray-300 flex-shrink-0 group-hover:text-red-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     </main>
   )
