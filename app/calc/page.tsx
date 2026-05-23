@@ -257,7 +257,7 @@ function CalcContent() {
 
           <div className="mt-3 mb-5 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-start gap-2">
             <span className="text-amber-500 text-sm flex-shrink-0 mt-0.5">⚠️</span>
-            <p className="text-xs text-amber-800 font-medium leading-relaxed">店頭で残数を確認し、各賞の数値を更新してください。<br />初期値は賞の種類数（目安）です。</p>
+            <p className="text-[11px] text-amber-800 font-medium leading-relaxed">店頭で残数を確認し、各賞の数値を更新してください。<br />初期値は賞の種類数（目安）です。</p>
           </div>
         </div>
 
