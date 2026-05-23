@@ -1,7 +1,13 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+
+export const metadata: Metadata = {
+  title: 'コラム一覧 | くじのね',
+  description: '一番くじの期待値・確率・攻略法をわかりやすく解説するコラム集。初心者から上級者まで役立つ情報をお届けします。',
+}
 
 function fmt(d: string) {
   const dt = new Date(d)

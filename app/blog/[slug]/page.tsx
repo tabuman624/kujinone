@@ -1,9 +1,21 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { marked } from 'marked'
 import ReadingProgress from './ReadingProgress'
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const filePath = path.join(process.cwd(), 'posts', `${slug}.md`)
+  const raw = fs.readFileSync(filePath, 'utf-8')
+  const { data } = matter(raw)
+  return {
+    title: `${data.title} | くじのね`,
+    description: String(data.summary || ''),
+  }
+}
 
 function fmt(d: string) {
   const dt = new Date(d)
@@ -23,8 +35,21 @@ export default async function BlogDetailPage({
   const date = fmt(String(data.date))
   const readMins = Math.max(1, Math.round(content.length / 600))
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: String(data.title),
+    description: String(data.summary || ''),
+    datePublished: String(data.date),
+    dateModified: String(data.date),
+    author: { '@type': 'Organization', name: 'くじのね', url: 'https://kujinone.com' },
+    publisher: { '@type': 'Organization', name: 'くじのね', url: 'https://kujinone.com', logo: { '@type': 'ImageObject', url: 'https://kujinone.com/logo.png' } },
+    url: `https://kujinone.com/blog/${slug}`,
+  }
+
   return (
     <main style={{ background: '#fff' }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <ReadingProgress />
 
       <div className="px-6 pt-5 pb-7 bg-white border-b border-gray-100">

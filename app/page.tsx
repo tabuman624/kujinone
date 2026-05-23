@@ -29,8 +29,22 @@ export default async function Home() {
     { slug: 'kuji-vs-mercari', title: '一番くじ vs メルカリ どちらがお得？', date: '2026-05-01', summary: '一番くじを引くのとフリマアプリで購入するのと、どちらがお得かを比較・解説します。' },
   ]
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'くじのね',
+    url: 'https://kujinone.com',
+    description: '一番くじの期待値を計算して、賢くくじを引こう',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: { '@type': 'EntryPoint', urlTemplate: 'https://kujinone.com/schedule' },
+      'query-input': 'required name=search_term_string',
+    },
+  }
+
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Hero — minimal: headline + single CTA */}
       <div className="bg-gray-900 px-6 text-white" style={{ paddingTop: 56, paddingBottom: 52 }}>
         <h1 className="text-[28px] font-black leading-[1.25] mb-6 anim-fade-up" style={{ animationDelay: '60ms', textWrap: 'balance' as React.CSSProperties['textWrap'] }}>

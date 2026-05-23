@@ -1,7 +1,18 @@
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import PrizeList from './PrizeList'
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const { data: kuji } = await supabase.from('kuji').select('title, price').eq('id', id).single()
+  if (!kuji) return {}
+  return {
+    title: `${kuji.title} 期待値 | くじのね`,
+    description: `${kuji.title}の期待値を計算。1回${kuji.price}円のくじを引く前に、目当ての賞が当たるまでの平均費用を確認しよう。`,
+  }
+}
 
 export default async function KujiDetail({
   params,
