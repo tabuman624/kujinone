@@ -35,7 +35,7 @@ export default async function KujiDetail({
         <h1 className="text-lg font-black leading-snug">{kuji.title}</h1>
         <div className="flex gap-2 mt-2">
           <span className="text-xs bg-white/10 text-gray-300 px-2 py-0.5 rounded-full">{kuji.price}円/回</span>
-          {kuji.total && <span className="text-xs bg-white/10 text-gray-300 px-2 py-0.5 rounded-full">全{kuji.total}本</span>}
+          {kuji.total > 0 && <span className="text-xs bg-white/10 text-gray-300 px-2 py-0.5 rounded-full">全{kuji.total}本</span>}
         </div>
       </div>
 
