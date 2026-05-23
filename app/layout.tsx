@@ -93,7 +93,8 @@ export default function RootLayout({
                 </Link>
               ))}
             </div>
-            <p className="text-xs text-gray-300 mt-2">© 2026 くじのね</p>
+            <p className="text-xs text-gray-400 mt-2">当サイトはアフィリエイト広告を利用しています</p>
+            <p className="text-xs text-gray-300 mt-1">© 2026 くじのね</p>
           </div>
         </div>
 
@@ -101,6 +102,7 @@ export default function RootLayout({
         <div className="md:pl-60">
           <div className="max-w-4xl mx-auto bg-white min-h-screen pb-24 md:pb-10 md:border-x md:border-gray-200 md:shadow-sm">
             {children}
+            <p className="text-center text-xs text-gray-300 py-4 px-6">当サイトはアフィリエイト広告を利用しています</p>
           </div>
         </div>
 
