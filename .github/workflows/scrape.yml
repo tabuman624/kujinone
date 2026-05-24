@@ -1,22 +1,43 @@
-name: 一番くじ情報スクレイピング
+name: 一番くじ スクレイピング＋記事自動生成
 
 on:
   schedule:
     - cron: '0 1 * * *'  # 毎日朝10時（JST）
-  workflow_dispatch:  # 手動実行も可能
+  workflow_dispatch:      # 手動実行も可能
 
 jobs:
-  scrape:
+  scrape-and-generate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write     # git push に必要
+
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: パッケージインストール
         run: pip install requests beautifulsoup4
-      - name: スクレイピング実行
+
+      - name: ① スクレイピング実行（Supabaseに登録）
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python scripts/scrape_and_register.py
+
+      - name: ② 新作記事を自動生成
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python scripts/generate_articles.py
+
+      - name: ③ 新規記事をコミット＆プッシュ
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Actions"
+          git add news-posts/
+          git diff --staged --quiet && echo "新規記事なし" || (git commit -m "feat: 新作くじ記事を自動生成 [skip ci]" && git push)

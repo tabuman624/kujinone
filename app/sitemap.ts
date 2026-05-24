@@ -11,6 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/schedule`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: `${BASE}/calc`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
     { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${BASE}/news`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: `${BASE}/howto`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     { url: `${BASE}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
@@ -26,6 +27,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
+  const newsDir = path.join(process.cwd(), 'news-posts')
+  const newsSlugs = fs.existsSync(newsDir)
+    ? fs.readdirSync(newsDir).filter(f => f.endsWith('.md')).map(f => f.replace('.md', ''))
+    : []
+  const newsPages: MetadataRoute.Sitemap = newsSlugs.map(slug => ({
+    url: `${BASE}/news/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }))
+
   const { data: kujiList } = await supabase.from('kuji').select('id, release_at').eq('is_active', true)
   const kujiPages: MetadataRoute.Sitemap = (kujiList ?? []).map(k => ({
     url: `${BASE}/kuji/${k.id}`,
@@ -34,5 +46,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }))
 
-  return [...staticPages, ...blogPages, ...kujiPages]
+  return [...staticPages, ...blogPages, ...newsPages, ...kujiPages]
 }
