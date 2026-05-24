@@ -18,34 +18,21 @@ summary: 2026年6月6日発売「一番くじ ワンピース 赤髪海賊団」
 |---|---|
 | 発売日 | 2026年6月6日 |
 | 価格 | 790円/回 |
-| 総本数 | 本数未発表 |
 
 ## 賞品一覧
 
-| 賞 | 景品名 | 本数 |
+| 賞 | 景品名 | 種類 |
 |---|---|---|
-| A賞 | シャンクス MASTERLISE EXPIECE | 1本 |
-| B賞 | ベン・ベックマン MASTERLISE EXPIECE | 1本 |
-| C賞 | ヤソップ MASTERLISE EXPIECE | 1本 |
-| D賞 | ラッキー・ルウ MASTERLISE EXPIECE | 1本 |
-| E賞 | はこにわーるど | 2本 |
-| F賞 | SOFVICちゅ | 3本 |
-| G賞 | ハンカチアソート | 5本 |
-| H賞 | ACLLECT-赤髪海賊団- | 12本 |
-| I賞 | デコレーションマグネット | 10本 |
-| J賞 | アクリルチャームアソート | 10本 |
-| ラストワン賞 | シャンクス＆ルフィ Revible Moment | 1本 |
+| A賞 | シャンクス MASTERLISE EXPIECE | 1種 |
+| B賞 | ベン・ベックマン MASTERLISE EXPIECE | 1種 |
+| C賞 | ヤソップ MASTERLISE EXPIECE | 1種 |
+| D賞 | ラッキー・ルウ MASTERLISE EXPIECE | 1種 |
+| E賞 | はこにわーるど | 2種 |
+| F賞 | SOFVICちゅ | 3種 |
+| G賞 | ハンカチアソート | 5種 |
+| H賞 | ACLLECT-赤髪海賊団- | 12種 |
+| I賞 | デコレーションマグネット | 10種 |
+| J賞 | アクリルチャームアソート | 10種 |
+| ラストワン賞 | シャンクス＆ルフィ Revible Moment | 1種 |
 
 
-
-## 期待値を計算する
-
-店頭で確認した残数を入力すると、より正確な期待値が計算できます。
-
-[この商品の期待値を計算する →](/calc?kuji_id=240)
-
-## オンラインで引く
-
-店頭に行けない場合は、一番くじONLINEでオンライン参加もできます。
-
-[一番くじONLINEはこちら →](https://click.linksynergy.com/fs-bin/click?id=txstqLlFvt4&offerid=1366097.2&type=3&subid=0)

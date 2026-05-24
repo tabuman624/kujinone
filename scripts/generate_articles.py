@@ -65,9 +65,9 @@ def format_date_ja(date_str):
 def build_prizes_table(prizes):
     if not prizes:
         return "（賞品情報未公開）"
-    lines = ["| 賞 | 景品名 | 本数 |", "|---|---|---|"]
+    lines = ["| 賞 | 景品名 | 種類 |", "|---|---|---|"]
     for p in prizes:
-        lines.append(f"| {p['grade']} | {p['name']} | {p['total']}本 |")
+        lines.append(f"| {p['grade']} | {p['name']} | {p['total']}種 |")
     return "\n".join(lines)
 
 
@@ -160,25 +160,12 @@ summary: {release_ja}発売「{title}」の賞品一覧と期待値。1回{price
 |---|---|
 | 発売日 | {release_ja} |
 | 価格 | {price}円/回 |
-| 総本数 | {total_str} |
 
 ## 賞品一覧
 
 {prizes_table}
 
 {expected_section}
-
-## 期待値を計算する
-
-店頭で確認した残数を入力すると、より正確な期待値が計算できます。
-
-[この商品の期待値を計算する →](/calc?kuji_id={kuji_id})
-
-## オンラインで引く
-
-店頭に行けない場合は、一番くじONLINEでオンライン参加もできます。
-
-[一番くじONLINEはこちら →]({LINKSYNERGY_URL})
 """
 
 

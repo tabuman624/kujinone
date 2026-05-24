@@ -122,12 +122,25 @@ export default async function NewsDetailPage({
         {data.kuji_id && (
           <Link
             href={`/kuji/${data.kuji_id}`}
-            className="flex items-center justify-center gap-2 w-full py-3 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 press"
+            className="flex items-center justify-center gap-2 w-full py-3 bg-red-600 text-white text-sm font-black rounded-xl hover:bg-red-700 press"
             style={{ boxShadow: '0 6px 16px rgba(220,38,38,0.35)' }}
           >
-            このくじの詳細・期待値を計算する →
+            この商品の期待値を計算する →
           </Link>
         )}
+        <a
+          href="https://click.linksynergy.com/fs-bin/click?id=txstqLlFvt4&offerid=1366097.2&type=3&subid=0"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 p-3 border rounded-xl bg-purple-50 border-purple-200 text-purple-700 press"
+        >
+          <div className="flex-1">
+            <p className="text-sm font-bold">一番くじONLINEはこちら</p>
+            <p className="text-xs opacity-70">PR</p>
+          </div>
+          <span className="text-sm">↗</span>
+        </a>
+        <img src="https://ad.linksynergy.com/fs-bin/show?id=txstqLlFvt4&bids=1366097.2&type=3&subid=0" width={1} height={1} alt="" />
         <Link
           href="/news"
           className="flex items-center justify-center gap-2 w-full py-3 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 press"
