@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import fs from 'fs'
+import path from 'path'
 import { supabase } from '../../lib/supabase'
 import PrizeList from './PrizeList'
 
@@ -51,6 +53,10 @@ export default async function KujiDetail({
 
   const isReleased = kuji.release_at <= today
   const searchKeyword = kuji.title.split(/\s+/).slice(0, 2).join(' ')
+
+  // 対応する新作速報記事の有無を確認
+  const newsSlug = `kuji-${kuji.product_id}`
+  const newsExists = fs.existsSync(path.join(process.cwd(), 'news-posts', `${newsSlug}.md`))
 
   const tweetUrls: string[] = Array.isArray(kuji.tweet_urls)
     ? kuji.tweet_urls
@@ -103,6 +109,22 @@ export default async function KujiDetail({
           <div className="mb-6">
             <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3 anim-fade-up" style={{ animationDelay: '180ms' }}>賞一覧 / PRIZES</h2>
             <PrizeList prizes={prizes} />
+          </div>
+        )}
+
+        {newsExists && (
+          <div className="mb-6 anim-fade-up" style={{ animationDelay: `${200 + (prizes?.length || 0) * 60}ms` }}>
+            <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">新作速報 / NEWS</h2>
+            <Link
+              href={`/news/${newsSlug}`}
+              className="flex items-center gap-3 p-3 border rounded-xl bg-red-50 border-red-200 text-red-700 press"
+            >
+              <div className="flex-1">
+                <p className="text-sm font-bold">このくじの賞品・期待値まとめ記事</p>
+                <p className="text-xs opacity-70">発売日・全賞品・期待値の目安を解説</p>
+              </div>
+              <span className="text-sm">↗</span>
+            </Link>
           </div>
         )}
 

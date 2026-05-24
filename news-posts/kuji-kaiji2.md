@@ -1,11 +1,14 @@
 ---
-title: 「一番くじ 鬮破滅録カイジ くじを引くのが 気持ちのいい人生ってもんだろっ・・・！」発売日・賞品一覧まとめ【2026年7月7日発売】
+title: 2026年7月7日発売「一番くじ 鬮破滅録カイジ くじを引くのが 気持ちのいい人生ってもんだろっ・・・！」賞品一覧と期待値を解説
 date: 2026-05-13
 release_date: 2026-07-07
 kuji_id: 256
 category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10689/79da4b6b-0c9f-49a7-8d7c-fbf02dc12dee.gif
 summary: 2026年7月7日発売「一番くじ 鬮破滅録カイジ くじを引くのが 気持ちのいい人生ってもんだろっ・・・！」の賞品一覧と期待値。1回777円、本数未発表。くじのねで期待値を計算できます。
 ---
+
+![一番くじ 鬮破滅録カイジ くじを引くのが 気持ちのいい人生ってもんだろっ・・・！](https://assets.1kuji.com/uploads/product/top_banner/10689/79da4b6b-0c9f-49a7-8d7c-fbf02dc12dee.gif)
 
 ## 基本情報
 

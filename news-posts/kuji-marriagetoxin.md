@@ -1,11 +1,14 @@
 ---
-title: 「一番くじちょこっと マリッジトキシン」発売日・賞品一覧まとめ【2026年6月30日発売】
+title: 2026年6月30日発売「一番くじちょこっと マリッジトキシン」賞品一覧と期待値を解説
 date: 2026-05-16
 release_date: 2026-06-30
 kuji_id: 253
 category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10677/924bf8f3-dc49-41ad-8369-a198a49585cd.webp
 summary: 2026年6月30日発売「一番くじちょこっと マリッジトキシン」の賞品一覧と期待値。1回550円、本数未発表。くじのねで期待値を計算できます。
 ---
+
+![一番くじちょこっと マリッジトキシン](https://assets.1kuji.com/uploads/product/top_banner/10677/924bf8f3-dc49-41ad-8369-a198a49585cd.webp)
 
 ## 基本情報
 

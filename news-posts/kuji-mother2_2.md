@@ -1,11 +1,14 @@
 ---
-title: 「一番くじ MOTHER2 ギーグの逆襲 第二弾」発売日・賞品一覧まとめ【2026年6月6日発売】
+title: 2026年6月6日発売「一番くじ MOTHER2 ギーグの逆襲 第二弾」賞品一覧と期待値を解説
 date: 2026-05-18
 release_date: 2026-06-06
 kuji_id: 241
 category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10695/90a8817a-cccc-4606-a24d-ca1962190c87.webp
 summary: 2026年6月6日発売「一番くじ MOTHER2 ギーグの逆襲 第二弾」の賞品一覧と期待値。1回790円、本数未発表。くじのねで期待値を計算できます。
 ---
+
+![一番くじ MOTHER2 ギーグの逆襲 第二弾](https://assets.1kuji.com/uploads/product/top_banner/10695/90a8817a-cccc-4606-a24d-ca1962190c87.webp)
 
 ## 基本情報
 

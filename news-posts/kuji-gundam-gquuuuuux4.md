@@ -1,11 +1,14 @@
 ---
-title: 「一番くじ 機動戦士Gundam GQuuuuuuX（ジークアクス） vol.4」発売日・賞品一覧まとめ【2026年5月22日発売】
+title: 【2026年5月22日発売】一番くじ 機動戦士Gundam GQuuuuuuX（ジークアクス） vol.4の賞品・期待値まとめ
 date: 2026-05-10
 release_date: 2026-05-22
 kuji_id: 16
 category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10655/898ededc-3f39-43a8-89ac-44b30ac0f6d0.webp
 summary: 2026年5月22日発売「一番くじ 機動戦士Gundam GQuuuuuuX（ジークアクス） vol.4」の賞品一覧と期待値。1回900円、本数未発表。くじのねで期待値を計算できます。
 ---
+
+![一番くじ 機動戦士Gundam GQuuuuuuX（ジークアクス） vol.4](https://assets.1kuji.com/uploads/product/top_banner/10655/898ededc-3f39-43a8-89ac-44b30ac0f6d0.webp)
 
 ## 基本情報
 

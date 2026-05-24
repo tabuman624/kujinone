@@ -1,11 +1,14 @@
 ---
-title: 「一番くじ ドラゴンボール スペクタクルバトル」発売日・賞品一覧まとめ【2026年7月11日発売】
+title: 2026年7月11日発売「一番くじ ドラゴンボール スペクタクルバトル」賞品一覧と期待値を解説
 date: 2026-05-07
 release_date: 2026-07-11
 kuji_id: 259
 category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10693/3205e8fc-383b-4b5d-91f1-b8e192f19592.webp
 summary: 2026年7月11日発売「一番くじ ドラゴンボール スペクタクルバトル」の賞品一覧と期待値。1回800円、本数未発表。くじのねで期待値を計算できます。
 ---
+
+![一番くじ ドラゴンボール スペクタクルバトル](https://assets.1kuji.com/uploads/product/top_banner/10693/3205e8fc-383b-4b5d-91f1-b8e192f19592.webp)
 
 ## 基本情報
 

@@ -4,8 +4,11 @@ date: 2026-05-23
 release_date: 2026-05-26
 kuji_id: 19
 category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10670/76906b06-9ed2-4c11-97df-f7454784de93.webp
 summary: 2026年5月26日発売「一番くじちょこっと いぬとの暮らし illustration by てらおかなつみ」の賞品一覧と期待値。1回550円、本数未発表。くじのねで期待値を計算できます。
 ---
+
+![一番くじちょこっと いぬとの暮らし illustration by てらおかなつみ](https://assets.1kuji.com/uploads/product/top_banner/10670/76906b06-9ed2-4c11-97df-f7454784de93.webp)
 
 ## 基本情報
 

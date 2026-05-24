@@ -119,18 +119,20 @@ export default async function NewsDetailPage({
 
       {/* CTAs */}
       <div className="px-5 pb-8 space-y-3 border-t border-gray-100 pt-6">
+        {data.kuji_id && (
+          <Link
+            href={`/kuji/${data.kuji_id}`}
+            className="flex items-center justify-center gap-2 w-full py-3 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 press"
+            style={{ boxShadow: '0 6px 16px rgba(220,38,38,0.35)' }}
+          >
+            このくじの詳細・期待値を計算する →
+          </Link>
+        )}
         <Link
           href="/news"
           className="flex items-center justify-center gap-2 w-full py-3 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 press"
         >
           新作速報一覧に戻る
-        </Link>
-        <Link
-          href="/schedule"
-          className="flex items-center justify-center gap-2 w-full py-3 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 press"
-          style={{ boxShadow: '0 6px 16px rgba(220,38,38,0.35)' }}
-        >
-          期待値を計算してみる →
         </Link>
       </div>
     </main>

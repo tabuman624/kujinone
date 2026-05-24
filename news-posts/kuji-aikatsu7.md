@@ -1,11 +1,14 @@
 ---
-title: 「一番くじ アイカツ！～私のアツいアイドル活動！～」発売日・賞品一覧まとめ【2026年5月30日発売】
+title: 一番くじ アイカツ！～私のアツいアイドル活動！～ 全賞品・期待値まとめ｜2026年5月30日発売
 date: 2026-05-04
 release_date: 2026-05-30
 kuji_id: 20
 category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10662/935146b6-e3e7-46e4-a34c-3b7db20bf1d9.webp
 summary: 2026年5月30日発売「一番くじ アイカツ！～私のアツいアイドル活動！～」の賞品一覧と期待値。1回750円、本数未発表。くじのねで期待値を計算できます。
 ---
+
+![一番くじ アイカツ！～私のアツいアイドル活動！～](https://assets.1kuji.com/uploads/product/top_banner/10662/935146b6-e3e7-46e4-a34c-3b7db20bf1d9.webp)
 
 ## 基本情報
 

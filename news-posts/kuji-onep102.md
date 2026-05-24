@@ -1,11 +1,14 @@
 ---
-title: 「一番くじ ワンピース 赤髪海賊団」発売日・賞品一覧まとめ【2026年6月6日発売】
+title: 一番くじ ワンピース 赤髪海賊団 全賞品・期待値まとめ｜2026年6月6日発売
 date: 2026-05-20
 release_date: 2026-06-06
 kuji_id: 240
 category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10679/825f6438-bde5-4d4f-a4e5-da2c2c74909b.webp
 summary: 2026年6月6日発売「一番くじ ワンピース 赤髪海賊団」の賞品一覧と期待値。1回790円、本数未発表。くじのねで期待値を計算できます。
 ---
+
+![一番くじ ワンピース 赤髪海賊団](https://assets.1kuji.com/uploads/product/top_banner/10679/825f6438-bde5-4d4f-a4e5-da2c2c74909b.webp)
 
 ## 基本情報
 

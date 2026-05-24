@@ -1,11 +1,14 @@
 ---
-title: 「一番くじ 〈トイ・ストーリー5〉」発売日・賞品一覧まとめ【2026年7月10日発売】
+title: 2026年7月10日発売「一番くじ 〈トイ・ストーリー5〉」賞品一覧と期待値を解説
 date: 2026-05-08
 release_date: 2026-07-10
 kuji_id: 257
 category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10700/f628067f-990c-4152-828e-fdc0dada87a8.webp
 summary: 2026年7月10日発売「一番くじ 〈トイ・ストーリー5〉」の賞品一覧と期待値。1回781円、本数未発表。くじのねで期待値を計算できます。
 ---
+
+![一番くじ 〈トイ・ストーリー5〉](https://assets.1kuji.com/uploads/product/top_banner/10700/f628067f-990c-4152-828e-fdc0dada87a8.webp)
 
 ## 基本情報
 

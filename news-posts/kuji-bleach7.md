@@ -1,11 +1,14 @@
 ---
-title: 「一番くじ BLEACH Stirring Souls vol.4」発売日・賞品一覧まとめ【2026年5月22日発売】
+title: 2026年5月22日発売「一番くじ BLEACH Stirring Souls vol.4」賞品一覧と期待値を解説
 date: 2026-05-05
 release_date: 2026-05-22
 kuji_id: 15
 category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10654/225eda79-ac7d-4053-be30-ff789efa4710.webp
 summary: 2026年5月22日発売「一番くじ BLEACH Stirring Souls vol.4」の賞品一覧と期待値。1回850円、本数未発表。くじのねで期待値を計算できます。
 ---
+
+![一番くじ BLEACH Stirring Souls vol.4](https://assets.1kuji.com/uploads/product/top_banner/10654/225eda79-ac7d-4053-be30-ff789efa4710.webp)
 
 ## 基本情報
 

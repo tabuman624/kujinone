@@ -66,9 +66,24 @@ export default function NewsPage() {
     ],
   }
 
+  const itemListJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '一番くじ 新作速報',
+    url: 'https://kujinone.com/news',
+    numberOfItems: posts.length,
+    itemListElement: posts.map((post, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `https://kujinone.com/news/${post.slug}`,
+      name: post.title,
+    })),
+  }
+
   return (
     <main style={{ background: '#fafafa' }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
 
       <div className="px-6 pt-6 pb-6 bg-gray-900">
         <div className="flex items-baseline justify-between mb-2">

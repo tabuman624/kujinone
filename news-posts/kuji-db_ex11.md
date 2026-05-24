@@ -4,8 +4,11 @@ date: 2026-05-06
 release_date: 2026-06-13
 kuji_id: 243
 category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10681/0fa7cc5e-3761-4e5c-b724-6a93703660b6.webp
 summary: 2026年6月13日発売「一番くじ ドラゴンボール EX 対決!レッドリボン軍」の賞品一覧と期待値。1回850円、本数未発表。くじのねで期待値を計算できます。
 ---
+
+![一番くじ ドラゴンボール EX 対決!レッドリボン軍](https://assets.1kuji.com/uploads/product/top_banner/10681/0fa7cc5e-3761-4e5c-b724-6a93703660b6.webp)
 
 ## 基本情報
 

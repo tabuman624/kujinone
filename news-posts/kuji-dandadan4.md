@@ -1,11 +1,14 @@
 ---
-title: 「一番くじ TVアニメ『ダンダダン』 ～音楽室のお舞踏（パーティー）、開演！～」発売日・賞品一覧まとめ【2026年6月27日発売】
+title: 【2026年6月27日発売】一番くじ TVアニメ『ダンダダン』 ～音楽室のお舞踏（パーティー）、開演！～の賞品・期待値まとめ
 date: 2026-05-05
 release_date: 2026-06-27
 kuji_id: 252
 category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10678/cf2ee618-0d90-44ec-bcc5-fc5bd9af3021.webp
 summary: 2026年6月27日発売「一番くじ TVアニメ『ダンダダン』 ～音楽室のお舞踏（パーティー）、開演！～」の賞品一覧と期待値。1回820円、本数未発表。くじのねで期待値を計算できます。
 ---
+
+![一番くじ TVアニメ『ダンダダン』 ～音楽室のお舞踏（パーティー）、開演！～](https://assets.1kuji.com/uploads/product/top_banner/10678/cf2ee618-0d90-44ec-bcc5-fc5bd9af3021.webp)
 
 ## 基本情報
 

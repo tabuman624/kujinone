@@ -4,8 +4,11 @@ date: 2026-05-13
 release_date: 2026-06-27
 kuji_id: 251
 category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10676/e0ac6b39-dc22-4a8b-9401-81b9f59d94ba.webp
 summary: 2026年6月27日発売「一番くじ ジョジョの奇妙な冒険 STEEL BALL RUN」の賞品一覧と期待値。1回850円、本数未発表。くじのねで期待値を計算できます。
 ---
+
+![一番くじ ジョジョの奇妙な冒険 STEEL BALL RUN](https://assets.1kuji.com/uploads/product/top_banner/10676/e0ac6b39-dc22-4a8b-9401-81b9f59d94ba.webp)
 
 ## 基本情報
 

@@ -14,12 +14,24 @@ SB_HEADERS = {
 POSTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'news-posts')
 LINKSYNERGY_URL = "https://click.linksynergy.com/fs-bin/click?id=txstqLlFvt4&offerid=1366097.2&type=3&subid=0"
 
+# ⑥ タイトルバリエーション（product_idのハッシュで安定的に選択）
+TITLE_TEMPLATES = [
+    "「{title}」発売日・賞品一覧まとめ【{release_ja}発売】",
+    "{title} 全賞品・期待値まとめ｜{release_ja}発売",
+    "{release_ja}発売「{title}」賞品一覧と期待値を解説",
+    "【{release_ja}発売】{title}の賞品・期待値まとめ",
+]
+
+def pick_title(product_id, title, release_ja):
+    idx = sum(ord(c) for c in product_id) % len(TITLE_TEMPLATES)
+    return TITLE_TEMPLATES[idx].format(title=title, release_ja=release_ja)
+
 
 def get_target_kuji():
     """直近60日以内に発売予定 or 発売済みのくじを取得"""
     today = datetime.now(timezone.utc).date()
-    start = (today - timedelta(days=7)).isoformat()   # 直近1週間の発売済み分も対象
-    end = (today + timedelta(days=60)).isoformat()    # 60日先まで
+    start = (today - timedelta(days=7)).isoformat()
+    end   = (today + timedelta(days=60)).isoformat()
     res = requests.get(
         f"{SUPABASE_URL}/rest/v1/kuji"
         f"?release_at=gte.{start}&release_at=lte.{end}"
@@ -72,7 +84,6 @@ def build_expected_section(prizes, total, price):
 
     a_prizes  = [p for p in prizes if p['grade'] == 'A賞']
     ab_prizes = [p for p in prizes if p['grade'] in ('A賞', 'B賞')]
-
     lines = []
 
     if a_prizes:
@@ -115,18 +126,24 @@ def generate_markdown(kuji, prizes):
     price      = kuji.get('price') or 800
     total      = kuji.get('total') or 0
     kuji_id    = kuji['id']
+    product_id = kuji['product_id']
     today      = datetime.now().strftime("%Y-%m-%d")
 
-    release_ja  = format_date_ja(release_at)
-    total_str   = f"全{total}本" if total > 0 else "本数未発表"
-    prizes_table    = build_prizes_table(prizes)
+    release_ja       = format_date_ja(release_at)
+    total_str        = f"全{total}本" if total > 0 else "本数未発表"
+    prizes_table     = build_prizes_table(prizes)
     expected_section = build_expected_section(prizes, total, price)
 
-    image_url = kuji.get('banner_url') or kuji.get('image_url') or ''
+    # ④ バナー画像
+    image_url  = kuji.get('banner_url') or kuji.get('image_url') or ''
     image_line = f"image_url: {image_url}" if image_url else ""
+    image_block = f"![{title}]({image_url})\n\n" if image_url else ""
+
+    # ⑥ タイトルバリエーション
+    article_title = pick_title(product_id, title, release_ja)
 
     return f"""---
-title: 「{title}」発売日・賞品一覧まとめ【{release_ja}発売】
+title: {article_title}
 date: {today}
 release_date: {release_at}
 kuji_id: {kuji_id}
@@ -135,7 +152,7 @@ category: 新作速報
 summary: {release_ja}発売「{title}」の賞品一覧と期待値。1回{price}円、{total_str}。くじのねで期待値を計算できます。
 ---
 
-## 基本情報
+{image_block}## 基本情報
 
 {release_ja}発売予定の「{title}」をまとめます。
 
