@@ -4,12 +4,14 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { marked } from 'marked'
+import { notFound } from 'next/navigation'
 
 const NEWS_DIR = path.join(process.cwd(), 'news-posts')
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const filePath = path.join(NEWS_DIR, `${slug}.md`)
+  if (!fs.existsSync(filePath)) notFound()
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { data } = matter(raw)
   const description = String(data.summary || '')
@@ -44,6 +46,7 @@ export default async function NewsDetailPage({
 }) {
   const { slug } = await params
   const filePath = path.join(NEWS_DIR, `${slug}.md`)
+  if (!fs.existsSync(filePath)) notFound()
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { data, content } = matter(raw)
   const html = await marked(content)

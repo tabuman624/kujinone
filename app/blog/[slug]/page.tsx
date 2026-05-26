@@ -4,11 +4,13 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { marked } from 'marked'
+import { notFound } from 'next/navigation'
 import ReadingProgress from './ReadingProgress'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const filePath = path.join(process.cwd(), 'posts', `${slug}.md`)
+  if (!fs.existsSync(filePath)) notFound()
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { data } = matter(raw)
   const description = String(data.summary || '')
@@ -66,6 +68,7 @@ export default async function BlogDetailPage({
 }) {
   const { slug } = await params
   const filePath = path.join(process.cwd(), 'posts', `${slug}.md`)
+  if (!fs.existsSync(filePath)) notFound()
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { data, content } = matter(raw)
   const html = await marked(content)

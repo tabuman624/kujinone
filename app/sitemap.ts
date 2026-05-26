@@ -5,6 +5,9 @@ import path from 'path'
 
 const BASE = 'https://kujinone.com'
 
+// 1時間ごとにサイトマップを再生成（Supabaseの変更を反映）
+export const revalidate = 3600
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
@@ -38,13 +41,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  const { data: kujiList } = await supabase.from('kuji').select('id, release_at').eq('is_active', true)
-  const kujiPages: MetadataRoute.Sitemap = (kujiList ?? []).map(k => ({
-    url: `${BASE}/kuji/${k.id}`,
-    lastModified: new Date(k.release_at),
-    changeFrequency: 'weekly',
-    priority: 0.9,
-  }))
+  let kujiPages: MetadataRoute.Sitemap = []
+  try {
+    const { data: kujiList, error } = await supabase.from('kuji').select('id, release_at').eq('is_active', true)
+    if (!error && kujiList) {
+      kujiPages = kujiList.map(k => ({
+        url: `${BASE}/kuji/${k.id}`,
+        lastModified: new Date(k.release_at),
+        changeFrequency: 'weekly' as const,
+        priority: 0.9,
+      }))
+    }
+  } catch {
+    // Supabase エラー時はくじページをサイトマップから除外して他ページは正常に返す
+  }
 
   return [...staticPages, ...blogPages, ...newsPages, ...kujiPages]
 }

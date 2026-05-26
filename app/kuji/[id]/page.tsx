@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import fs from 'fs'
 import path from 'path'
+import { notFound } from 'next/navigation'
 import { supabase } from '../../lib/supabase'
 import PrizeList from './PrizeList'
 
@@ -39,7 +40,7 @@ export default async function KujiDetail({
   const { data: prizes } = await supabase.from('prizes').select('*').eq('kuji_id', id).order('sort_order', { ascending: true })
   const today = new Date().toISOString().slice(0, 10)
 
-  if (!kuji) return <div className="p-6 text-sm text-gray-400">くじが見つかりません</div>
+  if (!kuji) notFound()
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
