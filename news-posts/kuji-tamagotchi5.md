@@ -1,0 +1,29 @@
+---
+title: 2026年7月25日発売「一番くじ たまごっち～ぐるぐる発見！Tamagotchi Paradise！～」賞品一覧と期待値を解説
+date: 2026-05-26
+release_date: 2026-07-25
+kuji_id: 264
+category: 新作速報
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10673/43203670-b307-43af-a10e-f5663c42c15c.webp
+summary: 2026年7月25日発売「一番くじ たまごっち～ぐるぐる発見！Tamagotchi Paradise！～」の賞品一覧と期待値。1回750円、本数未発表。くじのねで期待値を計算できます。
+---
+
+![一番くじ たまごっち～ぐるぐる発見！Tamagotchi Paradise！～](https://assets.1kuji.com/uploads/product/top_banner/10673/43203670-b307-43af-a10e-f5663c42c15c.webp)
+
+## 基本情報
+
+2026年7月25日発売予定の「一番くじ たまごっち～ぐるぐる発見！Tamagotchi Paradise！～」をまとめます。
+
+| 項目 | 内容 |
+|---|---|
+| 発売日 | 2026年7月25日 |
+| 価格 | 750円/回 |
+
+## 賞品一覧
+
+| 賞 | 景品名 | 種類 |
+|---|---|---|
+| C賞 | たまシッターUFOライト | 1種 |
+| ラストワン賞 | かんらんしゃテープカッター | 1種 |
+
+
