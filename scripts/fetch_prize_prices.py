@@ -98,8 +98,9 @@ def is_relevant(keyword: str, result_title: str, threshold: float = 0.35) -> boo
 
 def fetch_surugaya_price(keyword: str) -> Optional[int]:
     """
-    駿河屋の検索1件目の商品ページから価格を取得する。
-    1件目のタイトルが関連していない場合は None を返す。
+    駿河屋の検索結果から関連商品の最安値を返す。
+    - 全結果の中からタイトルが関連しているものだけ価格を拾う
+    - 関連する商品が1件もなければ None を返す
     """
     search_url = f"https://www.suruga-ya.jp/search?search_word={quote(keyword)}"
     try:
@@ -108,27 +109,27 @@ def fetch_surugaya_price(keyword: str) -> Optional[int]:
             return None
         soup = BeautifulSoup(res.text, "html.parser")
 
-        # 検索結果の1件目を取得
-        first_item = soup.select_one("ul.itemList li")
-        if not first_item:
+        items = soup.select("ul.itemList li")
+        if not items:
             return None
 
-        # タイトルの関連度チェック
-        title_el = first_item.select_one("p.itemName")
-        if title_el:
+        prices = []
+        for item in items[:5]:  # 上位5件を対象に
+            title_el = item.select_one("p.itemName")
+            if not title_el:
+                continue
             result_title = title_el.get_text(strip=True)
             if not is_relevant(keyword, result_title):
-                return None
+                continue  # 関連しない商品はスキップ
 
-        # 価格取得（class に "price" を含む要素から最小値）
-        prices = []
-        for el in first_item.select("[class*='price']"):
-            text = el.get_text(strip=True)
-            m = re.search(r'(\d{1,3}(?:,\d{3})+|\d{4,})', text)
-            if m:
-                val = int(m.group(1).replace(',', ''))
-                if PRICE_MIN <= val <= PRICE_MAX:
-                    prices.append(val)
+            # 価格取得（class に "price" を含む要素）
+            for el in item.select("[class*='price']"):
+                text = el.get_text(strip=True)
+                m = re.search(r'(\d{1,3}(?:,\d{3})*)', text)
+                if m:
+                    val = int(m.group(1).replace(',', ''))
+                    if PRICE_MIN <= val <= PRICE_MAX:
+                        prices.append(val)
 
         return min(prices) if prices else None
 
