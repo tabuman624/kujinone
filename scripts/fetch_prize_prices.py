@@ -9,6 +9,7 @@ market_price が未設定（NULL）の賞のみ処理するため、毎日実行
 import os
 import re
 import time
+from statistics import median
 from typing import Optional
 import requests
 from bs4 import BeautifulSoup
@@ -69,13 +70,27 @@ def update_market_price(prize_id: int, price: int) -> bool:
 # ─── キーワード生成 ─────────────────────────────────────────────────────────
 
 def build_search_keyword(prize_name: str, kuji_title: str) -> str:
-    """検索キーワードを組み立てる。賞記号（A賞など）を除去してくじタイトルを付加"""
+    """
+    検索キーワードを組み立てる。
+    例: "一番くじ ドラゴンボール A賞 孫悟空フィギュア"
+    - 「一番くじ」を先頭に付けて汎用商品との混入を防ぐ
+    - 賞名（A賞など）を含めることで同くじ内の別商品との混同を防ぐ
+    """
+    # 賞記号を取り出す（A賞、ラストワン賞 など）
+    grade_match = re.match(r'^([A-ZＡ-Ｚa-z\w]*賞)', prize_name)
+    grade = grade_match.group(1) if grade_match else ''
     item_name = re.sub(r'^[A-ZＡ-Ｚa-z\w]*賞\s*', '', prize_name).strip()
     if not item_name:
         item_name = prize_name
+
     title_words = re.sub(r'^一番くじ\s*', '', kuji_title).strip()
     title_prefix = title_words.split()[0] if title_words else ''
-    return f"{title_prefix} {item_name}".strip()
+
+    prefix = f"一番くじ {title_prefix}" if title_prefix else "一番くじ"
+    # 賞名があればキーワードに含める
+    if grade:
+        return f"{prefix} {grade} {item_name}".strip()
+    return f"{prefix} {item_name}".strip()
 
 
 # ─── タイトル関連度チェック ──────────────────────────────────────────────────
@@ -131,7 +146,8 @@ def fetch_surugaya_price(keyword: str) -> Optional[int]:
                     if PRICE_MIN <= val <= PRICE_MAX:
                         prices.append(val)
 
-        return min(prices) if prices else None
+        # 中央値を採用（最安値は関係ない安い商品を拾いやすいため）
+        return int(median(prices)) if prices else None
 
     except Exception as e:
         print(f"    駿河屋エラー ({keyword}): {e}")
