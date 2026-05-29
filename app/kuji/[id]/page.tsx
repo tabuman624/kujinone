@@ -77,7 +77,9 @@ export default async function KujiDetail({
             <Image src={kuji.banner_url || kuji.image_url} alt={kuji.title} width={600} height={400} className="w-full h-auto" sizes="(max-width: 768px) 100vw, 640px" priority />
           </div>
         )}
-        <span className="inline-block text-xs bg-red-600 text-white px-2 py-0.5 rounded-full font-semibold mb-2">{kuji.release_at.split('-').slice(1).map(Number).join('月')}日発売</span>
+        {kuji.release_at && (
+          <span className="inline-block text-xs bg-red-600 text-white px-2 py-0.5 rounded-full font-semibold mb-2">{kuji.release_at.split('-').slice(1).map(Number).join('月')}日発売</span>
+        )}
         <h1 className="text-lg font-black leading-snug">{kuji.title}</h1>
         <div className="flex gap-2 mt-2">
           <span className="text-xs bg-white/10 text-gray-300 px-2 py-0.5 rounded-full">{kuji.price}円/回</span>
