@@ -116,11 +116,25 @@ def upsert_kuji(kuji_data):
         return None
 
 def insert_prizes(kuji_id, prizes):
+    # 既存の market_price を sort_order をキーに退避（毎日の再挿入で消えないように）
+    backup_res = requests.get(
+        f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}&select=sort_order,market_price",
+        headers=SB_HEADERS
+    )
+    price_backup = {}
+    if backup_res.status_code == 200:
+        for p in backup_res.json():
+            if p.get("market_price") is not None:
+                price_backup[p["sort_order"]] = p["market_price"]
+
     requests.delete(
         f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}",
         headers=SB_HEADERS
     )
-    prize_data = [{"kuji_id": kuji_id, **p} for p in prizes]
+    prize_data = [
+        {"kuji_id": kuji_id, **p, "market_price": price_backup.get(p["sort_order"])}
+        for p in prizes
+    ]
     res = requests.post(
         f"{SUPABASE_URL}/rest/v1/prizes",
         headers=SB_HEADERS,

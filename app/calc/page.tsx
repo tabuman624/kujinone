@@ -7,7 +7,7 @@ import Link from "next/link"
 import { supabase } from "../lib/supabase"
 
 type Kuji = { id: number; title: string; price: number; total: number; release_at: string; image_url: string | null }
-type Prize = { id: number; name: string; grade: string; total: number }
+type Prize = { id: number; name: string; grade: string; total: number; market_price?: number | null }
 type PrizeWithInput = Prize & { checked: boolean; remaining: string }
 
 const gradeColors: { [key: string]: string } = {
@@ -79,6 +79,34 @@ function EmptyResultCard({ title, hint }: { title: string; hint: string }) {
       <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center text-gray-300 text-base">¥</div>
       <p className="text-sm font-semibold text-gray-700 mb-1">{title}</p>
       <p className="text-xs text-gray-400">{hint}</p>
+    </div>
+  )
+}
+
+function MarketPriceSection({ prizes }: { prizes: PrizeWithInput[] }) {
+  if (prizes.length === 0) return null
+  return (
+    <div className="border border-gray-200 rounded-xl overflow-hidden mb-6">
+      <div className="bg-gray-50 px-4 py-2.5 flex items-center justify-between border-b border-gray-200">
+        <p className="text-xs font-black text-gray-700">景品の相場</p>
+        <span className="text-[10px] text-gray-400 font-bold tracking-wider">MARKET PRICE</span>
+      </div>
+      <div className="divide-y divide-gray-100">
+        {prizes.map(prize => (
+          <div key={prize.id} className="px-4 py-3 flex items-center gap-3">
+            <span className={`text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 ${gradeColors[prize.grade] || "bg-gray-100 text-gray-700"}`}>
+              {prize.grade}
+            </span>
+            <span className="flex-1 text-xs text-gray-700 truncate">{prize.name}</span>
+            <span className="text-sm font-black text-blue-600 flex-shrink-0">
+              ¥{prize.market_price!.toLocaleString()}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
+        <p className="text-[10px] text-gray-400">参考：駿河屋の販売価格</p>
+      </div>
     </div>
   )
 }
@@ -283,6 +311,7 @@ function CalcContent() {
                 times={liveResult.times}
                 detail={`残数${totalRemaining}本 / ${liveResult.gradeStr}${liveResult.targetCount}本 / ${kuji.price}円 × ${liveResult.times}回`}
               />
+              <MarketPriceSection prizes={prizes.filter(p => p.checked && p.market_price != null)} />
               <AffiliateLinks title={kuji.title} />
             </>
           ) : (

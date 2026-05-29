@@ -35,7 +35,13 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python scripts/generate_articles.py
 
-      - name: ③ 新規記事をコミット＆プッシュ
+      - name: ③ 景品の参考価格を取得（駿河屋）
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python scripts/fetch_prize_prices.py
+
+      - name: ④ 新規記事をコミット＆プッシュ
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Actions"
