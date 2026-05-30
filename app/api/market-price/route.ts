@@ -69,27 +69,20 @@ async function fetchYahooAuctionClosedRange(keyword: string): Promise<AuctionRan
     if (!res.ok) return null
     const html = await res.text()
 
+    // Yahoo!オークションはNext.jsアプリのため価格はHTML本文ではなく
+    // __NEXT_DATA__ JSONブロックに格納されている
+    const nextDataMatch = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/)
+    if (!nextDataMatch) return null
+
+    const nextData = JSON.parse(nextDataMatch[1])
+    const items: Array<{ price?: number; title?: string }> =
+      nextData?.props?.pageProps?.initialState?.search?.items?.listing?.items ?? []
+
     const prices: number[] = []
-
-    // 各オークション結果は </li> で区切られる
-    const blocks = html.split('</li>')
-
-    for (const block of blocks) {
-      // 落札価格を抽出（「落札X,XXX円」形式）
-      const priceMatch = block.match(/落札([\d,]+)円/)
-      if (!priceMatch) continue
-
-      const price = parseInt(priceMatch[1].replace(/,/g, ''), 10)
-      if (!price || price < PRICE_MIN || price > PRICE_MAX) continue
-
-      // タイトルを抽出して関連性チェック（取れない場合は通す）
-      const titleMatch =
-        block.match(/<a[^>]+href="[^"]*\/auction\/[^"]*"[^>]*>([^<]{4,})<\/a>/) ??
-        block.match(/alt="([^"]{4,})"/) ??
-        block.match(/title="([^"]{4,})"/)
-      const title = titleMatch?.[1]?.trim() ?? ''
-
-      if (!title || isRelevant(keyword, title)) {
+    for (const item of items) {
+      const price = item.price
+      const title = item.title ?? ''
+      if (price && PRICE_MIN <= price && price <= PRICE_MAX && isRelevant(keyword, title)) {
         prices.push(price)
       }
     }
