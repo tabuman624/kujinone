@@ -88,6 +88,14 @@ export default async function KujiDetail({
       </div>
 
       <div className="px-5 py-6">
+        <Link
+          href={`/calc?kuji_id=${id}`}
+          className="flex items-center justify-center gap-2 w-full py-3.5 bg-red-600 text-white text-sm font-black rounded-xl hover:bg-red-700 press anim-fade-up mb-6"
+          style={{ boxShadow: '0 6px 16px rgba(220,38,38,0.35)' }}
+        >
+          この商品の期待値を計算する →
+        </Link>
+
         {tweetUrls.length > 0 && (
           <div className="mb-6 anim-fade-up" style={{ animationDelay: '140ms' }}>
             <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">公式情報 / OFFICIAL</h2>
@@ -165,14 +173,6 @@ export default async function KujiDetail({
             </div>
           </div>
         )}
-
-        <Link
-          href={`/calc?kuji_id=${id}`}
-          className="flex items-center justify-center gap-2 w-full py-3 bg-red-600 text-white text-sm font-black rounded-xl hover:bg-red-700 press anim-fade-up"
-          style={{ animationDelay: `${260 + (prizes?.length || 0) * 60}ms`, boxShadow: '0 6px 16px rgba(220,38,38,0.35)' }}
-        >
-          この商品の期待値を計算する →
-        </Link>
 
         <div className="mt-8 pt-6 border-t border-gray-100">
           <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">関連コラム / COLUMN</h2>
