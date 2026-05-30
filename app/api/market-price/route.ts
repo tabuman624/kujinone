@@ -201,9 +201,10 @@ export async function GET(req: NextRequest) {
 
   if (!prizes) return NextResponse.json({ prices: [] })
 
-  // 両ソースともキャッシュが新鮮なら即返す
+  // 両ソースとも値あり＆キャッシュが新鮮なら即返す
   const allFresh = prizes.every(p =>
-    isFresh(p.market_price_updated_at) && isFresh(p.auction_price_updated_at)
+    p.market_price !== null && isFresh(p.market_price_updated_at) &&
+    p.auction_price_min !== null && isFresh(p.auction_price_updated_at)
   )
   if (allFresh) {
     return NextResponse.json({
@@ -223,8 +224,9 @@ export async function GET(req: NextRequest) {
     prizes.map(async prize => {
       const keywords = buildKeywords(prize.name, kujiTitle, prize.grade)
 
-      const stableNeedsUpdate = !isFresh(prize.market_price_updated_at)
-      const auctionNeedsUpdate = !isFresh(prize.auction_price_updated_at)
+      // 値がnullの場合はtimestampがfreshでも再取得する
+      const stableNeedsUpdate = prize.market_price === null || !isFresh(prize.market_price_updated_at)
+      const auctionNeedsUpdate = prize.auction_price_min === null || !isFresh(prize.auction_price_updated_at)
 
       // 安定価格（Yahoo Shopping）とヤフオク範囲を並列取得
       const [newStable, newAuction] = await Promise.all([
