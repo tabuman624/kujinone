@@ -7,7 +7,6 @@ const supabase = createClient(
 )
 
 const YAHOO_APP_ID = process.env.YAHOO_APP_ID ?? ''
-// ヤフオク OAuth 用（ID連携ありアプリ）
 const YAHOO_AUCTION_CLIENT_ID     = process.env.YAHOO_AUCTION_CLIENT_ID ?? ''
 const YAHOO_AUCTION_CLIENT_SECRET = process.env.YAHOO_AUCTION_CLIENT_SECRET ?? ''
 const YAHOO_AUCTION_REFRESH_TOKEN = process.env.YAHOO_AUCTION_REFRESH_TOKEN ?? ''
@@ -16,7 +15,7 @@ const CACHE_TTL_HOURS = 6
 const PRICE_MIN = 500
 const PRICE_MAX = 200_000
 
-// ─── Yahoo! ショッピング API ────────────────────────────────────────────────
+// ─── Yahoo! ショッピング API（安定価格） ────────────────────────────────────
 
 async function fetchYahooShoppingPrice(keyword: string): Promise<number | null> {
   if (!YAHOO_APP_ID) return null
@@ -40,15 +39,14 @@ async function fetchYahooShoppingPrice(keyword: string): Promise<number | null> 
         prices.push(price)
       }
     }
-    return prices.length > 0 ? median(prices) : null
+    return prices.length > 0 ? calcMedian(prices) : null
   } catch {
     return null
   }
 }
 
-// ─── Yahoo! オークション API（OAuth・即決のみ） ────────────────────────────
+// ─── Yahoo! オークション API（OAuth・即決・価格範囲） ──────────────────────
 
-/** リフレッシュトークンからアクセストークンを取得（自動更新） */
 async function getYahooAccessToken(): Promise<string | null> {
   if (!YAHOO_AUCTION_CLIENT_ID || !YAHOO_AUCTION_CLIENT_SECRET || !YAHOO_AUCTION_REFRESH_TOKEN) {
     return null
@@ -73,7 +71,9 @@ async function getYahooAccessToken(): Promise<string | null> {
   }
 }
 
-async function fetchYahooAuctionPrice(keyword: string): Promise<number | null> {
+type AuctionRange = { min: number; max: number }
+
+async function fetchYahooAuctionRange(keyword: string): Promise<AuctionRange | null> {
   const accessToken = await getYahooAccessToken()
   if (!accessToken) return null
   try {
@@ -82,7 +82,7 @@ async function fetchYahooAuctionPrice(keyword: string): Promise<number | null> {
       type: 'buynow',
       minPrice: String(PRICE_MIN),
       maxPrice: String(PRICE_MAX),
-      hits: '10',
+      hits: '20',
       sort: '+price',
       output: 'json',
     })
@@ -104,7 +104,9 @@ async function fetchYahooAuctionPrice(keyword: string): Promise<number | null> {
         prices.push(price)
       }
     }
-    return prices.length > 0 ? median(prices) : null
+    if (prices.length === 0) return null
+    const sorted = [...prices].sort((a, b) => a - b)
+    return { min: sorted[0], max: sorted[sorted.length - 1] }
   } catch {
     return null
   }
@@ -120,7 +122,7 @@ function isRelevant(keyword: string, title: string, threshold = 0.35): boolean {
   return matched / kwWords.size >= threshold
 }
 
-function median(values: number[]): number {
+function calcMedian(values: number[]): number {
   const sorted = [...values].sort((a, b) => a - b)
   const mid = Math.floor(sorted.length / 2)
   return sorted.length % 2 === 0
@@ -128,7 +130,6 @@ function median(values: number[]): number {
     : sorted[mid]
 }
 
-/** アクセント記号を除去（Pokémon → Pokemon など） */
 function normalizeAccents(str: string): string {
   return str.normalize('NFD').replace(/[̀-ͯ]/g, '')
 }
@@ -137,38 +138,45 @@ function extractItemName(prizeName: string): string {
   return prizeName.replace(/^[A-ZＡ-Ｚa-z\w]*賞\s*/, '').trim() || prizeName
 }
 
-/** Tier0: 正式名称フル（一番くじ正式タイトル＋賞＋商品名） */
-function buildKeywordTier0(prizeName: string, kujiTitle: string, grade: string): string {
-  const itemName = extractItemName(prizeName)
-  const titleCore = normalizeAccents(kujiTitle.replace(/^一番くじ\s*/, '').trim())
-  const prefix = titleCore ? `一番くじ ${titleCore}` : '一番くじ'
-  return grade ? `${prefix} ${grade} ${itemName}` : `${prefix} ${itemName}`
-}
-
-/** Tier1: 先頭語のみ（くじタイトル先頭1語＋賞＋商品名） */
-function buildKeywordTier1(prizeName: string, kujiTitle: string, grade: string): string {
+function buildKeywords(prizeName: string, kujiTitle: string, grade: string): string[] {
   const itemName = extractItemName(prizeName)
   const titleCore = kujiTitle.replace(/^一番くじ\s*/, '').trim()
+  const titleFull = normalizeAccents(titleCore)
   const titlePrefix = normalizeAccents(titleCore.split(/\s+/)[0] ?? '')
-  const prefix = titlePrefix ? `一番くじ ${titlePrefix}` : '一番くじ'
-  return grade ? `${prefix} ${grade} ${itemName}` : `${prefix} ${itemName}`
+
+  const tier0 = grade
+    ? `一番くじ ${titleFull} ${grade} ${itemName}`
+    : `一番くじ ${titleFull} ${itemName}`
+  const tier1 = grade
+    ? `一番くじ ${titlePrefix} ${grade} ${itemName}`
+    : `一番くじ ${titlePrefix} ${itemName}`
+  const tier2 = grade ? `一番くじ ${grade} ${itemName}` : `一番くじ ${itemName}`
+  const tier3 = `一番くじ ${itemName}`
+
+  return [...new Set([tier0, tier1, tier2, tier3])]
 }
 
-/** Tier2: 賞名＋商品名（タイトル依存を排除） */
-function buildKeywordTier2(prizeName: string, grade: string): string {
-  const itemName = extractItemName(prizeName)
-  return grade ? `一番くじ ${grade} ${itemName}` : `一番くじ ${itemName}`
-}
-
-/** Tier3: 商品名のみ（最広域） */
-function buildKeywordTier3(prizeName: string): string {
-  return `一番くじ ${extractItemName(prizeName)}`
-}
-
-function isFresh(updatedAt: string | null): boolean {
+function isFresh(updatedAt: string | null | undefined): boolean {
   if (!updatedAt) return false
-  const diff = (Date.now() - new Date(updatedAt).getTime()) / 36e5 // hours
-  return diff < CACHE_TTL_HOURS
+  return (Date.now() - new Date(updatedAt).getTime()) / 36e5 < CACHE_TTL_HOURS
+}
+
+// ─── フォールバック付き取得 ─────────────────────────────────────────────────
+
+async function fetchStablePriceWithFallback(keywords: string[]): Promise<number | null> {
+  for (const kw of keywords) {
+    const price = await fetchYahooShoppingPrice(kw)
+    if (price !== null) return price
+  }
+  return null
+}
+
+async function fetchAuctionRangeWithFallback(keywords: string[]): Promise<AuctionRange | null> {
+  for (const kw of keywords) {
+    const range = await fetchYahooAuctionRange(kw)
+    if (range !== null) return range
+  }
+  return null
 }
 
 // ─── Route Handler ──────────────────────────────────────────────────────────
@@ -177,7 +185,6 @@ export async function GET(req: NextRequest) {
   const kujiId = req.nextUrl.searchParams.get('kuji_id')
   if (!kujiId) return NextResponse.json({ error: 'missing kuji_id' }, { status: 400 })
 
-  // くじタイトル取得
   const { data: kuji } = await supabase
     .from('kuji')
     .select('title')
@@ -186,67 +193,72 @@ export async function GET(req: NextRequest) {
 
   const kujiTitle = kuji?.title ?? ''
 
-  // 賞一覧取得
   const { data: prizes } = await supabase
     .from('prizes')
-    .select('id, name, grade, market_price, market_price_updated_at')
+    .select('id, name, grade, market_price, market_price_updated_at, auction_price_min, auction_price_max, auction_price_updated_at')
     .eq('kuji_id', kujiId)
     .order('sort_order')
 
   if (!prizes) return NextResponse.json({ prices: [] })
 
-  // キャッシュが全て新鮮なら即返す
-  const allFresh = prizes.every(p => p.market_price !== null && isFresh(p.market_price_updated_at))
+  // 両ソースともキャッシュが新鮮なら即返す
+  const allFresh = prizes.every(p =>
+    isFresh(p.market_price_updated_at) && isFresh(p.auction_price_updated_at)
+  )
   if (allFresh) {
     return NextResponse.json({
-      prices: prizes.map(p => ({ id: p.id, price: p.market_price })),
+      prices: prizes.map(p => ({
+        id: p.id,
+        stable_price: p.market_price,
+        auction_min: p.auction_price_min,
+        auction_max: p.auction_price_max,
+      })),
       cached: true,
     })
   }
 
-  // 要更新の賞を並列取得
-  const stale = prizes.filter(p => p.market_price === null || !isFresh(p.market_price_updated_at))
-
+  // 要更新の賞を並列処理
+  const now = new Date().toISOString()
   const results = await Promise.allSettled(
-    stale.map(async prize => {
-      const keywords = [
-        buildKeywordTier0(prize.name, kujiTitle, prize.grade), // 正式名称フル
-        buildKeywordTier1(prize.name, kujiTitle, prize.grade), // 先頭語のみ
-        buildKeywordTier2(prize.name, prize.grade),            // 賞名＋商品名
-        buildKeywordTier3(prize.name),                         // 商品名のみ
-      ]
+    prizes.map(async prize => {
+      const keywords = buildKeywords(prize.name, kujiTitle, prize.grade)
 
-      // 重複キーワードを除去してから順番に試す
-      const uniqueKeywords = [...new Set(keywords)]
-      let price: number | null = null
-      for (const kw of uniqueKeywords) {
-        price =
-          (await fetchYahooAuctionPrice(kw)) ??
-          (await fetchYahooShoppingPrice(kw))
-        if (price !== null) break
+      const stableNeedsUpdate = !isFresh(prize.market_price_updated_at)
+      const auctionNeedsUpdate = !isFresh(prize.auction_price_updated_at)
+
+      // 安定価格（Yahoo Shopping）とヤフオク範囲を並列取得
+      const [newStable, newAuction] = await Promise.all([
+        stableNeedsUpdate ? fetchStablePriceWithFallback(keywords) : Promise.resolve(null),
+        auctionNeedsUpdate ? fetchAuctionRangeWithFallback(keywords) : Promise.resolve(null),
+      ])
+
+      // DB更新
+      const updates: Record<string, unknown> = {}
+      if (stableNeedsUpdate) {
+        updates.market_price = newStable
+        updates.market_price_updated_at = now
+      }
+      if (auctionNeedsUpdate) {
+        updates.auction_price_min = newAuction?.min ?? null
+        updates.auction_price_max = newAuction?.max ?? null
+        updates.auction_price_updated_at = now
+      }
+      if (Object.keys(updates).length > 0) {
+        await supabase.from('prizes').update(updates).eq('id', prize.id)
       }
 
-      if (price !== null) {
-        await supabase
-          .from('prizes')
-          .update({ market_price: price, market_price_updated_at: new Date().toISOString() })
-          .eq('id', prize.id)
+      return {
+        id: prize.id,
+        stable_price: stableNeedsUpdate ? newStable : prize.market_price,
+        auction_min: auctionNeedsUpdate ? (newAuction?.min ?? null) : prize.auction_price_min,
+        auction_max: auctionNeedsUpdate ? (newAuction?.max ?? null) : prize.auction_price_max,
       }
-
-      return { id: prize.id, price }
     })
   )
 
-  // 最新の全賞データを返す
-  const updatedMap: Record<number, number | null> = {}
-  for (const r of results) {
-    if (r.status === 'fulfilled') updatedMap[r.value.id] = r.value.price
-  }
-
-  const response = prizes.map(p => ({
-    id: p.id,
-    price: updatedMap[p.id] !== undefined ? updatedMap[p.id] : p.market_price,
-  }))
+  const response = results.map(r =>
+    r.status === 'fulfilled' ? r.value : null
+  ).filter(Boolean)
 
   return NextResponse.json({ prices: response, cached: false })
 }

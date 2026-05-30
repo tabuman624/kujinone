@@ -7,7 +7,12 @@ import Link from "next/link"
 import { supabase } from "../lib/supabase"
 
 type Kuji = { id: number; title: string; price: number; total: number; release_at: string; image_url: string | null }
-type Prize = { id: number; name: string; grade: string; total: number; market_price?: number | null }
+type Prize = {
+  id: number; name: string; grade: string; total: number
+  market_price?: number | null       // Yahoo Shopping（安定価格）
+  auction_price_min?: number | null  // ヤフオク最安
+  auction_price_max?: number | null  // ヤフオク最高
+}
 type PrizeWithInput = Prize & { checked: boolean; remaining: string }
 
 const gradeColors: { [key: string]: string } = {
@@ -91,7 +96,7 @@ function buildYahooAuctionUrl(kujiTitle: string, prize: PrizeWithInput): string 
 }
 
 function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithInput[], loading: boolean, kujiTitle: string }) {
-  const pricesWithData = prizes.filter(p => p.market_price != null)
+  const hasAnyData = prizes.some(p => p.market_price != null || p.auction_price_min != null)
   const yahooAllUrl = `https://auctions.yahoo.co.jp/search/search?p=${encodeURIComponent('一番くじ ' + kujiTitle.replace(/^一番くじ\s*/, ''))}&istatus=1`
 
   if (prizes.length === 0) return null
@@ -110,34 +115,57 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
           </svg>
           <span className="text-xs">相場を取得中...</span>
         </div>
-      ) : pricesWithData.length > 0 ? (
+      ) : hasAnyData ? (
         <div className="divide-y divide-gray-100">
-          {pricesWithData.map(prize => (
-            <a
-              key={prize.id}
-              href={buildYahooAuctionUrl(kujiTitle, prize)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-3 flex items-center gap-3 hover:bg-gray-50 active:bg-gray-100 transition-colors"
-            >
-              <span className={`text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 ${gradeColors[prize.grade] || "bg-gray-100 text-gray-700"}`}>
-                {prize.grade}
-              </span>
-              <span className="flex-1 text-xs text-gray-700 truncate">{prize.name}</span>
-              <span className="text-sm font-black text-blue-600 flex-shrink-0">
-                ¥{prize.market_price!.toLocaleString()}
-              </span>
-              <svg className="w-3 h-3 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </a>
-          ))}
+          {prizes.map(prize => {
+            const hasStable = prize.market_price != null
+            const hasAuction = prize.auction_price_min != null && prize.auction_price_max != null
+            if (!hasStable && !hasAuction) return null
+            return (
+              <div key={prize.id} className="px-4 py-3 flex items-start gap-3">
+                <span className={`text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5 ${gradeColors[prize.grade] || "bg-gray-100 text-gray-700"}`}>
+                  {prize.grade}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-gray-700 truncate mb-1.5">{prize.name}</p>
+                  <div className="flex flex-col gap-1">
+                    {hasStable && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] text-gray-400 font-medium">Yahoo Shop</span>
+                        <span className="text-sm font-black text-emerald-600">
+                          ¥{prize.market_price!.toLocaleString()}
+                        </span>
+                      </div>
+                    )}
+                    {hasAuction && (
+                      <div className="flex items-center justify-between">
+                        <a
+                          href={buildYahooAuctionUrl(kujiTitle, prize)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[10px] text-blue-500 font-medium hover:underline"
+                        >
+                          ヤフオク →
+                        </a>
+                        <span className="text-sm font-black text-blue-600">
+                          {prize.auction_price_min === prize.auction_price_max
+                            ? `¥${prize.auction_price_min!.toLocaleString()}`
+                            : `¥${prize.auction_price_min!.toLocaleString()} 〜 ¥${prize.auction_price_max!.toLocaleString()}`
+                          }
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
         </div>
       ) : (
         <div className="px-4 py-3 text-xs text-gray-400">相場データが見つかりませんでした</div>
       )}
       <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
-        <p className="text-[10px] text-gray-400">参考：ヤフオク・Yahooショッピングの即決価格</p>
+        <p className="text-[10px] text-gray-400">参考：ヤフオク即決・Yahooショッピング</p>
         <a
           href={yahooAllUrl}
           target="_blank"
@@ -254,11 +282,17 @@ function CalcContent() {
           .then(r => r.json())
           .then(({ prices }) => {
             if (!Array.isArray(prices)) return
-            const priceMap: Record<number, number | null> = {}
-            for (const { id, price } of prices) priceMap[id] = price
+            type PriceEntry = { id: number; stable_price: number | null; auction_min: number | null; auction_max: number | null }
+            const priceMap: Record<number, PriceEntry> = {}
+            for (const entry of prices as PriceEntry[]) priceMap[entry.id] = entry
             setPrizes(prev => prev.map(prize =>
               priceMap[prize.id] !== undefined
-                ? { ...prize, market_price: priceMap[prize.id] }
+                ? {
+                    ...prize,
+                    market_price: priceMap[prize.id].stable_price,
+                    auction_price_min: priceMap[prize.id].auction_min,
+                    auction_price_max: priceMap[prize.id].auction_max,
+                  }
                 : prize
             ))
           })
