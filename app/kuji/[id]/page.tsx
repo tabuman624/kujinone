@@ -178,7 +178,7 @@ export default async function KujiDetail({
           <div className="space-y-0">
             {[
               { href: '/blog/kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説' },
-              { href: '/blog/ichiban-kuji-toha', title: '一番くじとは？初心者向けに仕組みをわかりやすく解説' },
+              { href: '/blog/ichiban-kuji-toha', title: '一番くじとは？仕組み・賞の種類・値段・お得な引き方を徹底解説' },
               { href: '/blog/kuji-vs-mercari', title: '一番くじ vs メルカリ どちらがお得？賢い選び方を解説' },
             ].map((post, i) => (
               <Link
