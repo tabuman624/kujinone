@@ -292,13 +292,19 @@ function CalcContent() {
 
   const toggleCheck = (id: number) => setPrizes(prev => prev.map(p => {
     if (p.id !== id) return p
-    // チェックON時のみトラッキング（fire and forget）
+    // チェックON時のみトラッキング（24時間クールダウン・fire and forget）
     if (!p.checked) {
-      fetch('/api/track-interest', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prize_id: id }),
-      })
+      const key = `ki_${id}`
+      const last = localStorage.getItem(key)
+      const now = Date.now()
+      if (!last || now - parseInt(last) >= 86_400_000) {
+        fetch('/api/track-interest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prize_id: id }),
+        })
+        localStorage.setItem(key, String(now))
+      }
     }
     return { ...p, checked: !p.checked }
   }))
