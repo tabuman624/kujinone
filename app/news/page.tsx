@@ -113,7 +113,7 @@ export default function NewsPage() {
           <p className="text-[11px] font-bold tracking-[0.18em] text-gray-400">NEWS</p>
           <span className="text-[11px] text-gray-400" style={{ fontVariantNumeric: 'tabular-nums' }}>{posts.length} 件</span>
         </div>
-        <h1 className="text-2xl font-black text-white mb-1">新作速報</h1>
+        <h1 className="text-2xl font-black text-white mb-1">一番くじ 新作速報</h1>
         <p className="text-xs text-gray-400">発売予定の一番くじをまとめてチェック</p>
       </div>
 

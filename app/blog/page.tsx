@@ -49,7 +49,7 @@ export default function BlogPage() {
           <p className="text-[11px] font-bold tracking-[0.18em] text-gray-400">COLUMN</p>
           <span className="text-[11px] text-gray-400" style={{ fontVariantNumeric: 'tabular-nums' }}>{posts.length} ARTICLES</span>
         </div>
-        <h1 className="text-2xl font-black text-white mb-1">コラム</h1>
+        <h1 className="text-2xl font-black text-white mb-1">一番くじ コラム</h1>
         <p className="text-xs text-gray-400">一番くじをもっと賢く楽しむためのガイド</p>
       </div>
 

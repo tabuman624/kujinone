@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next'
 import { supabase } from './lib/supabase'
 import fs from 'fs'
 import path from 'path'
+import matter from 'gray-matter'
 
 const BASE = 'https://kujinone.com'
 
@@ -22,24 +23,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   const postsDir = path.join(process.cwd(), 'posts')
-  const slugs = fs.readdirSync(postsDir).filter(f => f.endsWith('.md')).map(f => f.replace('.md', ''))
-  const blogPages: MetadataRoute.Sitemap = slugs.map(slug => ({
-    url: `${BASE}/blog/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly',
-    priority: 0.7,
-  }))
+  const blogFiles = fs.readdirSync(postsDir).filter(f => f.endsWith('.md'))
+  const blogPages: MetadataRoute.Sitemap = blogFiles.map(filename => {
+    const slug = filename.replace('.md', '')
+    const raw = fs.readFileSync(path.join(postsDir, filename), 'utf-8')
+    const { data } = matter(raw)
+    const lastMod = data.date ? new Date(String(data.date)) : new Date()
+    return {
+      url: `${BASE}/blog/${slug}`,
+      lastModified: lastMod,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    }
+  })
 
   const newsDir = path.join(process.cwd(), 'news-posts')
-  const newsSlugs = fs.existsSync(newsDir)
-    ? fs.readdirSync(newsDir).filter(f => f.endsWith('.md')).map(f => f.replace('.md', ''))
+  const newsFiles = fs.existsSync(newsDir)
+    ? fs.readdirSync(newsDir).filter(f => f.endsWith('.md'))
     : []
-  const newsPages: MetadataRoute.Sitemap = newsSlugs.map(slug => ({
-    url: `${BASE}/news/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  }))
+  const newsPages: MetadataRoute.Sitemap = newsFiles.map(filename => {
+    const slug = filename.replace('.md', '')
+    const raw = fs.readFileSync(path.join(newsDir, filename), 'utf-8')
+    const { data } = matter(raw)
+    const lastMod = data.date ? new Date(String(data.date)) : new Date()
+    return {
+      url: `${BASE}/news/${slug}`,
+      lastModified: lastMod,
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }
+  })
 
   let kujiPages: MetadataRoute.Sitemap = []
   try {
