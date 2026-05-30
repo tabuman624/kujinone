@@ -7,6 +7,11 @@ const supabase = createClient(
 )
 
 const YAHOO_APP_ID = process.env.YAHOO_APP_ID ?? ''
+// ヤフオク OAuth 用（ID連携ありアプリ）
+const YAHOO_AUCTION_CLIENT_ID     = process.env.YAHOO_AUCTION_CLIENT_ID ?? ''
+const YAHOO_AUCTION_CLIENT_SECRET = process.env.YAHOO_AUCTION_CLIENT_SECRET ?? ''
+const YAHOO_AUCTION_REFRESH_TOKEN = process.env.YAHOO_AUCTION_REFRESH_TOKEN ?? ''
+
 const CACHE_TTL_HOURS = 6
 const PRICE_MIN = 500
 const PRICE_MAX = 200_000
@@ -41,15 +46,40 @@ async function fetchYahooShoppingPrice(keyword: string): Promise<number | null> 
   }
 }
 
-// ─── Yahoo! オークション API（即決のみ） ───────────────────────────────────
+// ─── Yahoo! オークション API（OAuth・即決のみ） ────────────────────────────
+
+/** リフレッシュトークンからアクセストークンを取得（自動更新） */
+async function getYahooAccessToken(): Promise<string | null> {
+  if (!YAHOO_AUCTION_CLIENT_ID || !YAHOO_AUCTION_CLIENT_SECRET || !YAHOO_AUCTION_REFRESH_TOKEN) {
+    return null
+  }
+  try {
+    const res = await fetch('https://auth.login.yahoo.co.jp/yconnect/v2/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: YAHOO_AUCTION_REFRESH_TOKEN,
+        client_id: YAHOO_AUCTION_CLIENT_ID,
+        client_secret: YAHOO_AUCTION_CLIENT_SECRET,
+      }),
+      signal: AbortSignal.timeout(8000),
+    })
+    if (!res.ok) return null
+    const data = await res.json()
+    return data.access_token ?? null
+  } catch {
+    return null
+  }
+}
 
 async function fetchYahooAuctionPrice(keyword: string): Promise<number | null> {
-  if (!YAHOO_APP_ID) return null
+  const accessToken = await getYahooAccessToken()
+  if (!accessToken) return null
   try {
     const params = new URLSearchParams({
-      appid: YAHOO_APP_ID,
       query: keyword,
-      type: 'buynow',      // 即決のみ（1円スタートのオークション除外）
+      type: 'buynow',
       minPrice: String(PRICE_MIN),
       maxPrice: String(PRICE_MAX),
       hits: '10',
@@ -58,7 +88,10 @@ async function fetchYahooAuctionPrice(keyword: string): Promise<number | null> {
     })
     const res = await fetch(
       `https://auctions.yahooapis.jp/AuctionWebService/V2/json/auctionSearch?${params}`,
-      { signal: AbortSignal.timeout(8000) }
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        signal: AbortSignal.timeout(8000),
+      }
     )
     if (!res.ok) return null
     const data = await res.json()
