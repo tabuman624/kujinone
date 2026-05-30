@@ -232,26 +232,29 @@ export async function GET(req: NextRequest) {
         auctionNeedsUpdate ? fetchAuctionRangeWithFallback(keywords) : Promise.resolve(null),
       ])
 
-      // DB更新
+      // DB更新（取得できた場合のみ値を上書き。nullで既存データを消さない）
       const updates: Record<string, unknown> = {}
       if (stableNeedsUpdate) {
-        updates.market_price = newStable
-        updates.market_price_updated_at = now
+        updates.market_price_updated_at = now  // 試行済みとしてタイムスタンプは常に更新
+        if (newStable !== null) updates.market_price = newStable
       }
       if (auctionNeedsUpdate) {
-        updates.auction_price_min = newAuction?.min ?? null
-        updates.auction_price_max = newAuction?.max ?? null
         updates.auction_price_updated_at = now
+        if (newAuction !== null) {
+          updates.auction_price_min = newAuction.min
+          updates.auction_price_max = newAuction.max
+        }
       }
       if (Object.keys(updates).length > 0) {
         await supabase.from('prizes').update(updates).eq('id', prize.id)
       }
 
+      // レスポンス：新規取得できなければ既存DBの値を返す
       return {
         id: prize.id,
-        stable_price: stableNeedsUpdate ? newStable : prize.market_price,
-        auction_min: auctionNeedsUpdate ? (newAuction?.min ?? null) : prize.auction_price_min,
-        auction_max: auctionNeedsUpdate ? (newAuction?.max ?? null) : prize.auction_price_max,
+        stable_price: newStable ?? prize.market_price,
+        auction_min: newAuction?.min ?? prize.auction_price_min,
+        auction_max: newAuction?.max ?? prize.auction_price_max,
       }
     })
   )
