@@ -212,7 +212,7 @@ function AffiliateLinks({ title }: { title: string }) {
   }, [title])
 
   const links = [
-    { href: `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM`, label: "メルカリで相場を見る", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600", rel: "noopener noreferrer nofollow" },
+    { href: `https://jp.mercari.com/search?keyword=${encodeURIComponent(title)}`, label: "メルカリで相場を見る", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600", rel: "noopener noreferrer" },
     { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(title)}`, label: "駿河屋で相場を見る", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600", rel: "noopener noreferrer" },
     { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502`, label: "Yahoo!ショッピングで見る", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600", rel: "noopener noreferrer" },
     { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621`, label: "楽天市場で見る", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600", rel: "noopener noreferrer" },
@@ -237,8 +237,6 @@ function AffiliateLinks({ title }: { title: string }) {
           <span className="text-sm">↗</span>
         </a>
       ))}
-      {/* メルカリ A8 tracking pixel */}
-      <img width={1} height={1} alt="" src="https://www12.a8.net/0.gif?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM" />
     </div>
   )
 }
