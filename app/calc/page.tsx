@@ -92,8 +92,9 @@ function buildYahooAuctionUrl(kujiTitle: string, prize: PrizeWithInput): string 
 
 function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithInput[], loading: boolean, kujiTitle: string }) {
   const pricesWithData = prizes.filter(p => p.market_price != null)
+  const yahooAllUrl = `https://auctions.yahoo.co.jp/search/search?p=${encodeURIComponent('一番くじ ' + kujiTitle.replace(/^一番くじ\s*/, ''))}&istatus=1`
 
-  if (!loading && pricesWithData.length === 0) return null
+  if (prizes.length === 0) return null
 
   return (
     <div className="border border-gray-200 rounded-xl overflow-hidden mb-6">
@@ -109,7 +110,7 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
           </svg>
           <span className="text-xs">相場を取得中...</span>
         </div>
-      ) : (
+      ) : pricesWithData.length > 0 ? (
         <div className="divide-y divide-gray-100">
           {pricesWithData.map(prize => (
             <a
@@ -132,11 +133,13 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
             </a>
           ))}
         </div>
+      ) : (
+        <div className="px-4 py-3 text-xs text-gray-400">相場データが見つかりませんでした</div>
       )}
       <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
         <p className="text-[10px] text-gray-400">参考：ヤフオク・Yahooショッピングの即決価格</p>
         <a
-          href={`https://auctions.yahoo.co.jp/search/search?p=${encodeURIComponent('一番くじ ' + kujiTitle.replace(/^一番くじ\s*/, ''))}&istatus=1`}
+          href={yahooAllUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-[10px] text-blue-500 font-bold"
