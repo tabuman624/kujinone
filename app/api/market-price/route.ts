@@ -73,9 +73,7 @@ async function getYahooAccessToken(): Promise<string | null> {
 
 type AuctionRange = { min: number; max: number }
 
-async function fetchYahooAuctionRange(keyword: string): Promise<AuctionRange | null> {
-  const accessToken = await getYahooAccessToken()
-  if (!accessToken) return null
+async function fetchYahooAuctionRange(keyword: string, accessToken: string): Promise<AuctionRange | null> {
   try {
     const params = new URLSearchParams({
       query: keyword,
@@ -171,9 +169,9 @@ async function fetchStablePriceWithFallback(keywords: string[]): Promise<number 
   return null
 }
 
-async function fetchAuctionRangeWithFallback(keywords: string[]): Promise<AuctionRange | null> {
+async function fetchAuctionRangeWithFallback(keywords: string[], accessToken: string): Promise<AuctionRange | null> {
   for (const kw of keywords) {
-    const range = await fetchYahooAuctionRange(kw)
+    const range = await fetchYahooAuctionRange(kw, accessToken)
     if (range !== null) return range
   }
   return null
@@ -218,6 +216,9 @@ export async function GET(req: NextRequest) {
     })
   }
 
+  // アクセストークンを1回だけ取得して全賞で使い回す
+  const auctionToken = await getYahooAccessToken()
+
   // 要更新の賞を並列処理
   const now = new Date().toISOString()
   const results = await Promise.allSettled(
@@ -231,7 +232,7 @@ export async function GET(req: NextRequest) {
       // 安定価格（Yahoo Shopping）とヤフオク範囲を並列取得
       const [newStable, newAuction] = await Promise.all([
         stableNeedsUpdate ? fetchStablePriceWithFallback(keywords) : Promise.resolve(null),
-        auctionNeedsUpdate ? fetchAuctionRangeWithFallback(keywords) : Promise.resolve(null),
+        auctionNeedsUpdate && auctionToken ? fetchAuctionRangeWithFallback(keywords, auctionToken) : Promise.resolve(null),
       ])
 
       // DB更新（取得できた場合のみ値を上書き。nullで既存データを消さない）
