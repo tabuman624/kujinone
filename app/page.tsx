@@ -1,6 +1,18 @@
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { supabase } from './lib/supabase'
+
+export const metadata: Metadata = {
+  title: '一番くじ 期待値計算ツール | くじのね',
+  description: '一番くじ（いちばんくじ・1番くじ）の期待値を無料で計算。目当ての賞が当たるまでの平均費用を秒で算出。発売スケジュール・ヤフオク落札相場も確認できます。',
+  openGraph: {
+    title: '一番くじ 期待値計算ツール | くじのね',
+    description: '一番くじ（いちばんくじ・1番くじ）の期待値を無料で計算。目当ての賞が当たるまでの平均費用を秒で算出。発売スケジュール・ヤフオク落札相場も確認できます。',
+    url: 'https://kujinone.com',
+    images: [{ url: '/logo.png', alt: 'くじのね' }],
+  },
+}
 
 function fmtDate(d: string) {
   const dt = new Date(d)
@@ -25,7 +37,7 @@ export default async function Home() {
   // Hard-coded featured columns on the home page (same 3 as the original)
   const featuredPosts = [
     { slug: 'kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説', date: '2026-05-01', summary: '一番くじで目当ての賞を引くまでに平均いくらかかるかを示す「期待値」の計算方法を解説します。' },
-    { slug: 'ichiban-kuji-toha', title: '一番くじとは？初心者向けに仕組みをわかりやすく解説', date: '2026-05-01', summary: '一番くじの基本的な仕組みや賞の種類、どこで買えるのかを初心者向けにわかりやすく解説します。' },
+    { slug: 'ichiban-kuji-toha', title: '一番くじとは？仕組み・賞の種類・値段・お得な引き方を徹底解説', date: '2026-05-01', summary: '一番くじはハズレなしのキャラクターくじ。1回700〜800円で必ず景品がもらえます。賞の種類・購入場所・損しない引き方まで解説。' },
     { slug: 'kuji-vs-mercari', title: '一番くじ vs メルカリ どちらがお得？', date: '2026-05-01', summary: '一番くじを引くのとフリマアプリで購入するのと、どちらがお得かを比較・解説します。' },
   ]
 
@@ -33,8 +45,9 @@ export default async function Home() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'くじのね',
+    alternateName: '一番くじ 期待値計算ツール',
     url: 'https://kujinone.com',
-    description: '一番くじの期待値を計算して、賢くくじを引こう',
+    description: '一番くじ（いちばんくじ・1番くじ）の期待値を無料で計算。目当ての賞が当たるまでの平均費用を秒で算出できます。',
     potentialAction: {
       '@type': 'SearchAction',
       target: { '@type': 'EntryPoint', urlTemplate: 'https://kujinone.com/schedule' },
@@ -47,7 +60,13 @@ export default async function Home() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Hero */}
       <div className="bg-gray-900 px-6 text-white flex flex-col items-center text-center" style={{ paddingTop: 48, paddingBottom: 48 }}>
-        <Image src="/logo.png" alt="くじのね" width={400} height={400} className="w-full max-w-sm mb-6 anim-fade-up" style={{ animationDelay: '40ms' }} priority />
+        <Image src="/logo.png" alt="くじのね ロゴ" width={400} height={400} className="w-full max-w-sm mb-4 anim-fade-up" style={{ animationDelay: '40ms' }} priority />
+        <h1 className="text-base font-black text-white mb-1 anim-fade-up" style={{ animationDelay: '70ms' }}>
+          一番くじ 期待値計算ツール
+        </h1>
+        <p className="text-xs text-gray-400 mb-5 anim-fade-up" style={{ animationDelay: '90ms' }}>
+          いちばんくじ・1番くじの費用を無料で計算
+        </p>
         <Link
           href="/schedule"
           className="inline-flex items-center gap-2 bg-red-600 text-white text-sm font-bold px-5 py-2.5 rounded-full hover:bg-red-700 press anim-fade-up"

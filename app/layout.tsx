@@ -13,11 +13,11 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://kujinone.com'),
-  title: "くじのね | 一番くじ期待値計算",
-  description: "一番くじの期待値を計算して、賢くくじを引こう",
+  title: "一番くじ 期待値計算ツール | くじのね",
+  description: "一番くじ（いちばんくじ・1番くじ）の期待値を無料で計算。目当ての賞が当たるまでの平均費用を秒で算出。発売スケジュール・ヤフオク落札相場も確認できます。",
   openGraph: {
-    title: "くじのね | 一番くじ期待値計算",
-    description: "一番くじの期待値を計算して、賢くくじを引こう",
+    title: "一番くじ 期待値計算ツール | くじのね",
+    description: "一番くじ（いちばんくじ・1番くじ）の期待値を無料で計算。目当ての賞が当たるまでの平均費用を秒で算出。発売スケジュール・ヤフオク落札相場も確認できます。",
     url: "https://kujinone.com",
     siteName: "くじのね",
     images: [{ url: "/logo.png", width: 1024, height: 1024, alt: "くじのね" }],
@@ -26,8 +26,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "くじのね | 一番くじ期待値計算",
-    description: "一番くじの期待値を計算して、賢くくじを引こう",
+    title: "一番くじ 期待値計算ツール | くじのね",
+    description: "一番くじ（いちばんくじ・1番くじ）の期待値を無料で計算。目当ての賞が当たるまでの平均費用を秒で算出。",
     images: ["/logo.png"],
   },
   verification: {
