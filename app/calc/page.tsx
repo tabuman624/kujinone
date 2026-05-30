@@ -83,7 +83,14 @@ function EmptyResultCard({ title, hint }: { title: string; hint: string }) {
   )
 }
 
-function MarketPriceSection({ prizes, loading }: { prizes: PrizeWithInput[], loading: boolean }) {
+function buildYahooAuctionUrl(kujiTitle: string, prize: PrizeWithInput): string {
+  const titleCore = kujiTitle.replace(/^一番くじ\s*/, '').trim()
+  const titlePrefix = titleCore.split(/\s+/)[0] ?? ''
+  const keyword = [`一番くじ`, titlePrefix, prize.grade, prize.name.replace(/^[A-ZＡ-Ｚa-z\w]*賞\s*/, '').trim()].filter(Boolean).join(' ')
+  return `https://auctions.yahoo.co.jp/search/search?p=${encodeURIComponent(keyword)}&va=${encodeURIComponent(keyword)}&istatus=1`
+}
+
+function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithInput[], loading: boolean, kujiTitle: string }) {
   const pricesWithData = prizes.filter(p => p.market_price != null)
 
   if (!loading && pricesWithData.length === 0) return null
@@ -105,7 +112,13 @@ function MarketPriceSection({ prizes, loading }: { prizes: PrizeWithInput[], loa
       ) : (
         <div className="divide-y divide-gray-100">
           {pricesWithData.map(prize => (
-            <div key={prize.id} className="px-4 py-3 flex items-center gap-3">
+            <a
+              key={prize.id}
+              href={buildYahooAuctionUrl(kujiTitle, prize)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-3 flex items-center gap-3 hover:bg-gray-50 active:bg-gray-100 transition-colors"
+            >
               <span className={`text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 ${gradeColors[prize.grade] || "bg-gray-100 text-gray-700"}`}>
                 {prize.grade}
               </span>
@@ -113,12 +126,23 @@ function MarketPriceSection({ prizes, loading }: { prizes: PrizeWithInput[], loa
               <span className="text-sm font-black text-blue-600 flex-shrink-0">
                 ¥{prize.market_price!.toLocaleString()}
               </span>
-            </div>
+              <svg className="w-3 h-3 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
           ))}
         </div>
       )}
-      <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
+      <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
         <p className="text-[10px] text-gray-400">参考：ヤフオク・Yahooショッピングの即決価格</p>
+        <a
+          href={`https://auctions.yahoo.co.jp/search/search?p=${encodeURIComponent('一番くじ ' + kujiTitle.replace(/^一番くじ\s*/, ''))}&istatus=1`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[10px] text-blue-500 font-bold"
+        >
+          ヤフオクで探す →
+        </a>
       </div>
     </div>
   )
@@ -344,7 +368,7 @@ function CalcContent() {
                 times={liveResult.times}
                 detail={`残数${totalRemaining}本 / ${liveResult.gradeStr}${liveResult.targetCount}本 / ${kuji.price}円 × ${liveResult.times}回`}
               />
-              <MarketPriceSection prizes={prizes.filter(p => p.checked)} loading={marketLoading} />
+              <MarketPriceSection prizes={prizes.filter(p => p.checked)} loading={marketLoading} kujiTitle={kuji.title} />
               <AffiliateLinks title={kuji.title} />
             </>
           ) : (
