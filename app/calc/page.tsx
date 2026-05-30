@@ -212,10 +212,10 @@ function AffiliateLinks({ title }: { title: string }) {
   }, [title])
 
   const links = [
-    { href: `https://jp.mercari.com/search?keyword=${encodeURIComponent(title)}`, label: "メルカリで相場を見る", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600" },
-    { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(title)}`, label: "駿河屋で相場を見る", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600" },
-    { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502`, label: "Yahoo!ショッピングで見る", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600" },
-    { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621`, label: "楽天市場で見る", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600" },
+    { href: `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM`, label: "メルカリで相場を見る", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600", rel: "noopener noreferrer nofollow" },
+    { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(title)}`, label: "駿河屋で相場を見る", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600", rel: "noopener noreferrer" },
+    { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502`, label: "Yahoo!ショッピングで見る", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600", rel: "noopener noreferrer" },
+    { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621`, label: "楽天市場で見る", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600", rel: "noopener noreferrer" },
   ]
   return (
     <div className="space-y-2">
@@ -231,7 +231,7 @@ function AffiliateLinks({ title }: { title: string }) {
       <img src="https://ad.linksynergy.com/fs-bin/show?id=txstqLlFvt4&bids=1366097.2&type=3&subid=0" width={1} height={1} alt="" />
       <h2 className="text-sm font-black text-gray-900 mb-3 mt-4 anim-fade-up">相場を確認・購入する</h2>
       {links.map((link, i) => (
-        <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-3 p-3 border rounded-xl ${link.color} press anim-fade-up`} style={{ animationDelay: `${100 + i * 90}ms` }}>
+        <a key={link.href} href={link.href} target="_blank" rel={link.rel} className={`flex items-center gap-3 p-3 border rounded-xl ${link.color} press anim-fade-up`} style={{ animationDelay: `${100 + i * 90}ms` }}>
           <div className="flex-1">
             <p className="text-sm font-bold">{link.label}</p>
             <p className="text-xs opacity-70">{link.sub}</p>
@@ -239,6 +239,8 @@ function AffiliateLinks({ title }: { title: string }) {
           <span className="text-sm">↗</span>
         </a>
       ))}
+      {/* メルカリ A8 tracking pixel */}
+      <img width={1} height={1} alt="" src="https://www12.a8.net/0.gif?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM" />
     </div>
   )
 }
