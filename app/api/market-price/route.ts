@@ -154,8 +154,14 @@ function buildKeywordTier1(prizeName: string, kujiTitle: string, grade: string):
   return grade ? `${prefix} ${grade} ${itemName}` : `${prefix} ${itemName}`
 }
 
-/** Tier2: 広め（商品名のみ・タイトル依存を排除） */
-function buildKeywordTier2(prizeName: string): string {
+/** Tier2: 賞名＋商品名（タイトル依存を排除） */
+function buildKeywordTier2(prizeName: string, grade: string): string {
+  const itemName = extractItemName(prizeName)
+  return grade ? `一番くじ ${grade} ${itemName}` : `一番くじ ${itemName}`
+}
+
+/** Tier3: 商品名のみ（最広域） */
+function buildKeywordTier3(prizeName: string): string {
   return `一番くじ ${extractItemName(prizeName)}`
 }
 
@@ -206,7 +212,8 @@ export async function GET(req: NextRequest) {
       const keywords = [
         buildKeywordTier0(prize.name, kujiTitle, prize.grade), // 正式名称フル
         buildKeywordTier1(prize.name, kujiTitle, prize.grade), // 先頭語のみ
-        buildKeywordTier2(prize.name),                         // 商品名のみ
+        buildKeywordTier2(prize.name, prize.grade),            // 賞名＋商品名
+        buildKeywordTier3(prize.name),                         // 商品名のみ
       ]
 
       // 重複キーワードを除去してから順番に試す
