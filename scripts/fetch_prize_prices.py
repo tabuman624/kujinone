@@ -59,10 +59,14 @@ def get_unpriced_prizes():
 
 
 def update_market_price(prize_id: int, price: int) -> bool:
+    from datetime import datetime, timezone
     res = requests.patch(
         f"{SUPABASE_URL}/rest/v1/prizes?id=eq.{prize_id}",
         headers=SB_HEADERS,
-        json={"market_price": price},
+        json={
+            "market_price": price,
+            "market_price_updated_at": datetime.now(timezone.utc).isoformat(),
+        },
     )
     return res.status_code in [200, 204]
 

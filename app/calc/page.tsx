@@ -83,29 +83,42 @@ function EmptyResultCard({ title, hint }: { title: string; hint: string }) {
   )
 }
 
-function MarketPriceSection({ prizes }: { prizes: PrizeWithInput[] }) {
-  if (prizes.length === 0) return null
+function MarketPriceSection({ prizes, loading }: { prizes: PrizeWithInput[], loading: boolean }) {
+  const pricesWithData = prizes.filter(p => p.market_price != null)
+
+  if (!loading && pricesWithData.length === 0) return null
+
   return (
     <div className="border border-gray-200 rounded-xl overflow-hidden mb-6">
       <div className="bg-gray-50 px-4 py-2.5 flex items-center justify-between border-b border-gray-200">
-        <p className="text-xs font-black text-gray-700">景品の相場</p>
+        <p className="text-xs font-black text-gray-700">二次流通の相場</p>
         <span className="text-[10px] text-gray-400 font-bold tracking-wider">MARKET PRICE</span>
       </div>
-      <div className="divide-y divide-gray-100">
-        {prizes.map(prize => (
-          <div key={prize.id} className="px-4 py-3 flex items-center gap-3">
-            <span className={`text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 ${gradeColors[prize.grade] || "bg-gray-100 text-gray-700"}`}>
-              {prize.grade}
-            </span>
-            <span className="flex-1 text-xs text-gray-700 truncate">{prize.name}</span>
-            <span className="text-sm font-black text-blue-600 flex-shrink-0">
-              ¥{prize.market_price!.toLocaleString()}
-            </span>
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <div className="px-4 py-4 flex items-center gap-2 text-gray-400">
+          <svg className="w-3.5 h-3.5 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+          </svg>
+          <span className="text-xs">相場を取得中...</span>
+        </div>
+      ) : (
+        <div className="divide-y divide-gray-100">
+          {pricesWithData.map(prize => (
+            <div key={prize.id} className="px-4 py-3 flex items-center gap-3">
+              <span className={`text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 ${gradeColors[prize.grade] || "bg-gray-100 text-gray-700"}`}>
+                {prize.grade}
+              </span>
+              <span className="flex-1 text-xs text-gray-700 truncate">{prize.name}</span>
+              <span className="text-sm font-black text-blue-600 flex-shrink-0">
+                ¥{prize.market_price!.toLocaleString()}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
       <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
-        <p className="text-[10px] text-gray-400">参考：駿河屋の販売価格</p>
+        <p className="text-[10px] text-gray-400">参考：ヤフオク・Yahooショッピングの即決価格</p>
       </div>
     </div>
   )
@@ -193,6 +206,7 @@ function CalcContent() {
 
   const [kuji, setKuji] = useState<Kuji | null>(null)
   const [prizes, setPrizes] = useState<PrizeWithInput[]>([])
+  const [marketLoading, setMarketLoading] = useState(false)
 
   const [manualTotal, setManualTotal] = useState("")
   const [manualTarget, setManualTarget] = useState("")
@@ -204,7 +218,26 @@ function CalcContent() {
       const { data: k } = await supabase.from("kuji").select("*").eq("id", kujiId).single()
       const { data: p } = await supabase.from("prizes").select("*").eq("kuji_id", kujiId).order("sort_order", { ascending: true })
       if (k) setKuji(k)
-      if (p) setPrizes(p.map((prize: Prize) => ({ ...prize, checked: false, remaining: String(prize.total) })))
+      if (p) {
+        setPrizes(p.map((prize: Prize) => ({ ...prize, checked: false, remaining: String(prize.total) })))
+
+        // 相場をリアルタイム取得（並列・非同期）
+        setMarketLoading(true)
+        fetch(`/api/market-price?kuji_id=${kujiId}`)
+          .then(r => r.json())
+          .then(({ prices }) => {
+            if (!Array.isArray(prices)) return
+            const priceMap: Record<number, number | null> = {}
+            for (const { id, price } of prices) priceMap[id] = price
+            setPrizes(prev => prev.map(prize =>
+              priceMap[prize.id] !== undefined
+                ? { ...prize, market_price: priceMap[prize.id] }
+                : prize
+            ))
+          })
+          .catch(() => {})
+          .finally(() => setMarketLoading(false))
+      }
     }
     fetchData()
   }, [kujiId])
@@ -311,7 +344,7 @@ function CalcContent() {
                 times={liveResult.times}
                 detail={`残数${totalRemaining}本 / ${liveResult.gradeStr}${liveResult.targetCount}本 / ${kuji.price}円 × ${liveResult.times}回`}
               />
-              <MarketPriceSection prizes={prizes.filter(p => p.checked && p.market_price != null)} />
+              <MarketPriceSection prizes={prizes.filter(p => p.checked)} loading={marketLoading} />
               <AffiliateLinks title={kuji.title} />
             </>
           ) : (
