@@ -95,10 +95,15 @@ function median(values: number[]): number {
     : sorted[mid]
 }
 
+/** アクセント記号を除去（Pokémon → Pokemon など） */
+function normalizeAccents(str: string): string {
+  return str.normalize('NFD').replace(/[̀-ͯ]/g, '')
+}
+
 function buildKeyword(prizeName: string, kujiTitle: string, grade: string): string {
   const itemName = prizeName.replace(/^[A-ZＡ-Ｚa-z\w]*賞\s*/, '').trim() || prizeName
   const titleCore = kujiTitle.replace(/^一番くじ\s*/, '').trim()
-  const titlePrefix = titleCore.split(/\s+/)[0] ?? ''
+  const titlePrefix = normalizeAccents(titleCore.split(/\s+/)[0] ?? '')
   const prefix = titlePrefix ? `一番くじ ${titlePrefix}` : '一番くじ'
   return grade ? `${prefix} ${grade} ${itemName}` : `${prefix} ${itemName}`
 }
