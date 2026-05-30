@@ -123,17 +123,6 @@ export default async function KujiDetail({
           この商品の期待値を計算する →
         </Link>
 
-        <div className="mb-6 anim-fade-up" style={{ animationDelay: `${220 + (prizes?.length || 0) * 60}ms` }}>
-          <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">オンラインで参加 / ONLINE</h2>
-          <a href="https://kuji.bn-ent.net/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 border rounded-xl bg-purple-50 border-purple-200 text-purple-700 press">
-            <div className="flex-1">
-              <p className="text-sm font-bold">一番くじONLINEはこちら</p>
-              <p className="text-xs opacity-70">公式オンラインくじサービス</p>
-            </div>
-            <span className="text-sm">↗</span>
-          </a>
-        </div>
-
         {isReleased && (
           <div className="mb-6 anim-fade-up" style={{ animationDelay: `${260 + (prizes?.length || 0) * 60}ms` }}>
             <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">相場を確認・購入する / MARKET</h2>

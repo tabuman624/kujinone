@@ -131,18 +131,6 @@ export default async function NewsDetailPage({
             この商品の期待値を計算する →
           </Link>
         )}
-        <a
-          href="https://kuji.bn-ent.net/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-3 p-3 border rounded-xl bg-purple-50 border-purple-200 text-purple-700 press"
-        >
-          <div className="flex-1">
-            <p className="text-sm font-bold">一番くじONLINEはこちら</p>
-            <p className="text-xs opacity-70">公式オンラインくじサービス</p>
-          </div>
-          <span className="text-sm">↗</span>
-        </a>
         <Link
           href="/news"
           className="flex items-center justify-center gap-2 w-full py-3 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 press"
