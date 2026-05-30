@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation'
 import { supabase } from '../../lib/supabase'
 import PrizeList from './PrizeList'
 import PrizePopularity from './PrizePopularity'
+import KujiViewTracker from './KujiViewTracker'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
@@ -69,6 +70,7 @@ export default async function KujiDetail({
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <KujiViewTracker kujiId={Number(id)} />
       <div className="bg-gray-900 px-6 py-8 text-white">
         <Link href="/schedule" className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-white mb-3 transition-colors press">
           ← 戻る
@@ -117,7 +119,7 @@ export default async function KujiDetail({
         )}
 
         {prizes && prizes.length > 0 && (
-          <PrizePopularity prizes={prizes.map(p => ({ id: p.id, name: p.name, grade: p.grade }))} />
+          <PrizePopularity kujiId={Number(id)} prizes={prizes.map(p => ({ id: p.id, name: p.name, grade: p.grade }))} />
         )}
 
         <Link
