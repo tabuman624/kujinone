@@ -131,7 +131,7 @@ export async function GET(req: NextRequest) {
     .eq('kuji_id', kujiId)
     .order('sort_order')
 
-  if (!prizes) return NextResponse.json({ prices: [] })
+  if (!prizes) return NextResponse.json({ prices: [], debug: { hasApiKey: !!YAHOO_APP_ID } })
 
   // キャッシュが全て新鮮なら即返す
   const allFresh = prizes.every(p => p.market_price !== null && isFresh(p.market_price_updated_at))
@@ -176,5 +176,9 @@ export async function GET(req: NextRequest) {
     price: updatedMap[p.id] !== undefined ? updatedMap[p.id] : p.market_price,
   }))
 
-  return NextResponse.json({ prices: response, cached: false })
+  return NextResponse.json({
+    prices: response,
+    cached: false,
+    debug: { hasApiKey: !!YAHOO_APP_ID, staleCount: stale.length },
+  })
 }
