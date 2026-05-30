@@ -35,14 +35,11 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python scripts/generate_articles.py
 
-      - name: ③ 景品の参考価格を取得（駿河屋＋Yahoo）
+      - name: ③ 景品の参考価格を取得（Yahoo Shopping＋ヤフオク落札相場）
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           YAHOO_APP_ID: ${{ secrets.YAHOO_APP_ID }}
-          YAHOO_AUCTION_CLIENT_ID: ${{ secrets.YAHOO_AUCTION_CLIENT_ID }}
-          YAHOO_AUCTION_CLIENT_SECRET: ${{ secrets.YAHOO_AUCTION_CLIENT_SECRET }}
-          YAHOO_AUCTION_REFRESH_TOKEN: ${{ secrets.YAHOO_AUCTION_REFRESH_TOKEN }}
         run: python scripts/fetch_prize_prices.py
 
       - name: ④ 新規記事をコミット＆プッシュ

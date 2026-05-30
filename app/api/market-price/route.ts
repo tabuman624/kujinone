@@ -7,9 +7,6 @@ const supabase = createClient(
 )
 
 const YAHOO_APP_ID = process.env.YAHOO_APP_ID ?? ''
-const YAHOO_AUCTION_CLIENT_ID     = process.env.YAHOO_AUCTION_CLIENT_ID ?? ''
-const YAHOO_AUCTION_CLIENT_SECRET = process.env.YAHOO_AUCTION_CLIENT_SECRET ?? ''
-const YAHOO_AUCTION_REFRESH_TOKEN = process.env.YAHOO_AUCTION_REFRESH_TOKEN ?? ''
 
 const CACHE_TTL_HOURS = 6
 const PRICE_MIN = 500
@@ -45,63 +42,58 @@ async function fetchYahooShoppingPrice(keyword: string): Promise<number | null> 
   }
 }
 
-// ─── Yahoo! オークション API（OAuth・即決・価格範囲） ──────────────────────
-
-async function getYahooAccessToken(): Promise<string | null> {
-  if (!YAHOO_AUCTION_CLIENT_ID || !YAHOO_AUCTION_CLIENT_SECRET || !YAHOO_AUCTION_REFRESH_TOKEN) {
-    return null
-  }
-  try {
-    const res = await fetch('https://auth.login.yahoo.co.jp/yconnect/v2/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: YAHOO_AUCTION_REFRESH_TOKEN,
-        client_id: YAHOO_AUCTION_CLIENT_ID,
-        client_secret: YAHOO_AUCTION_CLIENT_SECRET,
-      }),
-      signal: AbortSignal.timeout(8000),
-    })
-    if (!res.ok) return null
-    const data = await res.json()
-    return data.access_token ?? null
-  } catch {
-    return null
-  }
-}
+// ─── Yahoo! オークション 落札済み検索（直接スクレイピング） ─────────────────
+// robots.txt で /closedsearch/closedsearch が明示的に許可されているパス
 
 type AuctionRange = { min: number; max: number }
 
-async function fetchYahooAuctionRange(keyword: string, accessToken: string): Promise<AuctionRange | null> {
+async function fetchYahooAuctionClosedRange(keyword: string): Promise<AuctionRange | null> {
   try {
     const params = new URLSearchParams({
-      query: keyword,
-      type: 'buynow',
-      minPrice: String(PRICE_MIN),
-      maxPrice: String(PRICE_MAX),
-      hits: '20',
-      sort: '+price',
-      output: 'json',
+      p: keyword,
+      n: '20',
+      s1: 'end',
+      o1: 'd',
     })
     const res = await fetch(
-      `https://auctions.yahooapis.jp/AuctionWebService/V2/json/auctionSearch?${params}`,
+      `https://auctions.yahoo.co.jp/closedsearch/closedsearch?${params}`,
       {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        signal: AbortSignal.timeout(8000),
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        },
+        signal: AbortSignal.timeout(10000),
       }
     )
     if (!res.ok) return null
-    const data = await res.json()
-    const hits = data.ResultSet?.Result?.Item ?? []
+    const html = await res.text()
+
     const prices: number[] = []
-    for (const item of Array.isArray(hits) ? hits : [hits]) {
-      const price = Number(item.BidOrBuy)
-      const title = item.Title ?? ''
-      if (price && PRICE_MIN <= price && price <= PRICE_MAX && isRelevant(keyword, title)) {
+
+    // 各オークション結果は </li> で区切られる
+    const blocks = html.split('</li>')
+
+    for (const block of blocks) {
+      // 落札価格を抽出（「落札X,XXX円」形式）
+      const priceMatch = block.match(/落札([\d,]+)円/)
+      if (!priceMatch) continue
+
+      const price = parseInt(priceMatch[1].replace(/,/g, ''), 10)
+      if (!price || price < PRICE_MIN || price > PRICE_MAX) continue
+
+      // タイトルを抽出して関連性チェック（取れない場合は通す）
+      const titleMatch =
+        block.match(/<a[^>]+href="[^"]*\/auction\/[^"]*"[^>]*>([^<]{4,})<\/a>/) ??
+        block.match(/alt="([^"]{4,})"/) ??
+        block.match(/title="([^"]{4,})"/)
+      const title = titleMatch?.[1]?.trim() ?? ''
+
+      if (!title || isRelevant(keyword, title)) {
         prices.push(price)
       }
     }
+
     if (prices.length === 0) return null
     const sorted = [...prices].sort((a, b) => a - b)
     return { min: sorted[0], max: sorted[sorted.length - 1] }
@@ -169,9 +161,9 @@ async function fetchStablePriceWithFallback(keywords: string[]): Promise<number 
   return null
 }
 
-async function fetchAuctionRangeWithFallback(keywords: string[], accessToken: string): Promise<AuctionRange | null> {
+async function fetchAuctionRangeWithFallback(keywords: string[]): Promise<AuctionRange | null> {
   for (const kw of keywords) {
-    const range = await fetchYahooAuctionRange(kw, accessToken)
+    const range = await fetchYahooAuctionClosedRange(kw)
     if (range !== null) return range
   }
   return null
@@ -216,29 +208,25 @@ export async function GET(req: NextRequest) {
     })
   }
 
-  // アクセストークンを1回だけ取得して全賞で使い回す
-  const auctionToken = await getYahooAccessToken()
-
   // 要更新の賞を並列処理
   const now = new Date().toISOString()
   const results = await Promise.allSettled(
     prizes.map(async prize => {
       const keywords = buildKeywords(prize.name, kujiTitle, prize.grade)
 
-      // 値がnullの場合はtimestampがfreshでも再取得する
       const stableNeedsUpdate = prize.market_price === null || !isFresh(prize.market_price_updated_at)
       const auctionNeedsUpdate = prize.auction_price_min === null || !isFresh(prize.auction_price_updated_at)
 
-      // 安定価格（Yahoo Shopping）とヤフオク範囲を並列取得
+      // 安定価格（Yahoo Shopping）とヤフオク落札範囲を並列取得
       const [newStable, newAuction] = await Promise.all([
         stableNeedsUpdate ? fetchStablePriceWithFallback(keywords) : Promise.resolve(null),
-        auctionNeedsUpdate && auctionToken ? fetchAuctionRangeWithFallback(keywords, auctionToken) : Promise.resolve(null),
+        auctionNeedsUpdate ? fetchAuctionRangeWithFallback(keywords) : Promise.resolve(null),
       ])
 
       // DB更新（取得できた場合のみ値を上書き。nullで既存データを消さない）
       const updates: Record<string, unknown> = {}
       if (stableNeedsUpdate) {
-        updates.market_price_updated_at = now  // 試行済みとしてタイムスタンプは常に更新
+        updates.market_price_updated_at = now
         if (newStable !== null) updates.market_price = newStable
       }
       if (auctionNeedsUpdate) {
@@ -252,7 +240,6 @@ export async function GET(req: NextRequest) {
         await supabase.from('prizes').update(updates).eq('id', prize.id)
       }
 
-      // レスポンス：新規取得できなければ既存DBの値を返す
       return {
         id: prize.id,
         stable_price: newStable ?? prize.market_price,
