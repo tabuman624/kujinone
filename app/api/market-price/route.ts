@@ -88,8 +88,8 @@ async function fetchYahooAuctionClosedRange(keyword: string): Promise<AuctionRan
     }
 
     if (prices.length === 0) return null
-    const sorted = [...prices].sort((a, b) => a - b)
-    return { min: sorted[0], max: sorted[sorted.length - 1] }
+    const median = calcMedian(prices)
+    return { min: median, max: median }
   } catch {
     return null
   }

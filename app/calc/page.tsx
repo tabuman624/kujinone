@@ -148,10 +148,7 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
                           ヤフオク →
                         </a>
                         <span className="text-sm font-black text-blue-600">
-                          {prize.auction_price_min === prize.auction_price_max
-                            ? `¥${prize.auction_price_min!.toLocaleString()}`
-                            : `¥${prize.auction_price_min!.toLocaleString()} 〜 ¥${prize.auction_price_max!.toLocaleString()}`
-                          }
+                          ¥{prize.auction_price_min!.toLocaleString()}
                         </span>
                       </div>
                     )}
@@ -165,7 +162,7 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
         <div className="px-4 py-3 text-xs text-gray-400">相場データが見つかりませんでした</div>
       )}
       <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
-        <p className="text-[10px] text-gray-400">参考：ヤフオク即決・Yahooショッピング</p>
+        <p className="text-[10px] text-gray-400">参考：ヤフオク落札相場・Yahooショッピング</p>
         <a
           href={yahooAllUrl}
           target="_blank"
