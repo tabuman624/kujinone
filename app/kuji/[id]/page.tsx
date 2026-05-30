@@ -6,6 +6,7 @@ import path from 'path'
 import { notFound } from 'next/navigation'
 import { supabase } from '../../lib/supabase'
 import PrizeList from './PrizeList'
+import PrizePopularity from './PrizePopularity'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
@@ -113,6 +114,10 @@ export default async function KujiDetail({
             <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3 anim-fade-up" style={{ animationDelay: '180ms' }}>賞一覧 / PRIZES</h2>
             <PrizeList prizes={prizes} />
           </div>
+        )}
+
+        {prizes && prizes.length > 0 && (
+          <PrizePopularity prizes={prizes.map(p => ({ id: p.id, name: p.name, grade: p.grade }))} />
         )}
 
         <Link

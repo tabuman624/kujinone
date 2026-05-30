@@ -290,7 +290,18 @@ function CalcContent() {
     fetchData()
   }, [kujiId])
 
-  const toggleCheck = (id: number) => setPrizes(prev => prev.map(p => p.id === id ? { ...p, checked: !p.checked } : p))
+  const toggleCheck = (id: number) => setPrizes(prev => prev.map(p => {
+    if (p.id !== id) return p
+    // チェックON時のみトラッキング（fire and forget）
+    if (!p.checked) {
+      fetch('/api/track-interest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prize_id: id }),
+      })
+    }
+    return { ...p, checked: !p.checked }
+  }))
   const updateRemaining = (id: number, value: string) => setPrizes(prev => prev.map(p => p.id === id ? { ...p, remaining: value } : p))
 
   const totalRemaining = useMemo(() =>
