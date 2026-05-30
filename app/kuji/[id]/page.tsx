@@ -133,7 +133,7 @@ export default async function KujiDetail({
                 { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502`, label: "Yahoo!ショッピングで見る", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600" },
                 { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621`, label: "楽天市場で見る", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600" },
               ].map((link, i) => (
-                <a key={link.href} href={link.href} target="_blank" rel={link.rel ?? "noopener noreferrer"} className={`flex items-center gap-3 p-3 border rounded-xl ${link.color} press anim-fade-up`} style={{ animationDelay: `${280 + (prizes?.length || 0) * 60 + i * 60}ms` }}>
+                <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-3 p-3 border rounded-xl ${link.color} press anim-fade-up`} style={{ animationDelay: `${280 + (prizes?.length || 0) * 60 + i * 60}ms` }}>
                   <div className="flex-1">
                     <p className="text-sm font-bold">{link.label}</p>
                     <p className="text-xs opacity-70">{link.sub}</p>
