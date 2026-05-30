@@ -133,12 +133,30 @@ function normalizeAccents(str: string): string {
   return str.normalize('NFD').replace(/[̀-ͯ]/g, '')
 }
 
-function buildKeyword(prizeName: string, kujiTitle: string, grade: string): string {
-  const itemName = prizeName.replace(/^[A-ZＡ-Ｚa-z\w]*賞\s*/, '').trim() || prizeName
+function extractItemName(prizeName: string): string {
+  return prizeName.replace(/^[A-ZＡ-Ｚa-z\w]*賞\s*/, '').trim() || prizeName
+}
+
+/** Tier0: 正式名称フル（一番くじ正式タイトル＋賞＋商品名） */
+function buildKeywordTier0(prizeName: string, kujiTitle: string, grade: string): string {
+  const itemName = extractItemName(prizeName)
+  const titleCore = normalizeAccents(kujiTitle.replace(/^一番くじ\s*/, '').trim())
+  const prefix = titleCore ? `一番くじ ${titleCore}` : '一番くじ'
+  return grade ? `${prefix} ${grade} ${itemName}` : `${prefix} ${itemName}`
+}
+
+/** Tier1: 先頭語のみ（くじタイトル先頭1語＋賞＋商品名） */
+function buildKeywordTier1(prizeName: string, kujiTitle: string, grade: string): string {
+  const itemName = extractItemName(prizeName)
   const titleCore = kujiTitle.replace(/^一番くじ\s*/, '').trim()
   const titlePrefix = normalizeAccents(titleCore.split(/\s+/)[0] ?? '')
   const prefix = titlePrefix ? `一番くじ ${titlePrefix}` : '一番くじ'
   return grade ? `${prefix} ${grade} ${itemName}` : `${prefix} ${itemName}`
+}
+
+/** Tier2: 広め（商品名のみ・タイトル依存を排除） */
+function buildKeywordTier2(prizeName: string): string {
+  return `一番くじ ${extractItemName(prizeName)}`
 }
 
 function isFresh(updatedAt: string | null): boolean {
@@ -185,12 +203,21 @@ export async function GET(req: NextRequest) {
 
   const results = await Promise.allSettled(
     stale.map(async prize => {
-      const keyword = buildKeyword(prize.name, kujiTitle, prize.grade)
+      const keywords = [
+        buildKeywordTier0(prize.name, kujiTitle, prize.grade), // 正式名称フル
+        buildKeywordTier1(prize.name, kujiTitle, prize.grade), // 先頭語のみ
+        buildKeywordTier2(prize.name),                         // 商品名のみ
+      ]
 
-      // ヤフオク（即決）→ Yahoo ショッピング の順で試す
-      const price =
-        (await fetchYahooAuctionPrice(keyword)) ??
-        (await fetchYahooShoppingPrice(keyword))
+      // 重複キーワードを除去してから順番に試す
+      const uniqueKeywords = [...new Set(keywords)]
+      let price: number | null = null
+      for (const kw of uniqueKeywords) {
+        price =
+          (await fetchYahooAuctionPrice(kw)) ??
+          (await fetchYahooShoppingPrice(kw))
+        if (price !== null) break
+      }
 
       if (price !== null) {
         await supabase
