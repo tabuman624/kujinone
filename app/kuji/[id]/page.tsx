@@ -125,15 +125,13 @@ export default async function KujiDetail({
 
         <div className="mb-6 anim-fade-up" style={{ animationDelay: `${220 + (prizes?.length || 0) * 60}ms` }}>
           <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">オンラインで参加 / ONLINE</h2>
-          <a href="https://click.linksynergy.com/fs-bin/click?id=txstqLlFvt4&offerid=1366097.2&type=3&subid=0" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 border rounded-xl bg-purple-50 border-purple-200 text-purple-700 press">
+          <a href="https://kuji.bn-ent.net/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 border rounded-xl bg-purple-50 border-purple-200 text-purple-700 press">
             <div className="flex-1">
               <p className="text-sm font-bold">一番くじONLINEはこちら</p>
-              <p className="text-xs opacity-70">PR</p>
+              <p className="text-xs opacity-70">公式オンラインくじサービス</p>
             </div>
             <span className="text-sm">↗</span>
           </a>
-          {/* tracking pixel */}
-          <img width={1} height={1} alt="" src="https://ad.linksynergy.com/fs-bin/show?id=txstqLlFvt4&bids=1366097.2&type=3&subid=0" />
         </div>
 
         {isReleased && (

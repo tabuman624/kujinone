@@ -132,18 +132,17 @@ export default async function NewsDetailPage({
           </Link>
         )}
         <a
-          href="https://click.linksynergy.com/fs-bin/click?id=txstqLlFvt4&offerid=1366097.2&type=3&subid=0"
+          href="https://kuji.bn-ent.net/"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-3 p-3 border rounded-xl bg-purple-50 border-purple-200 text-purple-700 press"
         >
           <div className="flex-1">
             <p className="text-sm font-bold">一番くじONLINEはこちら</p>
-            <p className="text-xs opacity-70">PR</p>
+            <p className="text-xs opacity-70">公式オンラインくじサービス</p>
           </div>
           <span className="text-sm">↗</span>
         </a>
-        <img src="https://ad.linksynergy.com/fs-bin/show?id=txstqLlFvt4&bids=1366097.2&type=3&subid=0" width={1} height={1} alt="" />
         <Link
           href="/news"
           className="flex items-center justify-center gap-2 w-full py-3 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 press"
