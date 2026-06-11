@@ -10,16 +10,17 @@ const BASE = 'https://kujinone.com'
 export const revalidate = 3600
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const STATIC_DATE = new Date('2026-05-01')
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
     { url: `${BASE}/schedule`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: `${BASE}/calc`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
     { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${BASE}/news`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
-    { url: `${BASE}/howto`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${BASE}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${BASE}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${BASE}/contact`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${BASE}/howto`, lastModified: STATIC_DATE, changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${BASE}/privacy`, lastModified: STATIC_DATE, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${BASE}/terms`, lastModified: STATIC_DATE, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${BASE}/contact`, lastModified: STATIC_DATE, changeFrequency: 'yearly', priority: 0.3 },
   ]
 
   const postsDir = path.join(process.cwd(), 'posts')
@@ -60,7 +61,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (!error && kujiList) {
       kujiPages = kujiList.map(k => ({
         url: `${BASE}/kuji/${k.id}`,
-        lastModified: new Date(k.release_at),
+        lastModified: new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.9,
       }))
