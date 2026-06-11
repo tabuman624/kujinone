@@ -144,6 +144,7 @@ export default function NewsPage() {
                       fill
                       className="object-cover"
                       sizes="176px"
+                      unoptimized
                     />
                   ) : (
                     <KujiPlaceholder />
@@ -201,6 +202,7 @@ export default function NewsPage() {
                           fill
                           className="object-cover"
                           sizes="56px"
+                          unoptimized
                         />
                       ) : (
                         <KujiPlaceholder />

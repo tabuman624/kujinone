@@ -35,7 +35,7 @@ export default function PrizeList({ prizes }: { prizes: Prize[] }) {
                 className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-50 press"
                 onClick={() => setActive({ url: prize.image_url!, name: prize.name })}
               >
-                <Image src={prize.image_url} alt={prize.name} width={48} height={48} className="w-full h-full object-cover" />
+                <Image src={prize.image_url} alt={prize.name} width={48} height={48} className="w-full h-full object-cover" unoptimized />
               </button>
             ) : (
               <div className="w-12 h-12 rounded-lg bg-gray-50 flex-shrink-0" />
@@ -63,6 +63,7 @@ export default function PrizeList({ prizes }: { prizes: Prize[] }) {
                 height={480}
                 className="rounded-2xl object-contain"
                 style={{ width: 'auto', height: 'auto', maxWidth: '85vw', maxHeight: '65vh' }}
+                unoptimized
               />
             </div>
             <p className="text-white text-sm font-bold mt-4 text-center">{active.name}</p>

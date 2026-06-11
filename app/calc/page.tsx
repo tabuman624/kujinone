@@ -352,7 +352,7 @@ function CalcContent() {
             <div className="flex items-start gap-3">
               <div className="w-11 h-11 bg-red-50 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0">
                 {kuji.image_url
-                  ? <Image src={kuji.image_url} alt={kuji.title} width={44} height={44} className="w-full h-full object-cover" />
+                  ? <Image src={kuji.image_url} alt={kuji.title} width={44} height={44} className="w-full h-full object-cover" unoptimized />
                   : <KujiIcon />}
               </div>
               <div className="flex-1 min-w-0">

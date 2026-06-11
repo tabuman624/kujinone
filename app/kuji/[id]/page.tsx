@@ -77,7 +77,7 @@ export default async function KujiDetail({
         </Link>
         {(kuji.banner_url || kuji.image_url) && (
           <div className="mb-4 rounded-xl overflow-hidden w-full">
-            <Image src={kuji.banner_url || kuji.image_url} alt={kuji.title} width={600} height={400} className="w-full h-auto" sizes="(max-width: 768px) 100vw, 640px" priority />
+            <Image src={kuji.banner_url || kuji.image_url} alt={kuji.title} width={600} height={400} className="w-full h-auto" sizes="(max-width: 768px) 100vw, 640px" priority unoptimized />
           </div>
         )}
         {kuji.release_at && (
