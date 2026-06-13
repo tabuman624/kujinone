@@ -12,7 +12,7 @@ export default function PrivacyPage() {
         </section>
         <section>
           <h2 className="text-base font-black text-gray-900 mb-2">アフィリエイトについて</h2>
-          <p>当サイトはメルカリ・駿河屋・Yahoo!ショッピング等のアフィリエイトプログラムに参加しています。リンク経由で購入された場合、当サイトに報酬が発生することがあります。</p>
+          <p>当サイトは駿河屋・Yahoo!ショッピング・楽天市場等のアフィリエイトプログラムに参加しています。リンク経由で購入された場合、当サイトに報酬が発生することがあります。</p>
         </section>
         <section>
           <h2 className="text-base font-black text-gray-900 mb-2">Cookieについて</h2>

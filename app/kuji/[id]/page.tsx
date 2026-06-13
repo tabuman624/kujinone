@@ -9,6 +9,8 @@ import PrizeList from './PrizeList'
 import PrizePopularity from './PrizePopularity'
 import KujiViewTracker from './KujiViewTracker'
 
+export const revalidate = 3600
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
   const { data: kuji } = await supabase.from('kuji').select('title, price, banner_url, image_url').eq('id', id).single()
@@ -135,12 +137,12 @@ export default async function KujiDetail({
             <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">相場を確認・購入する / MARKET</h2>
             <div className="space-y-2">
               {[
-                { href: `https://jp.mercari.com/search?keyword=${encodeURIComponent(searchKeyword)}`, label: "メルカリで相場を見る", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600" },
-                { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(searchKeyword)}`, label: "駿河屋で相場を見る", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600" },
-                { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502`, label: "Yahoo!ショッピングで見る", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600" },
-                { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621`, label: "楽天市場で見る", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600" },
+                { href: `https://jp.mercari.com/search?keyword=${encodeURIComponent(searchKeyword)}`, label: "メルカリで相場を見る", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600", sponsored: false },
+                { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(searchKeyword)}`, label: "駿河屋で相場を見る【PR】", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600", sponsored: true },
+                { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502`, label: "Yahoo!ショッピングで見る【PR】", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600", sponsored: true },
+                { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621`, label: "楽天市場で見る【PR】", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600", sponsored: true },
               ].map((link, i) => (
-                <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-3 p-3 border rounded-xl ${link.color} press anim-fade-up`} style={{ animationDelay: `${280 + (prizes?.length || 0) * 60 + i * 60}ms` }}>
+                <a key={link.href} href={link.href} target="_blank" rel={link.sponsored ? "noopener noreferrer sponsored" : "noopener noreferrer"} className={`flex items-center gap-3 p-3 border rounded-xl ${link.color} press anim-fade-up`} style={{ animationDelay: `${280 + (prizes?.length || 0) * 60 + i * 60}ms` }}>
                   <div className="flex-1">
                     <p className="text-sm font-bold">{link.label}</p>
                     <p className="text-xs opacity-70">{link.sub}</p>

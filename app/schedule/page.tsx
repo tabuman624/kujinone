@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { supabase } from '../lib/supabase'
 import ScheduleList from './ScheduleList'
 
+export const revalidate = 3600
+
 export const metadata: Metadata = {
   title: '一番くじ 発売スケジュール | くじのね',
   description: '一番くじの発売スケジュール一覧。月別に新作・最新くじの発売日をチェックして、期待値計算に役立てよう。',
