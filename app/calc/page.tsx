@@ -95,6 +95,13 @@ function buildYahooAuctionUrl(kujiTitle: string, prize: PrizeWithInput): string 
   return `https://auctions.yahoo.co.jp/search/search?p=${encodeURIComponent(keyword)}&va=${encodeURIComponent(keyword)}&istatus=1`
 }
 
+function buildYahooShoppingAffUrl(kujiTitle: string, prize: PrizeWithInput): string {
+  const titleCore = kujiTitle.replace(/^一番くじ\s*/, '').trim()
+  const titlePrefix = titleCore.split(/\s+/)[0] ?? ''
+  const keyword = [`一番くじ`, titlePrefix, prize.grade, prize.name.replace(/^[A-ZＡ-Ｚa-z\w]*賞\s*/, '').trim()].filter(Boolean).join(' ')
+  return `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502&url=${encodeURIComponent(`https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(keyword)}`)}`
+}
+
 function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithInput[], loading: boolean, kujiTitle: string }) {
   const hasAnyData = prizes.some(p => p.market_price != null || p.auction_price_min != null)
   const yahooAllUrl = `https://auctions.yahoo.co.jp/search/search?p=${encodeURIComponent('一番くじ ' + kujiTitle.replace(/^一番くじ\s*/, ''))}&istatus=1`
@@ -131,7 +138,14 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
                   <div className="flex flex-col gap-1">
                     {hasStable && (
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] text-gray-400 font-medium">Yahoo Shop</span>
+                        <a
+                          href={buildYahooShoppingAffUrl(kujiTitle, prize)}
+                          target="_blank"
+                          rel="noopener noreferrer sponsored"
+                          className="text-[10px] text-amber-500 font-medium hover:underline"
+                        >
+                          Yahoo Shop →
+                        </a>
                         <span className="text-sm font-black text-emerald-600">
                           ¥{prize.market_price!.toLocaleString()}
                         </span>
