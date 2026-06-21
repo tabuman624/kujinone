@@ -6,6 +6,8 @@ import matter from 'gray-matter'
 import { marked } from 'marked'
 import { notFound } from 'next/navigation'
 
+export const revalidate = 3600
+
 const NEWS_DIR = path.join(process.cwd(), 'news-posts')
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {

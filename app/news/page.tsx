@@ -39,6 +39,8 @@ function KujiPlaceholder() {
   )
 }
 
+export const revalidate = 3600
+
 export default function NewsPage() {
   const dir = path.join(process.cwd(), 'news-posts')
 
@@ -59,15 +61,21 @@ export default function NewsPage() {
       }
     })
 
+  const today = new Date().toISOString().slice(0, 10)
+
   // 最新3件（記事公開日 desc）
   const latestPosts = [...allPosts]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 3)
 
-  // 全件（発売日 asc）
-  const posts = [...allPosts].sort(
-    (a, b) => new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime()
-  )
+  // 全件（発売予定→近い順、発売済み→新しい順）
+  const posts = [...allPosts].sort((a, b) => {
+    const aUpcoming = a.releaseDate >= today
+    const bUpcoming = b.releaseDate >= today
+    if (aUpcoming !== bUpcoming) return aUpcoming ? -1 : 1
+    const diff = new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime()
+    return aUpcoming ? diff : -diff
+  })
 
   // 月別グループ
   const grouped = posts.reduce<Record<string, NewsPost[]>>((acc, post) => {
@@ -76,8 +84,6 @@ export default function NewsPage() {
     acc[key].push(post)
     return acc
   }, {})
-
-  const today = new Date().toISOString().slice(0, 10)
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
