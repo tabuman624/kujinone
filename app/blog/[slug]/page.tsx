@@ -174,6 +174,11 @@ export default async function BlogDetailPage({
         <Link href="/schedule" className="flex items-center justify-center gap-2 w-full py-3 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 press" style={{ boxShadow: '0 6px 16px rgba(220,38,38,0.35)' }}>
           期待値を計算してみる →
         </Link>
+        {String(data.category) !== '基礎' && (
+          <Link href="/blog/ichiban-kuji-toha" className="flex items-center justify-center gap-2 w-full py-3 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 press">
+            一番くじとは？基本を読む →
+          </Link>
+        )}
         <Link href="/blog" className="flex items-center justify-center gap-2 w-full py-3 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 press">
           コラム一覧に戻る
         </Link>

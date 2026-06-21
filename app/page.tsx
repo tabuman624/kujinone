@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
 import { supabase } from './lib/supabase'
 
 export const revalidate = 3600
@@ -36,12 +39,13 @@ export default async function Home() {
     .order('release_at', { ascending: true })
     .limit(5)
 
-  // Hard-coded featured columns on the home page (same 3 as the original)
-  const featuredPosts = [
-    { slug: 'kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説', date: '2026-05-01', summary: '一番くじで目当ての賞を引くまでに平均いくらかかるかを示す「期待値」の計算方法を解説します。' },
-    { slug: 'ichiban-kuji-toha', title: '一番くじとは？仕組み・賞の種類・値段・お得な引き方を徹底解説', date: '2026-05-01', summary: '一番くじはハズレなしのキャラクターくじ。1回700〜800円で必ず景品がもらえます。賞の種類・購入場所・損しない引き方まで解説。' },
-    { slug: 'kuji-vs-mercari', title: '一番くじ vs メルカリ どちらがお得？', date: '2026-05-01', summary: '一番くじを引くのとフリマアプリで購入するのと、どちらがお得かを比較・解説します。' },
-  ]
+  const postsDir = path.join(process.cwd(), 'posts')
+  const featuredSlugs = ['kitaichi-toha', 'ichiban-kuji-toha', 'kuji-vs-mercari']
+  const featuredPosts = featuredSlugs.map(slug => {
+    const raw = fs.readFileSync(path.join(postsDir, `${slug}.md`), 'utf-8')
+    const { data } = matter(raw)
+    return { slug, title: String(data.title || ''), date: String(data.date || ''), summary: String(data.summary || '') }
+  })
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -118,6 +122,17 @@ export default async function Home() {
             </Link>
           ))}
         </div>
+      </div>
+
+      {/* 一番くじとは？ */}
+      <div className="mx-5 my-2 p-4 bg-red-50 rounded-xl border border-red-100">
+        <h2 className="text-sm font-black text-gray-900 mb-1">一番くじ（いちばんくじ）とは？</h2>
+        <p className="text-xs text-gray-600 leading-relaxed mb-2">
+          バンダイスピリッツが展開するハズレなしのキャラクターくじ（1回700〜800円）。ドラゴンボール・ワンピースなど人気アニメのフィギュアが必ず当たります。
+        </p>
+        <Link href="/blog/ichiban-kuji-toha" className="text-xs text-red-600 font-bold hover:underline">
+          詳しく見る →
+        </Link>
       </div>
 
       {/* Column — numbered list matching /blog list style */}
