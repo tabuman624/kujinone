@@ -151,6 +151,22 @@ export default async function KujiDetail({
                 </a>
               ))}
             </div>
+            <div className="mt-3">
+              <h2 className="text-xs font-black text-gray-400 tracking-wider mb-2">賞品を売る / SELL</h2>
+              <a
+                href={`https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=${encodeURIComponent('https://www.suruga-ya.jp/kaitori.html#figure')}`}
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                className="flex items-center gap-3 p-3 border rounded-xl bg-green-50 border-green-200 text-green-700 press anim-fade-up"
+                style={{ animationDelay: `${460 + (prizes?.length || 0) * 60}ms` }}
+              >
+                <div className="flex-1">
+                  <p className="text-sm font-bold">駿河屋に売る【PR】</p>
+                  <p className="text-xs opacity-70">宅配・出張買取に対応、査定無料</p>
+                </div>
+                <span className="text-sm">↗</span>
+              </a>
+            </div>
           </div>
         )}
 
