@@ -124,17 +124,6 @@ export default async function Home() {
         </div>
       </div>
 
-      {/* 一番くじとは？ */}
-      <div className="mx-5 my-2 p-4 bg-red-50 rounded-xl border border-red-100">
-        <h2 className="text-sm font-black text-gray-900 mb-1">一番くじ（いちばんくじ）とは？</h2>
-        <p className="text-xs text-gray-600 leading-relaxed mb-2">
-          バンダイスピリッツが展開するハズレなしのキャラクターくじ（1回700〜800円）。ドラゴンボール・ワンピースなど人気アニメのフィギュアが必ず当たります。
-        </p>
-        <Link href="/blog/ichiban-kuji-toha" className="text-xs text-red-600 font-bold hover:underline">
-          詳しく見る →
-        </Link>
-      </div>
-
       {/* Column — numbered list matching /blog list style */}
       <div className="px-5 pb-7">
         <div className="border-t border-gray-100 pt-6 mb-3">
@@ -168,6 +157,17 @@ export default async function Home() {
             </Link>
           ))}
         </div>
+      </div>
+
+      {/* 一番くじとは？ */}
+      <div className="mx-5 mb-6 p-4 bg-red-50 rounded-xl border border-red-100">
+        <h2 className="text-sm font-black text-gray-900 mb-1">一番くじ（いちばんくじ）とは？</h2>
+        <p className="text-xs text-gray-600 leading-relaxed mb-2">
+          バンダイスピリッツが展開するハズレなしのキャラクターくじ（1回700〜800円）。ドラゴンボール・ワンピースなど人気アニメのフィギュアが必ず当たります。
+        </p>
+        <Link href="/blog/ichiban-kuji-toha" className="text-xs text-red-600 font-bold hover:underline">
+          詳しく見る →
+        </Link>
       </div>
 
       {/* フッターリンク（スマホのみ、PCはサイドナビに表示済み） */}
