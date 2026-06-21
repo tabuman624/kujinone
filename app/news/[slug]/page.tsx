@@ -6,7 +6,7 @@ import matter from 'gray-matter'
 import { marked } from 'marked'
 import { notFound } from 'next/navigation'
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 const NEWS_DIR = path.join(process.cwd(), 'news-posts')
 

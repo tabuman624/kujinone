@@ -39,7 +39,7 @@ function KujiPlaceholder() {
   )
 }
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export default function NewsPage() {
   const dir = path.join(process.cwd(), 'news-posts')
