@@ -154,7 +154,7 @@ export default async function KujiDetail({
             <div className="mt-3">
               <h2 className="text-xs font-black text-gray-400 tracking-wider mb-2">賞品を売る / SELL</h2>
               <a
-                href={`https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=${encodeURIComponent('https://www.suruga-ya.jp/kaitori.html#figure')}`}
+                href={`https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=${encodeURIComponent('https://www.suruga-ya.jp/man/kaitori/kaitoritop.html')}`}
                 target="_blank"
                 rel="noopener noreferrer sponsored"
                 className="flex items-center gap-3 p-3 border rounded-xl bg-green-50 border-green-200 text-green-700 press anim-fade-up"

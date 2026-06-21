@@ -223,7 +223,7 @@ function AffiliateLinks({ title }: { title: string }) {
     { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502&url=${encodeURIComponent(`https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(title)}`)}`, label: "Yahoo!ショッピングで見る【PR】", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600", rel: "noopener noreferrer sponsored" },
     { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621&url=${encodeURIComponent(`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(title)}`)}`, label: "楽天市場で見る【PR】", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600", rel: "noopener noreferrer sponsored" },
   ]
-  const surugaKaitoriUrl = `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=${encodeURIComponent('https://www.suruga-ya.jp/kaitori.html#figure')}`
+  const surugaKaitoriUrl = `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=${encodeURIComponent('https://www.suruga-ya.jp/man/kaitori/kaitoritop.html')}`
   return (
     <div className="space-y-2">
       <h2 className="text-sm font-black text-gray-900 mb-3 anim-fade-up">相場を確認・購入する</h2>
