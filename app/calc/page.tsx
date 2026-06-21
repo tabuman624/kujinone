@@ -245,6 +245,19 @@ function AffiliateLinks({ title }: { title: string }) {
           </div>
           <span className="text-sm">↗</span>
         </a>
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <p className="text-xs text-gray-400 font-bold tracking-wider mb-2">売り方を詳しく知る</p>
+          {[
+            { href: '/blog/ichiban-kuji-sell-where', label: '駿河屋・メルカリ・ヤフオク、売るならどこ？' },
+            { href: '/blog/ichiban-kuji-sell-tips', label: '外れ賞品を高く売る5つのコツ' },
+            { href: '/blog/ichiban-kuji-kaitori-price', label: '買取相場はいくら？グレード別に解説' },
+          ].map(item => (
+            <a key={item.href} href={item.href} className="flex items-center gap-2 py-2 border-t border-gray-100 text-xs text-gray-600 hover:text-green-700 transition-colors">
+              <span className="text-green-400">›</span>
+              {item.label}
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   )
