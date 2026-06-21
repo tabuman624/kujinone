@@ -219,7 +219,7 @@ function AffiliateLinks({ title }: { title: string }) {
 
   const links = [
     { href: `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM&a8ejpredirect=${encodeURIComponent(`https://jp.mercari.com/search?keyword=${encodeURIComponent(title)}`)}`, label: "メルカリで相場を見る【PR】", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600", rel: "noopener noreferrer nofollow sponsored" },
-    { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(title)}`, label: "駿河屋で相場を見る【PR】", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600", rel: "noopener noreferrer sponsored" },
+    { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(title)}`, label: "駿河屋で相場を見る【PR】", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600", rel: "nofollow noopener noreferrer" },
     { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502&url=${encodeURIComponent(`https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(title)}`)}`, label: "Yahoo!ショッピングで見る【PR】", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600", rel: "noopener noreferrer sponsored" },
     { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621&url=${encodeURIComponent(`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(title)}`)}`, label: "楽天市場で見る【PR】", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600", rel: "noopener noreferrer sponsored" },
   ]
@@ -238,7 +238,7 @@ function AffiliateLinks({ title }: { title: string }) {
       ))}
       <div className="pt-1">
         <h2 className="text-sm font-black text-gray-900 mb-3 anim-fade-up" style={{ animationDelay: '460ms' }}>賞品を売る</h2>
-        <a href={surugaKaitoriUrl} target="_blank" rel="noopener noreferrer sponsored" className="flex items-center gap-3 p-3 border rounded-xl bg-green-50 border-green-200 text-green-700 press anim-fade-up" style={{ animationDelay: '500ms' }}>
+        <a href={surugaKaitoriUrl} target="_blank" rel="nofollow noopener noreferrer" className="flex items-center gap-3 p-3 border rounded-xl bg-green-50 border-green-200 text-green-700 press anim-fade-up" style={{ animationDelay: '500ms' }}>
           <div className="flex-1">
             <p className="text-sm font-bold">駿河屋に売る【PR】</p>
             <p className="text-xs opacity-70">宅配・出張買取に対応、査定無料</p>

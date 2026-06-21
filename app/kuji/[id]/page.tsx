@@ -137,12 +137,12 @@ export default async function KujiDetail({
             <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">相場を確認・購入する / MARKET</h2>
             <div className="space-y-2">
               {[
-                { href: `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM&a8ejpredirect=${encodeURIComponent(`https://jp.mercari.com/search?keyword=${encodeURIComponent(searchKeyword)}`)}`, label: "メルカリで相場を見る【PR】", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600", sponsored: true },
-                { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(searchKeyword)}`, label: "駿河屋で相場を見る【PR】", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600", sponsored: true },
-                { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502&url=${encodeURIComponent(`https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(searchKeyword)}`)}`, label: "Yahoo!ショッピングで見る【PR】", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600", sponsored: true },
-                { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621&url=${encodeURIComponent(`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(searchKeyword)}`)}`, label: "楽天市場で見る【PR】", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600", sponsored: true },
+                { href: `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM&a8ejpredirect=${encodeURIComponent(`https://jp.mercari.com/search?keyword=${encodeURIComponent(searchKeyword)}`)}`, label: "メルカリで相場を見る【PR】", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600", rel: "noopener noreferrer sponsored nofollow" },
+                { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(searchKeyword)}`, label: "駿河屋で相場を見る【PR】", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600", rel: "nofollow noopener noreferrer" },
+                { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502&url=${encodeURIComponent(`https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(searchKeyword)}`)}`, label: "Yahoo!ショッピングで見る【PR】", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600", rel: "noopener noreferrer sponsored" },
+                { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621&url=${encodeURIComponent(`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(searchKeyword)}`)}`, label: "楽天市場で見る【PR】", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600", rel: "noopener noreferrer sponsored" },
               ].map((link, i) => (
-                <a key={link.href} href={link.href} target="_blank" rel={link.sponsored ? "noopener noreferrer sponsored" : "noopener noreferrer"} className={`flex items-center gap-3 p-3 border rounded-xl ${link.color} press anim-fade-up`} style={{ animationDelay: `${280 + (prizes?.length || 0) * 60 + i * 60}ms` }}>
+                <a key={link.href} href={link.href} target="_blank" rel={link.rel} className={`flex items-center gap-3 p-3 border rounded-xl ${link.color} press anim-fade-up`} style={{ animationDelay: `${280 + (prizes?.length || 0) * 60 + i * 60}ms` }}>
                   <div className="flex-1">
                     <p className="text-sm font-bold">{link.label}</p>
                     <p className="text-xs opacity-70">{link.sub}</p>
@@ -156,7 +156,7 @@ export default async function KujiDetail({
               <a
                 href={`https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=${encodeURIComponent('https://www.suruga-ya.jp/man/kaitori/kaitoritop.html')}`}
                 target="_blank"
-                rel="noopener noreferrer sponsored"
+                rel="nofollow noopener noreferrer"
                 className="flex items-center gap-3 p-3 border rounded-xl bg-green-50 border-green-200 text-green-700 press anim-fade-up"
                 style={{ animationDelay: `${460 + (prizes?.length || 0) * 60}ms` }}
               >
