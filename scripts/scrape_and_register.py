@@ -137,21 +137,28 @@ def insert_prizes(kuji_id, prizes):
         for p in prizes
     ]
 
-    # INSERT を先に試してから DELETE → 失敗時はデータを消さない
-    # 一時的に kuji_id=-1 でテスト挿入して書き込み権限を確認
+    # テスト挿入で書き込み権限を確認（kuji_id=-1 は FK なしなので必ず通る）
     test_res = requests.post(
         f"{SUPABASE_URL}/rest/v1/prizes",
         headers={**SB_HEADERS, "Prefer": "return=minimal"},
         json=[{**prize_data[0], "kuji_id": -1}]
     )
+    requests.delete(f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.-1",
+                    headers={**SB_HEADERS, "Prefer": "return=minimal"})
     if test_res.status_code not in [200, 201, 204]:
-        print(f"  ⚠️  prizes書き込み権限なし（RLSブロック）。DELETEをスキップします。")
-        print(f"     SUPABASE_SERVICE_ROLE_KEY を設定してください。")
+        print(f"  ⚠️  prizes書き込み権限なし（RLSブロック）。スキップします。")
         return
 
-    # 書き込み可能と確認できたので既存を削除してから挿入
-    requests.delete(f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.-1", headers=SB_HEADERS)
-    requests.delete(f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}", headers=SB_HEADERS)
+    # 既存データを削除して件数を確認
+    requests.delete(f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}",
+                    headers={**SB_HEADERS, "Prefer": "return=minimal"})
+    remaining = requests.get(
+        f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}&select=id&limit=1",
+        headers=SB_HEADERS
+    ).json()
+    if remaining:
+        print(f"  ⚠️  DELETE後も既存データが残っています。重複を避けるためスキップします。")
+        return
 
     res = requests.post(
         f"{SUPABASE_URL}/rest/v1/prizes",
