@@ -2,8 +2,9 @@ name: 一番くじ スクレイピング＋記事自動生成
 
 on:
   schedule:
-    - cron: '0 1 * * *'  # 毎日朝10時（JST）
-  workflow_dispatch:      # 手動実行も可能
+    - cron: '0 1 * * *'   # 毎日 10:00 JST（UTC 01:00）
+    - cron: '0 2 * * 0'   # 毎週日曜 11:00 JST（UTC 02:00）に画像チェック追加実行
+  workflow_dispatch:       # 手動実行も可能
 
 jobs:
   scrape-and-generate:
@@ -25,24 +26,27 @@ jobs:
 
       - name: ① スクレイピング実行（Supabaseに登録）
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python scripts/scrape_and_register.py
 
       - name: ② 新作記事を自動生成
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python scripts/generate_articles.py
 
       - name: ③ 景品の参考価格を取得（Yahoo Shopping＋ヤフオク落札相場）
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           YAHOO_APP_ID: ${{ secrets.YAHOO_APP_ID }}
         run: python scripts/fetch_prize_prices.py
 
-      - name: ④ 新規記事をコミット＆プッシュ
+      - name: ④ 画像URL死活チェック＆自動修復（日曜のみ）
+        if: github.event.schedule == '0 2 * * 0' || github.event_name == 'workflow_dispatch'
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python scripts/check_and_fix_images.py
+
+      - name: ⑤ 新規記事をコミット＆プッシュ
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Actions"
