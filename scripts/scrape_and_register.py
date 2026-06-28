@@ -178,6 +178,7 @@ def main():
             kuji["is_active"] = True
             if detail.get("banner_url"):
                 kuji["image_url"] = detail["banner_url"]
+                kuji["banner_url"] = detail["banner_url"]
 
             kuji_id = upsert_kuji(kuji)
             if kuji_id:
