@@ -5,7 +5,11 @@ import re
 import time
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://jydztbogaxevxjsdjohy.supabase.co")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZHp0Ym9nYXhldnhqc2Rqb2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDg5NzQsImV4cCI6MjA5NDI4NDk3NH0.9X1C_EwKKXk0h_g0ONNLT53BZctO9zu7o-2oLlZbl2s")
+ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZHp0Ym9nYXhldnhqc2Rqb2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDg5NzQsImV4cCI6MjA5NDI4NDk3NH0.9X1C_EwKKXk0h_g0ONNLT53BZctO9zu7o-2oLlZbl2s"
+# service_role key を優先。なければ anon key（書き込み不可）
+SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY", ANON_KEY)
+if SUPABASE_KEY == ANON_KEY:
+    print("⚠️  警告: SUPABASE_SERVICE_ROLE_KEY が未設定です。書き込みが失敗する可能性があります。")
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"}
 SB_HEADERS = {
@@ -128,14 +132,27 @@ def insert_prizes(kuji_id, prizes):
             if p.get("market_price") is not None:
                 price_backup[p["sort_order"]] = p["market_price"]
 
-    requests.delete(
-        f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}",
-        headers=SB_HEADERS
-    )
     prize_data = [
         {"kuji_id": kuji_id, **p, "market_price": price_backup.get(p["sort_order"])}
         for p in prizes
     ]
+
+    # INSERT を先に試してから DELETE → 失敗時はデータを消さない
+    # 一時的に kuji_id=-1 でテスト挿入して書き込み権限を確認
+    test_res = requests.post(
+        f"{SUPABASE_URL}/rest/v1/prizes",
+        headers={**SB_HEADERS, "Prefer": "return=minimal"},
+        json=[{**prize_data[0], "kuji_id": -1}]
+    )
+    if test_res.status_code not in [200, 201, 204]:
+        print(f"  ⚠️  prizes書き込み権限なし（RLSブロック）。DELETEをスキップします。")
+        print(f"     SUPABASE_SERVICE_ROLE_KEY を設定してください。")
+        return
+
+    # 書き込み可能と確認できたので既存を削除してから挿入
+    requests.delete(f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.-1", headers=SB_HEADERS)
+    requests.delete(f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}", headers=SB_HEADERS)
+
     res = requests.post(
         f"{SUPABASE_URL}/rest/v1/prizes",
         headers=SB_HEADERS,
