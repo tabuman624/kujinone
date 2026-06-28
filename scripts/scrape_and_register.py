@@ -166,21 +166,31 @@ def main():
     kuji_list = scrape_list()
     print(f"\n合計 {len(kuji_list)}件取得")
 
+    errors = []
     for kuji in kuji_list:
         print(f"\n処理中: {kuji['title']}")
         time.sleep(1)
 
-        detail = scrape_detail(kuji["source_url"])
-        kuji["price"] = detail["price"] or 800
-        kuji["total"] = 0
-        kuji["is_active"] = True
-        if detail.get("banner_url"):
-            kuji["image_url"] = detail["banner_url"]
+        try:
+            detail = scrape_detail(kuji["source_url"])
+            kuji["price"] = detail["price"] or 800
+            kuji["total"] = 0
+            kuji["is_active"] = True
+            if detail.get("banner_url"):
+                kuji["image_url"] = detail["banner_url"]
 
-        kuji_id = upsert_kuji(kuji)
-        if kuji_id:
-            insert_prizes(kuji_id, detail["prizes"])
-            print(f"  ✅ 登録完了 (id={kuji_id}, 賞{len(detail['prizes'])}件)")
+            kuji_id = upsert_kuji(kuji)
+            if kuji_id:
+                insert_prizes(kuji_id, detail["prizes"])
+                print(f"  ✅ 登録完了 (id={kuji_id}, 賞{len(detail['prizes'])}件)")
+        except Exception as e:
+            print(f"  ❌ エラー（スキップ）: {e}")
+            errors.append({"title": kuji["title"], "error": str(e)})
+
+    if errors:
+        print(f"\n⚠️  {len(errors)}件スキップ:")
+        for err in errors:
+            print(f"  - {err['title']}: {err['error']}")
 
     print("\n完了！")
 
