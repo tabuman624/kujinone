@@ -14,6 +14,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 SUPABASE_URL = "https://jydztbogaxevxjsdjohy.supabase.co"
 ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZHp0Ym9nYXhldnhqc2Rqb2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDg5NzQsImV4cCI6MjA5NDI4NDk3NH0.9X1C_EwKKXk0h_g0ONNLT53BZctO9zu7o-2oLlZbl2s"
@@ -40,6 +41,22 @@ def is_broken(url):
         return r.status_code == 404
     except Exception:
         return True
+
+
+def check_urls_parallel(items, url_key="image_url", workers=20):
+    """URLリストを並列チェックして壊れているものだけ返す"""
+    broken = []
+
+    def check(item):
+        return item, is_broken(item.get(url_key))
+
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        futures = {ex.submit(check, item): item for item in items}
+        for future in as_completed(futures):
+            item, broken_flag = future.result()
+            if broken_flag:
+                broken.append(item)
+    return broken
 
 
 def scrape_kuji_detail(source_url):
@@ -95,38 +112,37 @@ def fix_prize_images(kuji_id, source_url, broken_sort_orders):
 def main():
     print("=== 画像URL死活チェック開始 ===\n")
 
-    # 1. kuji テーブルの image_url チェック
+    # 1. kuji テーブルの image_url チェック（並列）
     print("【kuji テーブル】")
     res = requests.get(
         f"{SUPABASE_URL}/rest/v1/kuji?select=id,title,image_url,source_url&is_active=eq.true&order=id",
         headers=SB_HEADERS,
     )
     kuji_list = res.json()
-    kuji_broken = 0
-    for k in kuji_list:
-        if is_broken(k.get("image_url")):
+    print(f"  {len(kuji_list)}件を並列チェック中...")
+    broken_kuji = check_urls_parallel(kuji_list)
+    if broken_kuji:
+        for k in broken_kuji:
             print(f"  ❌ 404: id={k['id']} {k['title']}")
             fix_kuji_image(k["id"], k["title"], k["source_url"], k.get("image_url"))
-            kuji_broken += 1
             time.sleep(1)
-    if kuji_broken == 0:
+    else:
         print("  ✅ 全件OK")
 
     print(f"\n【prizes テーブル】")
     res = requests.get(
-        f"{SUPABASE_URL}/rest/v1/prizes?select=kuji_id,sort_order,grade,image_url&image_url=not.is.null&order=kuji_id,sort_order&limit=3000",
+        f"{SUPABASE_URL}/rest/v1/prizes?select=kuji_id,sort_order,grade,image_url&image_url=not.is.null&order=kuji_id,sort_order&limit=5000",
         headers=SB_HEADERS,
     )
     prizes = res.json()
+    print(f"  {len(prizes)}件を並列チェック中...")
+    broken_prizes = check_urls_parallel(prizes)
 
-    # kuji_idごとに壊れた sort_order をまとめる
     broken_by_kuji: dict[int, list[int]] = {}
-    for p in prizes:
-        if is_broken(p.get("image_url")):
-            print(f"  ❌ 404: kuji_id={p['kuji_id']} {p['grade']}")
-            broken_by_kuji.setdefault(p["kuji_id"], []).append(p["sort_order"])
+    for p in broken_prizes:
+        print(f"  ❌ 404: kuji_id={p['kuji_id']} {p['grade']}")
+        broken_by_kuji.setdefault(p["kuji_id"], []).append(p["sort_order"])
 
-    # source_url を取得して修復
     if broken_by_kuji:
         kuji_ids = list(broken_by_kuji.keys())
         id_filter = ",".join(map(str, kuji_ids))
