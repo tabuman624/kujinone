@@ -29,26 +29,26 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python scripts/scrape_and_register.py
 
-      - name: ② 新作記事を自動生成
-        env:
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python scripts/generate_articles.py
-
-      - name: ③ 景品の参考価格を取得（Yahoo Shopping＋ヤフオク落札相場）
-        env:
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          YAHOO_APP_ID: ${{ secrets.YAHOO_APP_ID }}
-        run: python scripts/fetch_prize_prices.py
-
-      - name: ④ 画像URL死活チェック＆自動修復（日曜のみ）
+      - name: ② 画像URL死活チェック＆自動修復（日曜のみ）
         if: github.event.schedule == '0 2 * * 0' || github.event_name == 'workflow_dispatch'
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python scripts/check_and_fix_images.py
 
-      - name: ⑤ 新規記事をコミット＆プッシュ
+      - name: ③ 新作記事を自動生成・画像URL同期
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python scripts/generate_articles.py
+
+      - name: ④ 景品の参考価格を取得（Yahoo Shopping＋ヤフオク落札相場）
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          YAHOO_APP_ID: ${{ secrets.YAHOO_APP_ID }}
+        run: python scripts/fetch_prize_prices.py
+
+      - name: ⑤ 記事をコミット＆プッシュ
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Actions"
           git add news-posts/
-          git diff --staged --quiet && echo "新規記事なし" || (git commit -m "feat: 新作くじ記事を自動生成 [skip ci]" && git push)
+          git diff --staged --quiet && echo "変更なし" || (git commit -m "feat: 新作くじ記事を自動生成 [skip ci]" && git push)

@@ -58,6 +58,31 @@ def post_exists(slug):
     return os.path.exists(os.path.join(POSTS_DIR, f"{slug}.md"))
 
 
+def update_article_image(slug, new_image_url):
+    """既存記事のimage_urlをDBの最新URLに更新する。変更があればTrueを返す。"""
+    if not new_image_url:
+        return False
+    filepath = os.path.join(POSTS_DIR, f"{slug}.md")
+    with open(filepath, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    m = re.search(r'^image_url:\s*(.*?)$', content, re.MULTILINE)
+    current_url = m.group(1).strip() if m else ''
+
+    if current_url == new_image_url:
+        return False
+
+    if m:
+        new_content = re.sub(r'^image_url:\s*(.*?)$', f'image_url: {new_image_url}', content, flags=re.MULTILINE)
+    else:
+        # image_url行がない場合はcategoryの後に追加
+        new_content = re.sub(r'^(category: 新作速報)$', f'\\1\nimage_url: {new_image_url}', content, flags=re.MULTILINE)
+
+    with open(filepath, 'w', encoding='utf-8') as f:
+        f.write(new_content)
+    return True
+
+
 def format_date_ja(date_str):
     d = datetime.strptime(date_str, "%Y-%m-%d")
     return f"{d.year}年{d.month}月{d.day}日"
@@ -176,10 +201,17 @@ def main():
     print(f"{len(kuji_list)}件のくじを確認")
 
     generated = 0
+    image_updated = 0
     for kuji in kuji_list:
         slug = make_slug(kuji['product_id'])
+        new_image_url = kuji.get('banner_url') or kuji.get('image_url') or ''
+
         if post_exists(slug):
-            print(f"  スキップ（記事あり）: {kuji['title']}")
+            if update_article_image(slug, new_image_url):
+                print(f"  🖼️  画像URL更新: {kuji['title']}")
+                image_updated += 1
+            else:
+                print(f"  スキップ（記事あり・画像変更なし）: {kuji['title']}")
             continue
 
         prizes  = get_prizes(kuji['id'])
@@ -192,7 +224,7 @@ def main():
         print(f"  ✅ 生成: {slug}.md ／ {kuji['title']}")
         generated += 1
 
-    print(f"\n完了：{generated}件の記事を生成しました。")
+    print(f"\n完了：{generated}件の記事を生成、{image_updated}件の画像URLを更新しました。")
     return generated
 
 
