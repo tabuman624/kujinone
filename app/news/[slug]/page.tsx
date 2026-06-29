@@ -36,9 +36,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
+function toDateStr(d: unknown): string {
+  if (d instanceof Date) return d.toISOString().slice(0, 10)
+  return String(d || '').slice(0, 10)
+}
+
 function fmt(d: string) {
   const dt = new Date(d)
-  return `${dt.getFullYear()}年${dt.getMonth() + 1}月${dt.getDate()}日`
+  return `${dt.getUTCFullYear()}年${dt.getUTCMonth() + 1}月${dt.getUTCDate()}日`
 }
 
 export default async function NewsDetailPage({
@@ -54,7 +59,7 @@ export default async function NewsDetailPage({
   const html = await marked(content)
 
   const title = String(data.title || '')
-  const releaseDate = String(data.release_date || data.date || '')
+  const releaseDate = toDateStr(data.release_date || data.date)
   const today = new Date().toISOString().slice(0, 10)
   const isUpcoming = releaseDate >= today
 

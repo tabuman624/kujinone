@@ -10,14 +10,19 @@ export const metadata: Metadata = {
   description: '一番くじの新作・発売予定情報をいち早くお届け。賞品一覧・期待値・発売日をまとめてチェック。',
 }
 
+function toDateStr(d: unknown): string {
+  if (d instanceof Date) return d.toISOString().slice(0, 10)
+  return String(d || '').slice(0, 10)
+}
+
 function fmt(d: string) {
   const dt = new Date(d)
-  return `${dt.getMonth() + 1}月${dt.getDate()}日`
+  return `${dt.getUTCMonth() + 1}月${dt.getUTCDate()}日`
 }
 
 function fmtMonth(d: string) {
   const dt = new Date(d)
-  return `${dt.getFullYear()}年${dt.getMonth() + 1}月`
+  return `${dt.getUTCFullYear()}年${dt.getUTCMonth() + 1}月`
 }
 
 type NewsPost = {
@@ -54,8 +59,8 @@ export default function NewsPage() {
       return {
         slug,
         title: String(data.title || ''),
-        date: String(data.date || ''),
-        releaseDate: String(data.release_date || data.date || ''),
+        date: toDateStr(data.date),
+        releaseDate: toDateStr(data.release_date || data.date),
         summary: String(data.summary || ''),
         imageUrl: String(data.image_url || ''),
       }
@@ -63,19 +68,18 @@ export default function NewsPage() {
 
   const today = new Date().toISOString().slice(0, 10)
 
-  // 最新3件（記事公開日 desc）
-  const latestPosts = [...allPosts]
+  // 発売日が今日以降の記事のみ
+  const upcomingPosts = allPosts.filter(p => p.releaseDate >= today)
+
+  // 最新3件（記事公開日 desc、発売予定のみ）
+  const latestPosts = [...upcomingPosts]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 3)
 
-  // 全件（発売予定→近い順、発売済み→新しい順）
-  const posts = [...allPosts].sort((a, b) => {
-    const aUpcoming = a.releaseDate >= today
-    const bUpcoming = b.releaseDate >= today
-    if (aUpcoming !== bUpcoming) return aUpcoming ? -1 : 1
-    const diff = new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime()
-    return aUpcoming ? diff : -diff
-  })
+  // 全件（発売予定→近い順）
+  const posts = [...upcomingPosts].sort((a, b) =>
+    new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime()
+  )
 
   // 月別グループ
   const grouped = posts.reduce<Record<string, NewsPost[]>>((acc, post) => {
@@ -157,10 +161,7 @@ export default function NewsPage() {
                   )}
                   {/* 発売バッジ（画像上に重ねる） */}
                   <div className="absolute top-2 left-2">
-                    {post.releaseDate >= today
-                      ? <span className="text-[9px] font-bold text-white bg-red-600 px-1.5 py-0.5 rounded-full shadow">発売予定</span>
-                      : <span className="text-[9px] font-bold text-white bg-gray-600 px-1.5 py-0.5 rounded-full shadow">発売済み</span>
-                    }
+                    <span className="text-[9px] font-bold text-white bg-red-600 px-1.5 py-0.5 rounded-full shadow">発売予定</span>
                   </div>
                 </div>
                 {/* テキスト */}
@@ -190,53 +191,47 @@ export default function NewsPage() {
             </div>
 
             <div className="space-y-2">
-              {monthPosts.map((post, i) => {
-                const isUpcoming = post.releaseDate >= today
-                return (
-                  <Link
-                    key={post.slug}
-                    href={`/news/${post.slug}`}
-                    className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl press anim-fade-up group"
-                    style={{ animationDelay: `${i * 40}ms` }}
-                  >
-                    {/* 正方形サムネイル */}
-                    <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
-                      {post.imageUrl ? (
-                        <Image
-                          src={post.imageUrl}
-                          alt={post.title}
-                          fill
-                          className="object-cover"
-                          sizes="56px"
-                          unoptimized
-                        />
-                      ) : (
-                        <KujiPlaceholder />
-                      )}
-                    </div>
+              {monthPosts.map((post, i) => (
+                <Link
+                  key={post.slug}
+                  href={`/news/${post.slug}`}
+                  className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl press anim-fade-up group"
+                  style={{ animationDelay: `${i * 40}ms` }}
+                >
+                  {/* 正方形サムネイル */}
+                  <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                    {post.imageUrl ? (
+                      <Image
+                        src={post.imageUrl}
+                        alt={post.title}
+                        fill
+                        className="object-cover"
+                        sizes="56px"
+                        unoptimized
+                      />
+                    ) : (
+                      <KujiPlaceholder />
+                    )}
+                  </div>
 
-                    {/* テキスト */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        {isUpcoming
-                          ? <span className="text-[9px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded-full">発売予定</span>
-                          : <span className="text-[9px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full">発売済み</span>
-                        }
-                        <span className="text-[10px] text-gray-400" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                          {fmt(post.releaseDate)}発売
-                        </span>
-                      </div>
-                      <p className="text-[13px] font-bold text-gray-900 leading-snug group-hover:text-red-600 transition-colors line-clamp-2">
-                        {post.title}
-                      </p>
+                  {/* テキスト */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <span className="text-[9px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded-full">発売予定</span>
+                      <span className="text-[10px] text-gray-400" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                        {fmt(post.releaseDate)}発売
+                      </span>
                     </div>
+                    <p className="text-[13px] font-bold text-gray-900 leading-snug group-hover:text-red-600 transition-colors line-clamp-2">
+                      {post.title}
+                    </p>
+                  </div>
 
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-gray-300 flex-shrink-0 group-hover:text-red-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                )
-              })}
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-gray-300 flex-shrink-0 group-hover:text-red-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              ))}
             </div>
           </div>
         ))}
