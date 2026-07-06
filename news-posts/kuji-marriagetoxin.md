@@ -4,7 +4,7 @@ date: 2026-05-16
 release_date: 2026-06-30
 kuji_id: 253
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10677/924bf8f3-dc49-41ad-8369-a198a49585cd.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10677/3a3be28d-f676-437e-ab77-68137eb028c1.webp
 summary: 2026年6月30日発売「一番くじちょこっと マリッジトキシン」の賞品一覧と期待値。1回550円、本数未発表。くじのねで期待値を計算できます。
 ---
 
