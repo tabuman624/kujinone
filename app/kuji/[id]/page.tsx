@@ -59,6 +59,23 @@ export default async function KujiDetail({
   const isReleased = kuji.release_at <= today
   const searchKeyword = kuji.title.split(/\s+/).slice(0, 2).join(' ')
 
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: kuji.title,
+    image: kuji.banner_url || kuji.image_url || undefined,
+    description: `${kuji.title}の賞品一覧・期待値。1回${kuji.price}円。`,
+    url: `https://kujinone.com/kuji/${id}`,
+    offers: {
+      '@type': 'Offer',
+      price: kuji.price,
+      priceCurrency: 'JPY',
+      availability: isReleased ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
+      itemCondition: 'https://schema.org/NewCondition',
+      url: `https://kujinone.com/kuji/${id}`,
+    },
+  }
+
   // 対応する新作速報記事の有無を確認
   const newsSlug = `kuji-${kuji.product_id}`
   const newsExists = fs.existsSync(path.join(process.cwd(), 'news-posts', `${newsSlug}.md`))
@@ -74,6 +91,7 @@ export default async function KujiDetail({
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       <KujiViewTracker kujiId={Number(id)} />
       <div className="bg-gray-900 px-6 py-8 text-white">
         <Link href="/schedule" className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-white mb-3 transition-colors press">
@@ -206,6 +224,7 @@ export default async function KujiDetail({
             {[
               { href: '/blog/kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説' },
               { href: '/blog/ichiban-kuji-toha', title: '一番くじとは？仕組み・賞の種類・値段・お得な引き方を徹底解説' },
+              { href: '/blog/ichiban-kuji-probability', title: '一番くじの確率の計算方法｜A賞〜D賞・ラストワン賞の当たる確率を解説' },
               { href: '/blog/ichiban-kuji-last-one', title: '一番くじ ラストワン賞の狙い方｜確率・タイミング・コツを解説' },
               { href: '/blog/kuji-vs-mercari', title: '一番くじ vs メルカリ どちらがお得？賢い選び方を解説' },
               { href: '/blog/ichiban-kuji-sell-where', title: '一番くじの賞品を売るには？駿河屋・メルカリ・ヤフオク徹底比較' },

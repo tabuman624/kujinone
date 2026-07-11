@@ -46,6 +46,9 @@ export default async function SchedulePage() {
       <div className="bg-gray-900 px-6 py-8 text-white">
         <p className="text-xs font-bold tracking-widest text-gray-400 mb-1">SCHEDULE</p>
         <h1 className="text-xl font-black">一番くじ 発売スケジュール</h1>
+        <p className="text-xs text-gray-400 mt-2 leading-relaxed">
+          最新の一番くじ発売予定を月別にまとめています。気になるくじをタップすると、賞品一覧と期待値をその場で計算できます。
+        </p>
       </div>
       <ScheduleList kujiList={kujiList ?? []} />
     </main>
