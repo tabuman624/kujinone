@@ -46,7 +46,12 @@ jobs:
           YAHOO_APP_ID: ${{ secrets.YAHOO_APP_ID }}
         run: python scripts/fetch_prize_prices.py
 
-      - name: ⑤ 記事をコミット＆プッシュ
+      - name: ⑤ 「本数未発表」のまま放置された既存記事に実データをバックフィル
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python scripts/backfill_article_data.py
+
+      - name: ⑥ 記事をコミット＆プッシュ
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Actions"

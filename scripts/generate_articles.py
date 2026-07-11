@@ -105,69 +105,63 @@ def calc_expected(total, target_count, price):
     return times * price, times
 
 
-def build_expected_section(prizes, total, price):
+def build_ev_section(prizes, total, price, as_of):
+    """賞品ごとの期待値テーブルを生成する（calc_expectedと同じ式を全賞品に適用）。"""
     if total <= 0 or not prizes:
         return ""
 
-    a_prizes  = [p for p in prizes if p['grade'] == 'A賞']
-    ab_prizes = [p for p in prizes if p['grade'] in ('A賞', 'B賞')]
-    lines = []
+    rows = []
+    for p in prizes:
+        result = calc_expected(total, p['total'], price)
+        if not result:
+            continue
+        cost, times = result
+        rows.append(f"| {p['grade']} | {p['total']}本 | 約{times}回 | 約{cost:,}円 |")
 
-    if a_prizes:
-        a_count = sum(p['total'] for p in a_prizes)
-        result = calc_expected(total, a_count, price)
-        if result:
-            exp, times = result
-            lines.append(f"**A賞のみ狙う場合**：平均 {exp:,}円（約{times}回）")
-
-    if len(ab_prizes) > len(a_prizes):
-        ab_count = sum(p['total'] for p in ab_prizes)
-        result = calc_expected(total, ab_count, price)
-        if result:
-            exp, times = result
-            lines.append(f"**A賞＋B賞を狙う場合**：平均 {exp:,}円（約{times}回）")
-
-    if not lines:
-        first = prizes[0]
-        result = calc_expected(total, first['total'], price)
-        if result:
-            exp, times = result
-            lines.append(f"**{first['grade']}のみ狙う場合**：平均 {exp:,}円（約{times}回）")
-
-    if not lines:
+    if not rows:
         return ""
 
-    body = "\n\n".join(lines)
-    return f"""## 期待値の目安
+    table   = "\n".join(rows)
+    all_cost = total * price
+    as_of_ja = datetime.strptime(as_of, "%Y-%m-%d").strftime("%Y年%m月") if as_of else ""
 
-計算式：（総残数＋1）÷（目当て賞の本数＋1）× くじ価格
+    return f"""## 期待値を計算してみた
 
-{body}
+以下はくじのねの期待値計算ツールで算出した実データです（{as_of_ja}時点）。
 
-※実際の期待値は店頭の残数によって変わります。くじのねで最新の残数を入力して計算してください。"""
+**全本数：{total}本 / 1回{price}円 / 全部引いたら{all_cost:,}円**
+
+| 賞 | 本数 | 平均当選回数 | 平均費用 |
+|---|---|---|---|
+{table}
+
+※ 非復元抽出（引いたくじは戻さない）での理論値です。実際の費用は引く順番により異なります。"""
 
 
-def generate_markdown(kuji, prizes):
+def generate_markdown(kuji, prizes, title_override=None, date_override=None):
     title      = kuji['title']
     release_at = kuji['release_at']
     price      = kuji.get('price') or 800
     total      = sum(p['total'] for p in prizes) if prizes else 0
     kuji_id    = kuji['id']
     product_id = kuji['product_id']
-    today      = datetime.now().strftime("%Y-%m-%d")
+    today      = date_override or datetime.now().strftime("%Y-%m-%d")
 
-    release_ja       = format_date_ja(release_at)
-    total_str        = f"全{total}本" if total > 0 else "本数未発表"
-    prizes_table     = build_prizes_table(prizes)
-    expected_section = build_expected_section(prizes, total, price)
+    release_ja   = format_date_ja(release_at)
+    total_str    = f"全{total}本" if total > 0 else "本数未発表"
+    prizes_table = build_prizes_table(prizes)
+    ev_section   = build_ev_section(prizes, total, price, datetime.now().strftime("%Y-%m-%d"))
+    cta_link     = f"[→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/{kuji_id})"
 
     # ④ バナー画像
     image_url  = kuji.get('banner_url') or kuji.get('image_url') or ''
     image_line = f"image_url: {image_url}" if image_url else ""
     image_block = f"![{title}]({image_url})\n\n" if image_url else ""
 
-    # ⑥ タイトルバリエーション
-    article_title = pick_title(product_id, title, release_ja)
+    # ⑥ タイトルバリエーション（既存記事の再生成時はtitle_overrideで維持）
+    article_title = title_override or pick_title(product_id, title, release_ja)
+
+    body_tail = f"{ev_section}\n\n{cta_link}" if ev_section else cta_link
 
     return f"""---
 title: {article_title}
@@ -192,7 +186,7 @@ summary: {release_ja}発売「{title}」の賞品一覧と期待値。1回{price
 
 {prizes_table}
 
-{expected_section}
+{body_tail}
 """
 
 
