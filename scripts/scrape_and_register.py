@@ -74,13 +74,18 @@ def scrape_detail(url):
     res = requests.get(url, headers=HEADERS)
     soup = BeautifulSoup(res.text, "html.parser")
     price = None
+    available_stores = []
     about = soup.select_one("div.detail.glBox")
     if about:
         for li in about.select("li"):
-            m = re.search(r'1回(\d+)円', li.text)
+            text = li.text
+            m = re.search(r'1回(\d+)円', text)
             if m:
                 price = int(m.group(1))
-                break
+            m2 = re.search(r'■取扱店[：:](.+)', text)
+            if m2:
+                stores_text = re.sub(r'など\s*$', '', m2.group(1).strip())
+                available_stores = [s.strip() for s in stores_text.split('、') if s.strip()]
     banner_el = soup.select_one("section.mvCol img")
     banner_url = banner_el["src"] if banner_el else None
 
@@ -106,7 +111,7 @@ def scrape_detail(url):
         img_el = item.select_one("div.itemColGallery ul.slider-item li img")
         image_url = img_el["src"] if img_el else None
         prizes.append({"grade": grade, "name": item_name, "total": total, "sort_order": i, "image_url": image_url})
-    return {"price": price, "banner_url": banner_url, "prizes": prizes}
+    return {"price": price, "banner_url": banner_url, "prizes": prizes, "available_stores": available_stores}
 
 def upsert_kuji(kuji_data):
     res = requests.post(
@@ -121,6 +126,10 @@ def upsert_kuji(kuji_data):
         return None
 
 def insert_prizes(kuji_id, prizes):
+    if not prizes:
+        print(f"  ⚠️  賞品が0件のため取得失敗とみなし、既存データを保持してスキップします。")
+        return
+
     # 既存の market_price を sort_order をキーに退避（毎日の再挿入で消えないように）
     backup_res = requests.get(
         f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}&select=sort_order,market_price",
@@ -183,6 +192,7 @@ def main():
             kuji["price"] = detail["price"] or 800
             kuji["total"] = 0
             kuji["is_active"] = True
+            kuji["available_stores"] = detail.get("available_stores") or []
             if detail.get("banner_url"):
                 kuji["image_url"] = detail["banner_url"]
                 kuji["banner_url"] = detail["banner_url"]

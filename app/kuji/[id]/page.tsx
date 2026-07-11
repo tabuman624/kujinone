@@ -69,6 +69,8 @@ export default async function KujiDetail({
     ? [kuji.tweet_urls]
     : []
 
+  const availableStores: string[] = Array.isArray(kuji.available_stores) ? kuji.available_stores : []
+
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
@@ -93,6 +95,19 @@ export default async function KujiDetail({
       </div>
 
       <div className="px-5 py-6">
+        {availableStores.length > 0 && (
+          <div className="mb-6 anim-fade-up" style={{ animationDelay: '120ms' }}>
+            <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">取扱店 / STORES</h2>
+            <div className="flex flex-wrap gap-2">
+              {availableStores.map((store) => (
+                <span key={store} className="text-xs bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full font-semibold">
+                  {store}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         {tweetUrls.length > 0 && (
           <div className="mb-6 anim-fade-up" style={{ animationDelay: '140ms' }}>
             <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">公式情報 / OFFICIAL</h2>

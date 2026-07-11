@@ -378,7 +378,9 @@ kuji（一番くじ本体）
   image_url TEXT,                            -- 商品画像URL
   banner_url TEXT,                           -- バナー画像URL
   product_id VARCHAR,                        -- 一番くじ公式の製品ID
+  source_url TEXT,                           -- スクレイプ元の商品ページURL
   tweet_urls TEXT[],                         -- 公式X投稿URL（配列）
+  available_stores TEXT[],                   -- 取扱店（コンビニ・公式ショップなど）
   is_active BOOLEAN DEFAULT true,            -- 表示フラグ
   created_at TIMESTAMPTZ DEFAULT NOW()
 
