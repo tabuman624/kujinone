@@ -18,7 +18,7 @@ LINKSYNERGY_URL = "https://click.linksynergy.com/fs-bin/click?id=txstqLlFvt4&off
 
 # ⑥ タイトルバリエーション（product_idのハッシュで安定的に選択）
 TITLE_TEMPLATES = [
-    "「{title}」発売日・賞品一覧まとめ【{release_ja}発売】",
+    "「{title}」発売日・賞品一覧＆期待値まとめ【{release_ja}発売】",
     "{title} 全賞品・期待値まとめ｜{release_ja}発売",
     "{release_ja}発売「{title}」賞品一覧と期待値を解説",
     "【{release_ja}発売】{title}の賞品・期待値まとめ",

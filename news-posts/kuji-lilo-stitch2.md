@@ -45,4 +45,4 @@ summary: 2026年6月19日発売「一番くじ〈スティッチ〉Every day wit
 
 ※ 非復元抽出（引いたくじは戻さない）での理論値です。実際の費用は引く順番により異なります。
 
-[→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/lilo-stitch2)
+[→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/245)

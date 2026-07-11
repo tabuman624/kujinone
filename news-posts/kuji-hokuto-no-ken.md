@@ -46,4 +46,4 @@ summary: 2026年6月20日発売「一番くじ 北斗の拳 -FIST OF THE NORTH S
 
 ※ 非復元抽出（引いたくじは戻さない）での理論値です。実際の費用は引く順番により異なります。
 
-[→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/hokuto-no-ken)
+[→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/247)
