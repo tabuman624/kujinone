@@ -40,7 +40,7 @@ export default async function Home() {
     .limit(5)
 
   const postsDir = path.join(process.cwd(), 'posts')
-  const featuredSlugs = ['kitaichi-toha', 'ichiban-kuji-toha', 'kuji-vs-mercari']
+  const featuredSlugs = ['kitaichi-toha', 'ichiban-kuji-toha', 'ichiban-kuji-last-one', 'kuji-vs-mercari']
   const featuredPosts = featuredSlugs.map(slug => {
     const raw = fs.readFileSync(path.join(postsDir, `${slug}.md`), 'utf-8')
     const { data } = matter(raw)

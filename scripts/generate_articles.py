@@ -151,7 +151,7 @@ def generate_markdown(kuji, prizes):
     title      = kuji['title']
     release_at = kuji['release_at']
     price      = kuji.get('price') or 800
-    total      = kuji.get('total') or 0
+    total      = sum(p['total'] for p in prizes) if prizes else 0
     kuji_id    = kuji['id']
     product_id = kuji['product_id']
     today      = datetime.now().strftime("%Y-%m-%d")
