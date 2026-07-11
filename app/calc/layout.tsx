@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: '一番くじ 期待値計算ツール【無料】 | くじのね',
   description: '一番くじの期待値を無料で計算。残り枚数を入力するだけで「A賞が当たるまで平均何回・何円かかるか」が即わかる。スマホ対応。',
+  alternates: { canonical: '/calc' },
 }
 
 const softwareJsonLd = {

@@ -5,7 +5,7 @@ release_date: 2026-08-05
 kuji_id: 1221
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10720/8980b568-120f-4eaa-a09e-5e2ed3b10541.webp
-summary: 2026年8月5日発売「一番くじ 進撃の巨人 ～選択と結果～」の賞品一覧と期待値。1回700円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年8月5日発売「一番くじ 進撃の巨人 ～選択と結果～」の賞品一覧と期待値。1回700円、全5本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ 進撃の巨人 ～選択と結果～](https://assets.1kuji.com/uploads/product/top_banner/10720/8980b568-120f-4eaa-a09e-5e2ed3b10541.webp)

@@ -7,6 +7,7 @@ import BlogTabs from './BlogTabs'
 export const metadata: Metadata = {
   title: '一番くじ コラム・攻略記事 | くじのね',
   description: '一番くじの期待値・確率・攻略法をわかりやすく解説するコラム集。初心者から上級者まで役立つ情報をお届けします。',
+  alternates: { canonical: '/blog' },
 }
 
 export default function BlogPage() {

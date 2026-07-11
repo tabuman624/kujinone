@@ -5,7 +5,7 @@ release_date: 2026-07-30
 kuji_id: 267
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10703/bcff45e9-dba8-4c98-83e4-443bbcc36c65.webp
-summary: 2026年7月30日発売「一番くじ 鬼滅の刃 ～上弦の弐～」の賞品一覧と期待値。1回850円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年7月30日発売「一番くじ 鬼滅の刃 ～上弦の弐～」の賞品一覧と期待値。1回850円、全5本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ 鬼滅の刃 ～上弦の弐～](https://assets.1kuji.com/uploads/product/top_banner/10703/b7af5fe9-565b-4cfa-9a4f-ece18eba2fd2.webp)

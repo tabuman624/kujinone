@@ -5,7 +5,7 @@ release_date: 2026-07-31
 kuji_id: 269
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10706/7a22920e-7687-4607-9c91-586de2c33e28.webp
-summary: 2026年7月31日発売「一番くじ 春秋戦国大戦キングダム The Animation 知と武の両輪」の賞品一覧と期待値。1回790円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年7月31日発売「一番くじ 春秋戦国大戦キングダム The Animation 知と武の両輪」の賞品一覧と期待値。1回790円、全4本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ 春秋戦国大戦キングダム The Animation 知と武の両輪](https://assets.1kuji.com/uploads/product/top_banner/10706/7a22920e-7687-4607-9c91-586de2c33e28.webp)

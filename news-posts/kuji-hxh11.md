@@ -5,7 +5,7 @@ release_date: 2026-08-29
 kuji_id: 1234
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10712/37f25fe3-82ea-4d80-b8dc-16dfb5c260b4.webp
-summary: 2026年8月29日発売「一番くじ HUNTER×HUNTER GREED ISLAND ②」の賞品一覧と期待値。1回850円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年8月29日発売「一番くじ HUNTER×HUNTER GREED ISLAND ②」の賞品一覧と期待値。1回850円、全8本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ HUNTER×HUNTER GREED ISLAND ②](https://assets.1kuji.com/uploads/product/top_banner/10712/37f25fe3-82ea-4d80-b8dc-16dfb5c260b4.webp)

@@ -5,7 +5,7 @@ release_date: 2026-08-15
 kuji_id: 1229
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10719/bcce94ef-ffa0-485c-84fa-c958b66d161e.webp
-summary: 2026年8月15日発売「一番くじ ハイキュー!! -烏野の未来-」の賞品一覧と期待値。1回790円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年8月15日発売「一番くじ ハイキュー!! -烏野の未来-」の賞品一覧と期待値。1回790円、全4本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ ハイキュー!! -烏野の未来-](https://assets.1kuji.com/uploads/product/top_banner/10719/9af1008c-2814-4a5a-8a09-5d567928cbf0.webp)

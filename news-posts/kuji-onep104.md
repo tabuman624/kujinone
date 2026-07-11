@@ -5,7 +5,7 @@ release_date: 2026-08-08
 kuji_id: 1223
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10710/6adb2b73-5524-41fc-9a9d-40a4cd30d690.webp
-summary: 2026年8月8日発売「一番くじ ワンピース -エルバフ編- GIANT BASH!! Vol.2」の賞品一覧と期待値。1回790円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年8月8日発売「一番くじ ワンピース -エルバフ編- GIANT BASH!! Vol.2」の賞品一覧と期待値。1回790円、全4本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ ワンピース -エルバフ編- GIANT BASH!! Vol.2](https://assets.1kuji.com/uploads/product/top_banner/10710/6adb2b73-5524-41fc-9a9d-40a4cd30d690.webp)

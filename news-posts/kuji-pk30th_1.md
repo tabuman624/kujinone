@@ -5,7 +5,7 @@ release_date: 2026-05-30
 kuji_id: 21
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10674/b55d6bca-55e0-41b8-bb48-e5479ba985f2.webp
-summary: 2026年5月30日発売「一番くじ Pokémon 30th ANNIVERSARY vol.1」の賞品一覧と期待値。1回750円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年5月30日発売「一番くじ Pokémon 30th ANNIVERSARY vol.1」の賞品一覧と期待値。1回750円、全41本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ Pokémon 30th ANNIVERSARY vol.1](https://assets.1kuji.com/uploads/product/top_banner/10674/b55d6bca-55e0-41b8-bb48-e5479ba985f2.webp)

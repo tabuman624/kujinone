@@ -5,7 +5,7 @@ release_date: 2026-06-13
 kuji_id: 242
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10680/5a271790-1107-4d71-b69e-e25d028ff6b1.webp
-summary: 2026年6月13日発売「一番くじ サッカー日本代表ver. ～最高の景色を2026～」の賞品一覧と期待値。1回790円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年6月13日発売「一番くじ サッカー日本代表ver. ～最高の景色を2026～」の賞品一覧と期待値。1回790円、全51本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ サッカー日本代表ver. ～最高の景色を2026～](https://assets.1kuji.com/uploads/product/top_banner/10680/5a271790-1107-4d71-b69e-e25d028ff6b1.webp)

@@ -5,7 +5,7 @@ release_date: 2026-07-25
 kuji_id: 266
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10690/6f789874-5254-43f4-bc1a-b75af4f84630.webp
-summary: 2026年7月25日発売「一番くじ ゴジラ 最恐怪獣王列伝」の賞品一覧と期待値。1回900円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年7月25日発売「一番くじ ゴジラ 最恐怪獣王列伝」の賞品一覧と期待値。1回900円、全10本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ ゴジラ 最恐怪獣王列伝](https://assets.1kuji.com/uploads/product/top_banner/10690/6f789874-5254-43f4-bc1a-b75af4f84630.webp)

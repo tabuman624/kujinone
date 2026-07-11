@@ -5,7 +5,7 @@ release_date: 2026-08-08
 kuji_id: 1224
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10721/228b9cea-f92d-4a1a-8dae-7d8203c2c0bb.webp
-summary: 2026年8月8日発売「一番くじ 勝利の女神：NIKKE CHAPTER8」の賞品一覧と期待値。1回850円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年8月8日発売「一番くじ 勝利の女神：NIKKE CHAPTER8」の賞品一覧と期待値。1回850円、全3本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ 勝利の女神：NIKKE CHAPTER8](https://assets.1kuji.com/uploads/product/top_banner/10721/06338d96-ca69-4fcc-948f-bdf1f4c78bcd.webp)

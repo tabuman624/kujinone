@@ -1,4 +1,9 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  alternates: { canonical: '/howto' },
+}
 
 const steps = [
   { num: '01', title: 'スケジュールから選ぶ', desc: '気になるくじをタップして賞の内容と本数を確認します。', tip: '「期待値を計算する」ボタンで賞情報が自動で引き継がれます。' },

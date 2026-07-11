@@ -5,7 +5,7 @@ release_date: 2026-06-19
 kuji_id: 244
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10642/e616103f-d37c-40ea-892d-d87d8a84d25f.webp
-summary: 2026年6月19日発売「一番くじ 学園アイドルマスター Part5」の賞品一覧と期待値。1回850円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年6月19日発売「一番くじ 学園アイドルマスター Part5」の賞品一覧と期待値。1回850円、全35本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ 学園アイドルマスター Part5](https://assets.1kuji.com/uploads/product/top_banner/10642/e616103f-d37c-40ea-892d-d87d8a84d25f.webp)

@@ -5,7 +5,7 @@ release_date: 2026-08-08
 kuji_id: 1222
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10708/68de5f7b-7321-438b-86a3-4c0f41b2a30e.webp
-summary: 2026年8月8日発売「一番くじ ナルミヤキャラクターズ ～あの頃のときめきメモリーズ～」の賞品一覧と期待値。1回730円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年8月8日発売「一番くじ ナルミヤキャラクターズ ～あの頃のときめきメモリーズ～」の賞品一覧と期待値。1回730円、全1本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ ナルミヤキャラクターズ ～あの頃のときめきメモリーズ～](https://assets.1kuji.com/uploads/product/top_banner/10708/68de5f7b-7321-438b-86a3-4c0f41b2a30e.webp)

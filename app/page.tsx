@@ -11,6 +11,7 @@ export const revalidate = 3600
 export const metadata: Metadata = {
   title: '一番くじ 期待値計算ツール | くじのね',
   description: '一番くじ（いちばんくじ・1番くじ）の期待値を無料で計算。目当ての賞が当たるまでの平均費用を秒で算出。発売スケジュール・ヤフオク落札相場も確認できます。',
+  alternates: { canonical: '/' },
   openGraph: {
     title: '一番くじ 期待値計算ツール | くじのね',
     description: '一番くじ（いちばんくじ・1番くじ）の期待値を無料で計算。目当ての賞が当たるまでの平均費用を秒で算出。発売スケジュール・ヤフオク落札相場も確認できます。',

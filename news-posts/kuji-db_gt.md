@@ -5,7 +5,7 @@ release_date: 2026-08-22
 kuji_id: 1231
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10725/c7225f21-0220-4d72-a476-b4bc19ff2e34.webp
-summary: 2026年8月22日発売「一番くじ ドラゴンボールGT」の賞品一覧と期待値。1回790円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年8月22日発売「一番くじ ドラゴンボールGT」の賞品一覧と期待値。1回790円、全7本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ ドラゴンボールGT](https://assets.1kuji.com/uploads/product/top_banner/10725/c7225f21-0220-4d72-a476-b4bc19ff2e34.webp)

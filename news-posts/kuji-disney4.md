@@ -5,7 +5,7 @@ release_date: 2026-06-05
 kuji_id: 239
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10641/aca69020-9a78-4eb7-9f10-dabb5a753383.webp
-summary: 2026年6月5日発売「一番くじ 〈Disney〉 World of Imagination」の賞品一覧と期待値。1回790円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年6月5日発売「一番くじ 〈Disney〉 World of Imagination」の賞品一覧と期待値。1回790円、全41本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ 〈Disney〉 World of Imagination](https://assets.1kuji.com/uploads/product/top_banner/10641/aca69020-9a78-4eb7-9f10-dabb5a753383.webp)

@@ -5,7 +5,7 @@ release_date: 2026-08-21
 kuji_id: 1230
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10717/872ff32b-2077-47d4-9fdf-742100b11ffb.webp
-summary: 2026年8月21日発売「一番くじ 銀魂 生誕20周年記念　銀魂展　～はたちのつどい～ その弐」の賞品一覧と期待値。1回800円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年8月21日発売「一番くじ 銀魂 生誕20周年記念　銀魂展　～はたちのつどい～ その弐」の賞品一覧と期待値。1回800円、全5本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ 銀魂 生誕20周年記念　銀魂展　～はたちのつどい～ その弐](https://assets.1kuji.com/uploads/product/top_banner/10717/872ff32b-2077-47d4-9fdf-742100b11ffb.webp)

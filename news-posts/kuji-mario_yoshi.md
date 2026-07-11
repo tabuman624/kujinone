@@ -5,7 +5,7 @@ release_date: 2026-05-23
 kuji_id: 18
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10682/86d30df3-4e11-42bd-85a8-4c007eea735a.webp
-summary: 2026年5月23日発売「一番くじ スーパーマリオ with YOSHI」の賞品一覧と期待値。1回750円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年5月23日発売「一番くじ スーパーマリオ with YOSHI」の賞品一覧と期待値。1回750円、全28本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ スーパーマリオ with YOSHI](https://assets.1kuji.com/uploads/product/top_banner/10682/86d30df3-4e11-42bd-85a8-4c007eea735a.webp)

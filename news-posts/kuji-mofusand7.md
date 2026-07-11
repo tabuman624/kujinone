@@ -5,7 +5,7 @@ release_date: 2026-07-31
 kuji_id: 268
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10692/09a52dad-3e6d-4023-ad62-f4885efc3053.webp
-summary: 2026年7月31日発売「一番くじ mofusand ～ひんやりくつろぎ時間～」の賞品一覧と期待値。1回750円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年7月31日発売「一番くじ mofusand ～ひんやりくつろぎ時間～」の賞品一覧と期待値。1回750円、全4本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ mofusand ～ひんやりくつろぎ時間～](https://assets.1kuji.com/uploads/product/top_banner/10692/09a52dad-3e6d-4023-ad62-f4885efc3053.webp)

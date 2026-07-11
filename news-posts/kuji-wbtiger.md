@@ -5,7 +5,7 @@ release_date: 2026-06-27
 kuji_id: 250
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10675/a5eb7835-3a06-4065-a291-1669e0154d16.webp
-summary: 2026年6月27日発売「一番くじ ホワイトタイガーとブラックタイガー ～みんなでパーティ～」の賞品一覧と期待値。1回750円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年6月27日発売「一番くじ ホワイトタイガーとブラックタイガー ～みんなでパーティ～」の賞品一覧と期待値。1回750円、全19本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ ホワイトタイガーとブラックタイガー ～みんなでパーティ～](https://assets.1kuji.com/uploads/product/top_banner/10675/a5eb7835-3a06-4065-a291-1669e0154d16.webp)

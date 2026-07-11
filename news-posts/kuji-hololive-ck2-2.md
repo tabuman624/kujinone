@@ -5,7 +5,7 @@ release_date: 2026-06-23
 kuji_id: 3570
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10784/54af3956-e510-4920-8d60-ec09170c3df6.webp
-summary: 2026年6月23日発売「一番くじ ホロライブ ちょこのっこコレクション 2026ver.（再販売）」の賞品一覧と期待値。1回900円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年6月23日発売「一番くじ ホロライブ ちょこのっこコレクション 2026ver.（再販売）」の賞品一覧と期待値。1回900円、全34本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ ホロライブ ちょこのっこコレクション 2026ver.（再販売）](https://assets.1kuji.com/uploads/product/top_banner/10784/54af3956-e510-4920-8d60-ec09170c3df6.webp)

@@ -5,7 +5,7 @@ release_date: 2026-06-20
 kuji_id: 246
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10663/f2ee3ba0-d9f1-4210-9444-0549e103d859.webp
-summary: 2026年6月20日発売「一番くじ 僕のヒーローアカデミア -いつまでも手を差し伸べ続ける物語-」の賞品一覧と期待値。1回790円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年6月20日発売「一番くじ 僕のヒーローアカデミア -いつまでも手を差し伸べ続ける物語-」の賞品一覧と期待値。1回790円、全51本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ 僕のヒーローアカデミア -いつまでも手を差し伸べ続ける物語-](https://assets.1kuji.com/uploads/product/top_banner/10663/f2ee3ba0-d9f1-4210-9444-0549e103d859.webp)

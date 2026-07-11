@@ -5,7 +5,7 @@ release_date: 2026-07-25
 kuji_id: 264
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10673/43203670-b307-43af-a10e-f5663c42c15c.webp
-summary: 2026年7月25日発売「一番くじ たまごっち～ぐるぐる発見！Tamagotchi Paradise！～」の賞品一覧と期待値。1回750円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年7月25日発売「一番くじ たまごっち～ぐるぐる発見！Tamagotchi Paradise！～」の賞品一覧と期待値。1回750円、全2本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ たまごっち～ぐるぐる発見！Tamagotchi Paradise！～](https://assets.1kuji.com/uploads/product/top_banner/10673/43203670-b307-43af-a10e-f5663c42c15c.webp)

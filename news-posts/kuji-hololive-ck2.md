@@ -5,7 +5,7 @@ release_date: 2026-05-21
 kuji_id: 13
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10665/3df9558c-2f11-4798-a7dd-01bd75cc1751.webp
-summary: 2026年5月21日発売「一番くじ ホロライブ ちょこのっこコレクション 2026ver.」の賞品一覧と期待値。1回900円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年5月21日発売「一番くじ ホロライブ ちょこのっこコレクション 2026ver.」の賞品一覧と期待値。1回900円、全34本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ ホロライブ ちょこのっこコレクション 2026ver.](https://assets.1kuji.com/uploads/product/top_banner/10665/3df9558c-2f11-4798-a7dd-01bd75cc1751.webp)

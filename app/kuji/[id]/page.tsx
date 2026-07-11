@@ -19,6 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return {
     title: `${kuji.title} 期待値 | くじのね`,
     description: `${kuji.title}の期待値を計算。1回${kuji.price}円のくじを引く前に、目当ての賞が当たるまでの平均費用を確認しよう。`,
+    alternates: { canonical: `/kuji/${id}` },
     openGraph: {
       title: `${kuji.title} 期待値 | くじのね`,
       description: `${kuji.title}の期待値を計算。1回${kuji.price}円のくじを引く前に、目当ての賞が当たるまでの平均費用を確認しよう。`,
