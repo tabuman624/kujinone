@@ -169,6 +169,9 @@ export default async function KujiDetail({
         {isReleased && (
           <div className="mb-6 anim-fade-up" style={{ animationDelay: `${260 + (prizes?.length || 0) * 60}ms` }}>
             <h2 className="text-xs font-black text-gray-400 tracking-wider mb-3">相場を確認・購入する / MARKET</h2>
+            <p className="text-xs text-gray-500 mb-3 leading-relaxed">
+              『{kuji.title}』の中古相場はメルカリ・駿河屋などで確認できます。発売直後は定価に近い価格で取引されることが多く、時間が経つにつれて相場が下がっていく傾向があります。
+            </p>
             <div className="space-y-2">
               {[
                 { href: `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM&a8ejpredirect=${encodeURIComponent(`https://jp.mercari.com/search?keyword=${encodeURIComponent(searchKeyword)}`)}`, label: "メルカリで相場を見る【PR】", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600", rel: "noopener noreferrer sponsored nofollow" },
