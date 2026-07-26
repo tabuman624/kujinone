@@ -8,6 +8,7 @@ import { supabase } from '../../lib/supabase'
 import PrizeList from './PrizeList'
 import PrizePopularity from './PrizePopularity'
 import KujiViewTracker from './KujiViewTracker'
+import AffiliateLink from '../../components/AffiliateLink'
 
 export const revalidate = 3600
 
@@ -179,30 +180,29 @@ export default async function KujiDetail({
                 { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502&url=${encodeURIComponent(`https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(searchKeyword)}`)}`, label: "Yahoo!ショッピングで見る【PR】", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600", rel: "noopener noreferrer sponsored" },
                 { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621&url=${encodeURIComponent(`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(searchKeyword)}`)}`, label: "楽天市場で見る【PR】", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600", rel: "noopener noreferrer sponsored" },
               ].map((link, i) => (
-                <a key={link.href} href={link.href} target="_blank" rel={link.rel} className={`flex items-center gap-3 p-3 border rounded-xl ${link.color} press anim-fade-up`} style={{ animationDelay: `${280 + (prizes?.length || 0) * 60 + i * 60}ms` }}>
-                  <div className="flex-1">
-                    <p className="text-sm font-bold">{link.label}</p>
-                    <p className="text-xs opacity-70">{link.sub}</p>
-                  </div>
-                  <span className="text-sm">↗</span>
-                </a>
+                <AffiliateLink
+                  key={link.href}
+                  href={link.href}
+                  rel={link.rel}
+                  className={`flex items-center gap-3 p-3 border rounded-xl ${link.color} press anim-fade-up`}
+                  style={{ animationDelay: `${280 + (prizes?.length || 0) * 60 + i * 60}ms` }}
+                  label={link.label}
+                  sub={link.sub}
+                  eventLabel={`${link.label}_${kuji.title}`}
+                />
               ))}
             </div>
             <div className="mt-3">
               <h2 className="text-xs font-black text-gray-400 tracking-wider mb-2">賞品を売る / SELL</h2>
-              <a
+              <AffiliateLink
                 href={`https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=${encodeURIComponent('https://www.suruga-ya.jp/man/kaitori/kaitoritop.html')}`}
-                target="_blank"
                 rel="nofollow noopener noreferrer"
                 className="flex items-center gap-3 p-3 border rounded-xl bg-green-50 border-green-200 text-green-700 press anim-fade-up"
                 style={{ animationDelay: `${460 + (prizes?.length || 0) * 60}ms` }}
-              >
-                <div className="flex-1">
-                  <p className="text-sm font-bold">駿河屋に売る【PR】</p>
-                  <p className="text-xs opacity-70">宅配・出張買取に対応、査定無料</p>
-                </div>
-                <span className="text-sm">↗</span>
-              </a>
+                label="駿河屋に売る【PR】"
+                sub="宅配・出張買取に対応、査定無料"
+                eventLabel={`駿河屋に売る_${kuji.title}`}
+              />
             </div>
           </div>
         )}
@@ -229,7 +229,7 @@ export default async function KujiDetail({
               { href: '/blog/kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説' },
               { href: '/blog/ichiban-kuji-toha', title: '一番くじとは？仕組み・賞の種類・値段・お得な引き方を徹底解説' },
               { href: '/blog/ichiban-kuji-probability', title: '一番くじの確率の計算方法｜A賞〜D賞・ラストワン賞の当たる確率を解説' },
-              { href: '/blog/ichiban-kuji-last-one', title: '一番くじ ラストワン賞の狙い方｜確率・タイミング・コツを解説' },
+              { href: '/blog/ichiban-kuji-last-one', title: '一番くじ ラストワン賞とは？狙い方・確率を解説' },
               { href: '/blog/kuji-vs-mercari', title: '一番くじ vs メルカリ どちらがお得？賢い選び方を解説' },
               { href: '/blog/ichiban-kuji-sell-where', title: '一番くじの賞品を売るには？駿河屋・メルカリ・ヤフオク徹底比較' },
               { href: '/blog/ichiban-kuji-kaitori-price', title: '一番くじの買取相場はいくら？フィギュア・ラストワン賞の価値を解説' },

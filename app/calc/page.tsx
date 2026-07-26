@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { supabase } from "../lib/supabase"
+import AffiliateLink from "../components/AffiliateLink"
 
 type Kuji = { id: number; title: string; price: number; total: number; release_at: string; image_url: string | null }
 type Prize = {
@@ -228,23 +229,28 @@ function AffiliateLinks({ title }: { title: string }) {
     <div className="space-y-2">
       <h2 className="text-sm font-black text-gray-900 mb-3 anim-fade-up">相場を確認・購入する</h2>
       {links.map((link, i) => (
-        <a key={link.href} href={link.href} target="_blank" rel={link.rel} className={`flex items-center gap-3 p-3 border rounded-xl ${link.color} press anim-fade-up`} style={{ animationDelay: `${100 + i * 90}ms` }}>
-          <div className="flex-1">
-            <p className="text-sm font-bold">{link.label}</p>
-            <p className="text-xs opacity-70">{link.sub}</p>
-          </div>
-          <span className="text-sm">↗</span>
-        </a>
+        <AffiliateLink
+          key={link.href}
+          href={link.href}
+          rel={link.rel}
+          className={`flex items-center gap-3 p-3 border rounded-xl ${link.color} press anim-fade-up`}
+          style={{ animationDelay: `${100 + i * 90}ms` }}
+          label={link.label}
+          sub={link.sub}
+          eventLabel={`${link.label}_${title}`}
+        />
       ))}
       <div className="pt-1">
         <h2 className="text-sm font-black text-gray-900 mb-3 anim-fade-up" style={{ animationDelay: '460ms' }}>賞品を売る</h2>
-        <a href={surugaKaitoriUrl} target="_blank" rel="nofollow noopener noreferrer" className="flex items-center gap-3 p-3 border rounded-xl bg-green-50 border-green-200 text-green-700 press anim-fade-up" style={{ animationDelay: '500ms' }}>
-          <div className="flex-1">
-            <p className="text-sm font-bold">駿河屋に売る【PR】</p>
-            <p className="text-xs opacity-70">宅配・出張買取に対応、査定無料</p>
-          </div>
-          <span className="text-sm">↗</span>
-        </a>
+        <AffiliateLink
+          href={surugaKaitoriUrl}
+          rel="nofollow noopener noreferrer"
+          className="flex items-center gap-3 p-3 border rounded-xl bg-green-50 border-green-200 text-green-700 press anim-fade-up"
+          style={{ animationDelay: '500ms' }}
+          label="駿河屋に売る【PR】"
+          sub="宅配・出張買取に対応、査定無料"
+          eventLabel={`駿河屋に売る_${title}`}
+        />
         <div className="mt-3 pt-3 border-t border-gray-100">
           <p className="text-xs text-gray-400 font-bold tracking-wider mb-2">売り方を詳しく知る</p>
           {[
