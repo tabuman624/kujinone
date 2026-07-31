@@ -4,7 +4,7 @@ date: 2026-07-06
 release_date: 2026-08-29
 kuji_id: 1233
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10697/dd5e9053-2a9c-4a0e-b91c-66fdf07f496a.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10697/34e51f7c-45e9-4c2d-90d5-947632c57e1c.webp
 summary: 2026年8月29日発売「一番くじ 爬虫類＆両生類～Tiny Friends～vol.3」の賞品一覧と期待値。1回680円、全1本。くじのねで期待値を計算できます。
 ---
 
