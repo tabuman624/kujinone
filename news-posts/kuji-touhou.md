@@ -4,7 +4,7 @@ date: 2026-06-15
 release_date: 2026-08-14
 kuji_id: 1226
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10713/971f6bae-2a44-46a3-bc71-f08f1645b75c.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10713/bebf87c6-9d17-4578-ac50-c91a1232507c.webp
 summary: 2026年8月14日発売「一番くじ 東方Project」の賞品一覧と期待値。1回700円、全5本。くじのねで期待値を計算できます。
 ---
 
