@@ -4,7 +4,7 @@ date: 2026-07-21
 release_date: 2026-09-19
 kuji_id: 3964
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10733/53fbf406-d28a-4488-b1a3-fc21b033d72c.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10733/bb97c3a4-7941-4f9c-a7f2-83867cf8ee8d.webp
 summary: 2026年9月19日発売「一番くじ 学園アイドルマスター Part6」の賞品一覧と期待値。1回850円、全3本。くじのねで期待値を計算できます。
 ---
 
