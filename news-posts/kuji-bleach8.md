@@ -4,7 +4,7 @@ date: 2026-07-21
 release_date: 2026-09-19
 kuji_id: 3965
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10747/97b0c794-7b4c-4955-9daa-fa1896e0eb44.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10747/316c3d7d-0526-4809-a0e7-b40bbc68518b.webp
 summary: 2026年9月19日発売「一番くじ BLEACH Stirring Souls vol.5」の賞品一覧と期待値。1回850円、全3本。くじのねで期待値を計算できます。
 ---
 
