@@ -61,23 +61,6 @@ export default async function KujiDetail({
   const isReleased = kuji.release_at <= today
   const searchKeyword = kuji.title.split(/\s+/).slice(0, 2).join(' ')
 
-  const productJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: kuji.title,
-    image: kuji.banner_url || kuji.image_url || undefined,
-    description: `${kuji.title}の賞品一覧・期待値。1回${kuji.price}円。`,
-    url: `https://kujinone.com/kuji/${id}`,
-    offers: {
-      '@type': 'Offer',
-      price: kuji.price,
-      priceCurrency: 'JPY',
-      availability: isReleased ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
-      itemCondition: 'https://schema.org/NewCondition',
-      url: `https://kujinone.com/kuji/${id}`,
-    },
-  }
-
   // 対応する新作速報記事の有無を確認
   const newsSlug = `kuji-${kuji.product_id}`
   const newsExists = fs.existsSync(path.join(process.cwd(), 'news-posts', `${newsSlug}.md`))
@@ -93,7 +76,6 @@ export default async function KujiDetail({
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       <KujiViewTracker kujiId={Number(id)} />
       <div className="bg-stone-800 px-6 py-8 text-white">
         <Link href="/schedule" className="inline-flex items-center gap-1 text-xs text-stone-400 hover:text-white mb-3 transition-colors press">
