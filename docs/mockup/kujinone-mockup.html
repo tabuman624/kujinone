@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>くじのね | 一番くじの期待値計算</title>
+<style>
+:root{
+  --stone-900:#1C1917; --stone-800:#292524; --stone-700:#44403C;
+  --stone-600:#57534E; --stone-500:#78716C; --stone-400:#A8A29E;
+  --stone-200:#E7E5E4; --stone-100:#F5F5F4; --stone-50:#FAFAF9;
+  --shu:#E14B36; --shu-dark:#C93C29; --shu-bg:#FDF0ED;
+  --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+  background:var(--stone-100); color:var(--stone-800);
+  -webkit-font-smoothing:antialiased;
+}
+.shell{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;padding-bottom:72px}
+a{color:inherit;text-decoration:none}
+
+header{background:var(--stone-800);padding:11px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20}
+.brand-ja{color:var(--stone-50);font-size:14px;font-weight:600;line-height:1.2}
+.brand-en{color:var(--stone-400);font-size:9px;letter-spacing:.14em;line-height:1.3}
+
+.hero{padding:34px 20px 26px;text-align:center}
+.hero h1{font-size:21px;font-weight:600;line-height:1.45;letter-spacing:.01em;color:var(--stone-800);text-wrap:balance}
+.hero p{color:var(--stone-500);font-size:13px;line-height:1.8;margin-top:11px}
+.cta{display:block;background:var(--shu);color:#fff;font-size:15px;font-weight:600;padding:14px;border-radius:var(--radius);margin-top:24px}
+.cta-sub{display:block;border:1px solid var(--stone-200);color:var(--stone-600);font-size:13.5px;padding:12px;border-radius:var(--radius);margin-top:10px}
+
+.band{display:flex;align-items:flex-end;justify-content:center;gap:6px;height:38px}
+.band i{width:10px;background:var(--stone-200);border-radius:5px 5px 0 0;display:block}
+
+section{padding:26px 18px;border-top:8px solid var(--stone-100)}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+.sec-head h2{font-size:15px;font-weight:600;position:relative;padding-left:12px}
+.sec-head h2::before{content:"";position:absolute;left:0;top:.2em;bottom:.2em;width:3px;border-radius:2px;background:var(--shu)}
+.more{font-size:12px;color:var(--stone-500)}
+
+.card{border:1px solid var(--stone-200);border-radius:12px;padding:13px 14px;margin-bottom:10px}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.card-title{font-size:13.5px;font-weight:600;line-height:1.5}
+.card-meta{font-size:11.5px;color:var(--stone-500);margin-top:5px}
+.ev{text-align:right;flex-shrink:0}
+.ev-label{font-size:10px;color:var(--stone-400);letter-spacing:.04em}
+.ev-num{font-size:19px;font-weight:600;line-height:1.2;color:var(--shu)}
+.ev-num.low{color:var(--stone-400)}
+.rate{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;margin-top:8px;background:var(--shu-bg);color:var(--shu-dark)}
+.rate.low{background:var(--stone-100);color:var(--stone-500)}
+
+.steps{display:grid;gap:12px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.step-n{width:24px;height:24px;border-radius:50%;background:var(--shu-bg);color:var(--shu-dark);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:13.5px;font-weight:600}
+.step-d{font-size:12px;color:var(--stone-500);line-height:1.7;margin-top:3px}
+
+.post{padding:12px 0;border-bottom:1px solid var(--stone-200)}
+.post:last-child{border-bottom:none}
+.post-t{font-size:13.5px;font-weight:600;line-height:1.55}
+.post-d{font-size:11.5px;color:var(--stone-400);margin-top:5px}
+
+.note{background:var(--stone-50);border-radius:var(--radius);padding:12px 14px;font-size:11.5px;color:var(--stone-500);line-height:1.75}
+
+footer{background:var(--stone-800);padding:22px 18px 26px;color:var(--stone-400)}
+.f-links{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;margin:14px 0 16px}
+.f-copy{font-size:11px;color:var(--stone-600)}
+
+nav.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid var(--stone-200);display:flex;z-index:30}
+nav.bottom a{flex:1;padding:9px 0 10px;text-align:center;font-size:10.5px;color:var(--stone-400)}
+nav.bottom a.on{color:var(--shu);font-weight:600}
+nav.bottom svg{display:block;margin:0 auto 3px}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<header>
+  <svg width="22" height="22" viewBox="0 0 64 64" aria-hidden="true">
+    <rect x="6" y="34" width="12" height="24" rx="6" fill="#FAFAF9"/>
+    <rect x="26" y="6" width="12" height="44" rx="6" fill="#F2634E"/>
+    <rect x="46" y="24" width="12" height="34" rx="6" fill="#FAFAF9"/>
+  </svg>
+  <div>
+    <div class="brand-ja">くじのね</div>
+    <div class="brand-en">KUJINONE</div>
+  </div>
+</header>
+
+<div class="hero">
+  <svg width="58" height="58" viewBox="0 0 64 64" aria-hidden="true" style="margin-bottom:16px">
+    <rect x="6" y="34" width="12" height="24" rx="6" fill="#292524"/>
+    <rect x="26" y="6" width="12" height="44" rx="6" fill="#E14B36"/>
+    <rect x="46" y="24" width="12" height="34" rx="6" fill="#292524"/>
+  </svg>
+  <h1>期待値でねらう、一番くじ</h1>
+  <p>商品を選ぶだけで、1回あたりの<br>損得と損益ラインがわかります。</p>
+  <a class="cta" href="#">期待値を計算する</a>
+  <a class="cta-sub" href="#">発売スケジュール</a>
+</div>
+
+<div class="band">
+  <i style="height:15px"></i><i style="height:24px"></i><i style="height:12px"></i>
+  <i style="height:31px;background:#E14B36"></i><i style="height:18px"></i>
+  <i style="height:26px"></i><i style="height:14px"></i><i style="height:21px"></i>
+</div>
+
+<section>
+  <div class="sec-head"><h2>期待値ランキング</h2><a class="more" href="#">すべて見る →</a></div>
+
+  <a class="card" href="#" style="display:block">
+    <div class="card-top">
+      <div>
+        <div class="card-title">一番くじ ワンピース ‐ 頂上決戦 ‐</div>
+        <div class="card-meta">1回 800円 ・ 全80種 ・ 発売中</div>
+      </div>
+      <div class="ev">
+        <div class="ev-label">期待値</div>
+        <div class="ev-num">742<span style="font-size:12px">円</span></div>
+      </div>
+    </div>
+    <span class="rate">還元率 92.8%</span>
+  </a>
+
+  <a class="card" href="#" style="display:block">
+    <div class="card-top">
+      <div>
+        <div class="card-title">一番くじ ドラゴンボール 超戦士列伝</div>
+        <div class="card-meta">1回 780円 ・ 全70種 ・ 9/12発売</div>
+      </div>
+      <div class="ev">
+        <div class="ev-label">期待値</div>
+        <div class="ev-num">690<span style="font-size:12px">円</span></div>
+      </div>
+    </div>
+    <span class="rate">還元率 88.5%</span>
+  </a>
+
+  <a class="card" href="#" style="display:block">
+    <div class="card-top">
+      <div>
+        <div class="card-title">一番くじ すみっコぐらし おうちじかん</div>
+        <div class="card-meta">1回 700円 ・ 全60種 ・ 発売中</div>
+      </div>
+      <div class="ev">
+        <div class="ev-label">期待値</div>
+        <div class="ev-num low">521<span style="font-size:12px">円</span></div>
+      </div>
+    </div>
+    <span class="rate low">還元率 74.4%</span>
+  </a>
+</section>
+
+<section>
+  <div class="sec-head"><h2>使い方</h2></div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div><div class="step-t">くじを選ぶ</div><div class="step-d">発売中・発売予定のくじから、気になるタイトルを選びます。</div></div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div><div class="step-t">残り数を入力する</div><div class="step-d">店頭の残り本数がわかれば入力。わからなければそのままでも計算できます。</div></div>
+    </div>
+    <div class="step">
+      <div class="step-n">3</div>
+      <div><div class="step-t">期待値を確認する</div><div class="step-d">1回あたりの期待値と、何回引くと損益が分かれるかが表示されます。</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>コラム</h2><a class="more" href="#">一覧 →</a></div>
+  <a class="post" href="#" style="display:block">
+    <div class="post-t">一番くじの期待値とは？計算方法をやさしく解説</div>
+    <div class="post-d">2026.08.24</div>
+  </a>
+  <a class="post" href="#" style="display:block">
+    <div class="post-t">ラストワン賞をねらうべきタイミングの見分け方</div>
+    <div class="post-d">2026.08.19</div>
+  </a>
+  <a class="post" href="#" style="display:block">
+    <div class="post-t">残り本数から当たりやすさを推測する方法</div>
+    <div class="post-d">2026.08.11</div>
+  </a>
+</section>
+
+<section>
+  <div class="note">
+    期待値は「1回あたりの平均的な価値」を示す目安です。実際の結果を保証するものではありません。二次流通価格をもとに算出しているため、相場の変動によって数値は前後します。
+  </div>
+</section>
+
+<footer>
+  <svg width="20" height="20" viewBox="0 0 64 64" aria-hidden="true">
+    <rect x="6" y="34" width="12" height="24" rx="6" fill="#78716C"/>
+    <rect x="26" y="6" width="12" height="44" rx="6" fill="#E14B36"/>
+    <rect x="46" y="24" width="12" height="34" rx="6" fill="#78716C"/>
+  </svg>
+  <div class="f-links">
+    <a href="#">使い方</a><a href="#">利用規約</a><a href="#">プライバシー</a><a href="#">お問い合わせ</a>
+  </div>
+  <div class="f-copy">© 2026 くじのね</div>
+</footer>
+
+</div>
+
+<nav class="bottom">
+  <a class="on" href="#">
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    ホーム
+  </a>
+  <a href="#">
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+    スケジュール
+  </a>
+  <a href="#">
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+    計算する
+  </a>
+  <a href="#">
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+    コラム
+  </a>
+</nav>
+
+</body>
+</html>
