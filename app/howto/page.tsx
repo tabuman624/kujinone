@@ -14,10 +14,10 @@ const steps = [
 export default function HowtoPage() {
   return (
     <main style={{ background: '#fafafa' }}>
-      <div className="px-6 pt-6 pb-6 bg-gray-900">
-        <p className="text-[11px] font-bold tracking-[0.18em] text-gray-400 mb-1">HOW TO USE</p>
+      <div className="px-6 pt-6 pb-6 bg-stone-800">
+        <p className="text-[11px] font-bold tracking-[0.18em] text-stone-400 mb-1">HOW TO USE</p>
         <h1 className="text-2xl font-black text-white">使い方</h1>
-        <p className="text-xs text-gray-400 mt-1">3ステップで賢くくじを楽しむ</p>
+        <p className="text-xs text-stone-400 mt-1">3ステップで賢くくじを楽しむ</p>
       </div>
 
       <div className="px-6 pt-8 pb-4">
@@ -30,7 +30,7 @@ export default function HowtoPage() {
               top: 28,
               bottom: 28,
               width: 2,
-              background: 'linear-gradient(180deg, #dc2626 0%, #fca5a5 60%, #e5e7eb 100%)',
+              background: 'linear-gradient(180deg, #E14B36 0%, #F0A79A 60%, #E7E5E4 100%)',
               borderRadius: 2,
             }}
           />
@@ -50,27 +50,27 @@ export default function HowtoPage() {
                   height: 48,
                   borderRadius: '50%',
                   background: '#fff',
-                  border: '2px solid #dc2626',
+                  border: '2px solid #E14B36',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#dc2626',
+                  color: '#E14B36',
                   fontWeight: 900,
                   fontSize: 15,
                   letterSpacing: '0.02em',
                   fontVariantNumeric: 'tabular-nums',
-                  boxShadow: '0 6px 14px rgba(220,38,38,0.18)',
+                  boxShadow: '0 6px 14px rgba(225, 75, 54, 0.18)',
                   animationDelay: `${80 + i * 110}ms`,
                 }}
               >
                 {step.num}
               </div>
-              <p className="text-[10px] font-bold tracking-[0.18em] text-red-500 mb-1">STEP {step.num}</p>
-              <h2 className="text-base font-black text-gray-900 leading-snug mb-2" style={{ textWrap: 'pretty' as React.CSSProperties['textWrap'] }}>{step.title}</h2>
-              <p className="text-[13px] text-gray-500 leading-relaxed mb-3" style={{ textWrap: 'pretty' as React.CSSProperties['textWrap'] }}>{step.desc}</p>
-              <div className="flex items-start gap-2 bg-white border border-red-100 rounded-xl px-3 py-2.5">
-                <span className="text-red-500 text-xs mt-0.5">💡</span>
-                <p className="text-[11.5px] text-gray-700 leading-relaxed flex-1" style={{ textWrap: 'pretty' as React.CSSProperties['textWrap'] }}>{step.tip}</p>
+              <p className="text-[10px] font-bold tracking-[0.18em] text-shu mb-1">STEP {step.num}</p>
+              <h2 className="text-base font-black text-stone-800 leading-snug mb-2" style={{ textWrap: 'pretty' as React.CSSProperties['textWrap'] }}>{step.title}</h2>
+              <p className="text-[13px] text-stone-500 leading-relaxed mb-3" style={{ textWrap: 'pretty' as React.CSSProperties['textWrap'] }}>{step.desc}</p>
+              <div className="flex items-start gap-2 bg-white border border-shu-bg rounded-xl px-3 py-2.5">
+                <span className="text-shu text-xs mt-0.5">💡</span>
+                <p className="text-[11.5px] text-stone-700 leading-relaxed flex-1" style={{ textWrap: 'pretty' as React.CSSProperties['textWrap'] }}>{step.tip}</p>
               </div>
             </div>
           ))}
@@ -78,7 +78,7 @@ export default function HowtoPage() {
       </div>
 
       <div className="px-5 pt-2 pb-8">
-        <Link href="/schedule" className="flex items-center justify-center gap-2 w-full py-3.5 bg-red-600 text-white text-sm font-bold rounded-xl press" style={{ boxShadow: '0 6px 16px rgba(220,38,38,0.35)' }}>
+        <Link href="/schedule" className="flex items-center justify-center gap-2 w-full py-3.5 bg-shu text-white text-sm font-bold rounded-xl press" style={{ boxShadow: '0 6px 16px rgba(225, 75, 54, 0.35)' }}>
           さっそく使ってみる →
         </Link>
       </div>

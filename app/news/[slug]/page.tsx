@@ -100,21 +100,21 @@ export default async function NewsDetailPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
 
       {/* Header */}
-      <div className="px-6 pt-5 pb-7 bg-gray-900 text-white">
-        <Link href="/news" className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-white mb-4 press transition-colors">
+      <div className="px-6 pt-5 pb-7 bg-stone-800 text-white">
+        <Link href="/news" className="inline-flex items-center gap-1 text-xs text-stone-400 hover:text-white mb-4 press transition-colors">
           ← 新作速報に戻る
         </Link>
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-[10px] font-bold tracking-[0.18em] text-red-400">NEWS</span>
+          <span className="text-[10px] font-bold tracking-[0.18em] text-shu">NEWS</span>
           {releaseDate && (
             <>
-              <span className="text-gray-600">·</span>
-              <span className="text-[11px] text-gray-400">{fmt(releaseDate)}発売</span>
+              <span className="text-stone-600">·</span>
+              <span className="text-[11px] text-stone-400">{fmt(releaseDate)}発売</span>
             </>
           )}
           {isUpcoming
-            ? <span className="text-[9px] font-bold text-red-400 bg-red-900/40 px-1.5 py-0.5 rounded-full">発売予定</span>
-            : <span className="text-[9px] font-bold text-gray-400 bg-white/10 px-1.5 py-0.5 rounded-full">発売済み</span>
+            ? <span className="text-[9px] font-bold text-shu bg-shu-dark/40 px-1.5 py-0.5 rounded-full">発売予定</span>
+            : <span className="text-[9px] font-bold text-stone-400 bg-white/10 px-1.5 py-0.5 rounded-full">発売済み</span>
           }
         </div>
         <h1 className="text-xl font-black leading-snug" style={{ textWrap: 'pretty' as React.CSSProperties['textWrap'] }}>{title}</h1>
@@ -129,19 +129,19 @@ export default async function NewsDetailPage({
       </div>
 
       {/* CTAs */}
-      <div className="px-5 pb-8 space-y-3 border-t border-gray-100 pt-6">
+      <div className="px-5 pb-8 space-y-3 border-t border-stone-100 pt-6">
         {data.kuji_id && (
           <Link
             href={`/kuji/${data.kuji_id}`}
-            className="flex items-center justify-center gap-2 w-full py-3 bg-red-600 text-white text-sm font-black rounded-xl hover:bg-red-700 press"
-            style={{ boxShadow: '0 6px 16px rgba(220,38,38,0.35)' }}
+            className="flex items-center justify-center gap-2 w-full py-3 bg-shu text-white text-sm font-black rounded-xl hover:bg-shu-dark press"
+            style={{ boxShadow: '0 6px 16px rgba(225, 75, 54, 0.35)' }}
           >
             この商品の期待値を計算する →
           </Link>
         )}
         <Link
           href="/news"
-          className="flex items-center justify-center gap-2 w-full py-3 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 press"
+          className="flex items-center justify-center gap-2 w-full py-3 bg-stone-100 text-stone-700 text-sm font-semibold rounded-xl hover:bg-stone-200 press"
         >
           新作速報一覧に戻る
         </Link>

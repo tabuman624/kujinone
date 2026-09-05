@@ -37,6 +37,9 @@ export const metadata: Metadata = {
   other: {
     "google-adsense-account": "ca-pub-9006140407795306",
   },
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -56,16 +59,16 @@ export default function RootLayout({
         gtag('js', new Date());
         gtag('config', 'G-88R7X8E7B0');
       `}</Script>
-      <body className="min-h-full bg-gray-100 text-gray-900">
+      <body className="min-h-full bg-stone-100 text-stone-800">
 
         {/* PC: サイドナビ */}
         <SideNav />
 
         {/* コンテンツエリア */}
         <div className="md:pl-60">
-          <div className="max-w-4xl mx-auto bg-white min-h-screen pb-24 md:pb-10 md:border-x md:border-gray-200 md:shadow-sm">
+          <div className="max-w-4xl mx-auto bg-white min-h-screen pb-24 md:pb-10 md:border-x md:border-stone-200 md:shadow-sm">
             {children}
-            <p className="text-center text-xs text-gray-300 py-4 px-6">当サイトはアフィリエイト広告を利用しています</p>
+            <p className="text-center text-xs text-stone-300 py-4 px-6">当サイトはアフィリエイト広告を利用しています</p>
           </div>
         </div>
 
