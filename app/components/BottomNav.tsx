@@ -29,7 +29,7 @@ export default function BottomNav() {
   const activeIdx = navItems.findIndex(n => n.href === activeHref);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden shadow-lg z-50" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 md:hidden shadow-lg z-50" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
       {/* Animated indicator */}
       <div
         aria-hidden
@@ -45,7 +45,7 @@ export default function BottomNav() {
           opacity: activeHref ? 1 : 0,
         }}
       >
-        <div style={{ margin: "0 24%", height: "100%", background: "#dc2626", borderRadius: "0 0 4px 4px" }} />
+        <div style={{ margin: "0 24%", height: "100%", background: "#E14B36", borderRadius: "0 0 4px 4px" }} />
       </div>
 
       <div className="flex">
@@ -56,7 +56,7 @@ export default function BottomNav() {
               key={item.href}
               href={item.href}
               onClick={() => { setBouncedHref(item.href); setTimeout(() => setBouncedHref(null), 360); }}
-              className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 press transition-colors ${active ? "text-red-600" : "text-gray-400 hover:text-red-600"}`}
+              className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 press transition-colors ${active ? "text-shu" : "text-stone-400 hover:text-shu"}`}
             >
               <span className={bouncedHref === item.href ? "anim-tab-bounce" : ""} style={{ display: "inline-flex" }}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

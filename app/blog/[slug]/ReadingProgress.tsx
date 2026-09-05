@@ -17,7 +17,7 @@ export default function ReadingProgress() {
 
   return (
     <div style={{ position: "sticky", top: 0, zIndex: 20, height: 2, background: "rgba(0,0,0,0.05)" }}>
-      <div style={{ height: "100%", width: `${progress * 100}%`, background: "#dc2626", transition: "width 80ms linear" }} />
+      <div style={{ height: "100%", width: `${progress * 100}%`, background: "#E14B36", transition: "width 80ms linear" }} />
     </div>
   )
 }

@@ -24,13 +24,13 @@ export default function ContactPage() {
 
   return (
     <main>
-      <div className="bg-gray-900 px-6 py-8 text-white">
-        <p className="text-xs font-bold tracking-widest text-gray-400 mb-1">CONTACT</p>
+      <div className="bg-stone-800 px-6 py-8 text-white">
+        <p className="text-xs font-bold tracking-widest text-stone-400 mb-1">CONTACT</p>
         <h1 className="text-xl font-black">お問い合わせ</h1>
       </div>
 
       <div className="px-6 py-8">
-        <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+        <p className="text-sm text-stone-500 mb-6 leading-relaxed">
           くじのねへのご意見・ご要望・不具合報告などはこちらからお送りください。
         </p>
 
@@ -43,47 +43,47 @@ export default function ContactPage() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-xs font-bold text-gray-700 block mb-1">お名前</label>
+              <label className="text-xs font-bold text-stone-700 block mb-1">お名前</label>
               <input
                 type="text"
                 name="name"
                 required
                 placeholder="山田 太郎"
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-red-400 transition-colors"
+                className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-shu transition-colors"
               />
             </div>
 
             <div>
-              <label className="text-xs font-bold text-gray-700 block mb-1">メールアドレス</label>
+              <label className="text-xs font-bold text-stone-700 block mb-1">メールアドレス</label>
               <input
                 type="email"
                 name="email"
                 required
                 placeholder="example@email.com"
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-red-400 transition-colors"
+                className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-shu transition-colors"
               />
             </div>
 
             <div>
-              <label className="text-xs font-bold text-gray-700 block mb-1">お問い合わせ内容</label>
+              <label className="text-xs font-bold text-stone-700 block mb-1">お問い合わせ内容</label>
               <textarea
                 name="message"
                 required
                 rows={5}
                 placeholder="お問い合わせ内容をご記入ください"
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-red-400 transition-colors resize-none"
+                className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-shu transition-colors resize-none"
               />
             </div>
 
             {status === "error" && (
-              <p className="text-xs text-red-500">送信に失敗しました。もう一度お試しください。</p>
+              <p className="text-xs text-shu">送信に失敗しました。もう一度お試しください。</p>
             )}
 
             <button
               type="submit"
               disabled={status === "sending"}
-              className="w-full py-3.5 bg-red-600 text-white text-sm font-bold rounded-xl press disabled:opacity-50"
-              style={{ boxShadow: "0 6px 16px rgba(220,38,38,0.35)" }}
+              className="w-full py-3.5 bg-shu text-white text-sm font-bold rounded-xl press disabled:opacity-50"
+              style={{ boxShadow: "0 6px 16px rgba(225, 75, 54, 0.35)" }}
             >
               {status === "sending" ? "送信中..." : "送信する"}
             </button>

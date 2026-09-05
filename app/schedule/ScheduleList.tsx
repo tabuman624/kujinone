@@ -36,7 +36,7 @@ export default function ScheduleList({ kujiList }: { kujiList: Kuji[] }) {
   return (
     <>
       {/* 月タブ */}
-      <div className="flex flex-wrap border-b border-gray-200 px-4 sticky top-0 bg-white z-10 select-none">
+      <div className="flex flex-wrap border-b border-stone-200 px-4 sticky top-0 bg-white z-10 select-none">
         {months.map(month => (
           <button
             key={month}
@@ -44,8 +44,8 @@ export default function ScheduleList({ kujiList }: { kujiList: Kuji[] }) {
             draggable={false}
             className={`flex-shrink-0 px-4 py-3 text-sm font-bold transition-colors border-b-2 -mb-px ${
               selected === month
-                ? 'text-red-600 border-red-600'
-                : 'text-gray-400 border-transparent hover:text-gray-700'
+                ? 'text-shu border-shu'
+                : 'text-stone-400 border-transparent hover:text-stone-700'
             }`}
           >
             {formatMonthLabel(month)}
@@ -59,24 +59,24 @@ export default function ScheduleList({ kujiList }: { kujiList: Kuji[] }) {
           <Link
             key={kuji.id}
             href={`/kuji/${kuji.id}`}
-            className="flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-xl card-hover hover:border-red-300 hover:shadow-md press anim-fade-up"
+            className="flex items-center gap-4 p-4 bg-white border border-stone-200 rounded-xl card-hover hover:border-shu hover:shadow-md press anim-fade-up"
             style={{ animationDelay: `${40 + i * 40}ms` }}
           >
-            <div className="w-12 h-12 bg-red-50 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 bg-shu-bg rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0">
               {kuji.image_url ? (
                 <Image src={kuji.image_url} alt={kuji.title} width={48} height={48} className="w-full h-full object-cover" sizes="48px" unoptimized />
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-shu" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                 </svg>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              {kuji.release_at && <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-semibold">{kuji.release_at.split('-').slice(1).map(Number).join('月')}日発売</span>}
-              <p className="text-sm font-bold text-gray-900 mt-0.5 truncate">{kuji.title}</p>
-              <p className="text-xs text-gray-500">{kuji.price}円/回{kuji.total ? ` · 全${kuji.total}本` : ''}</p>
+              {kuji.release_at && <span className="text-xs bg-shu-bg text-shu px-2 py-0.5 rounded-full font-semibold">{kuji.release_at.split('-').slice(1).map(Number).join('月')}日発売</span>}
+              <p className="text-sm font-bold text-stone-800 mt-0.5 truncate">{kuji.title}</p>
+              <p className="text-xs text-stone-500">{kuji.price}円/回{kuji.total ? ` · 全${kuji.total}本` : ''}</p>
             </div>
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-stone-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </Link>

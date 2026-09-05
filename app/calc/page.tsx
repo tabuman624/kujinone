@@ -21,7 +21,7 @@ const gradeColors: { [key: string]: string } = {
   "B賞": "bg-blue-100 text-blue-700",
   "C賞": "bg-emerald-100 text-emerald-700",
   "D賞": "bg-purple-100 text-purple-700",
-  "E賞": "bg-gray-100 text-gray-700",
+  "E賞": "bg-stone-100 text-stone-700",
 }
 
 function useCountUp(value: number | null | undefined, duration = 700) {
@@ -52,27 +52,27 @@ function Stepper({ value, onChange, min = 0, max = 999 }: { value: string; onCha
   const n = isNaN(v) ? 0 : v
   const stop = (e: React.MouseEvent) => e.stopPropagation()
   return (
-    <div className="inline-flex items-center bg-gray-100 rounded-lg p-0.5" onClick={stop}>
-      <button onClick={(e) => { e.stopPropagation(); onChange(String(Math.max(min, n - 1))) }} className="w-7 h-7 rounded-md bg-white shadow-sm flex items-center justify-center text-gray-700 press text-base font-bold leading-none" style={{ paddingBottom: 2 }}>−</button>
+    <div className="inline-flex items-center bg-stone-100 rounded-lg p-0.5" onClick={stop}>
+      <button onClick={(e) => { e.stopPropagation(); onChange(String(Math.max(min, n - 1))) }} className="w-7 h-7 rounded-md bg-white shadow-sm flex items-center justify-center text-stone-700 press text-base font-bold leading-none" style={{ paddingBottom: 2 }}>−</button>
       <input
         type="number"
         value={value}
         onClick={stop}
         onChange={(e) => onChange(e.target.value)}
-        className="w-10 text-center text-sm font-bold text-gray-900 bg-transparent outline-none"
+        className="w-10 text-center text-sm font-bold text-stone-800 bg-transparent outline-none"
         style={{ fontVariantNumeric: "tabular-nums" }}
       />
-      <button onClick={(e) => { e.stopPropagation(); onChange(String(Math.min(max, n + 1))) }} className="w-7 h-7 rounded-md bg-white shadow-sm flex items-center justify-center text-gray-700 press text-base font-bold leading-none" style={{ paddingBottom: 2 }}>+</button>
+      <button onClick={(e) => { e.stopPropagation(); onChange(String(Math.min(max, n + 1))) }} className="w-7 h-7 rounded-md bg-white shadow-sm flex items-center justify-center text-stone-700 press text-base font-bold leading-none" style={{ paddingBottom: 2 }}>+</button>
     </div>
   )
 }
 
 function FormCard({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-3.5">
+    <div className="bg-white border border-stone-200 rounded-xl p-3.5">
       <div className="flex items-baseline justify-between mb-2">
-        <label className="text-xs font-bold text-gray-700">{label}</label>
-        {hint && <span className="text-[10px] text-gray-400">{hint}</span>}
+        <label className="text-xs font-bold text-stone-700">{label}</label>
+        {hint && <span className="text-[10px] text-stone-400">{hint}</span>}
       </div>
       {children}
     </div>
@@ -81,10 +81,10 @@ function FormCard({ label, hint, children }: { label: string; hint?: string; chi
 
 function EmptyResultCard({ title, hint }: { title: string; hint: string }) {
   return (
-    <div className="bg-white border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center">
-      <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center text-gray-300 text-base">¥</div>
-      <p className="text-sm font-semibold text-gray-700 mb-1">{title}</p>
-      <p className="text-xs text-gray-400">{hint}</p>
+    <div className="bg-white border-2 border-dashed border-stone-200 rounded-2xl p-6 text-center">
+      <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-stone-100 flex items-center justify-center text-stone-300 text-base">¥</div>
+      <p className="text-sm font-semibold text-stone-700 mb-1">{title}</p>
+      <p className="text-xs text-stone-400">{hint}</p>
     </div>
   )
 }
@@ -110,13 +110,13 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
   if (prizes.length === 0) return null
 
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden mb-6">
-      <div className="bg-gray-50 px-4 py-2.5 flex items-center justify-between border-b border-gray-200">
-        <p className="text-xs font-black text-gray-700">二次流通の相場</p>
-        <span className="text-[10px] text-gray-400 font-bold tracking-wider">MARKET PRICE</span>
+    <div className="border border-stone-200 rounded-xl overflow-hidden mb-6">
+      <div className="bg-stone-50 px-4 py-2.5 flex items-center justify-between border-b border-stone-200">
+        <p className="text-xs font-black text-stone-700">二次流通の相場</p>
+        <span className="text-[10px] text-stone-400 font-bold tracking-wider">MARKET PRICE</span>
       </div>
       {loading ? (
-        <div className="px-4 py-4 flex items-center gap-2 text-gray-400">
+        <div className="px-4 py-4 flex items-center gap-2 text-stone-400">
           <svg className="w-3.5 h-3.5 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
@@ -124,18 +124,18 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
           <span className="text-xs">相場を取得中...</span>
         </div>
       ) : hasAnyData ? (
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-stone-100">
           {prizes.map(prize => {
             const hasStable = prize.market_price != null
             const hasAuction = prize.auction_price_min != null && prize.auction_price_max != null
             if (!hasStable && !hasAuction) return null
             return (
               <div key={prize.id} className="px-4 py-3 flex items-start gap-3">
-                <span className={`text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5 ${gradeColors[prize.grade] || "bg-gray-100 text-gray-700"}`}>
+                <span className={`text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5 ${gradeColors[prize.grade] || "bg-stone-100 text-stone-700"}`}>
                   {prize.grade}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-700 truncate mb-1.5">{prize.name}</p>
+                  <p className="text-xs text-stone-700 truncate mb-1.5">{prize.name}</p>
                   <div className="flex flex-col gap-1">
                     {hasStable && (
                       <div className="flex items-center justify-between">
@@ -174,10 +174,10 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
           })}
         </div>
       ) : (
-        <div className="px-4 py-3 text-xs text-gray-400">相場データが見つかりませんでした</div>
+        <div className="px-4 py-3 text-xs text-stone-400">相場データが見つかりませんでした</div>
       )}
-      <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
-        <p className="text-[10px] text-gray-400">参考：ヤフオク落札相場・Yahooショッピング</p>
+      <div className="px-4 py-2 bg-stone-50 border-t border-stone-100">
+        <p className="text-[10px] text-stone-400">参考：ヤフオク落札相場・Yahooショッピング</p>
       </div>
     </div>
   )
@@ -187,27 +187,27 @@ function ResultCard({ expected, times, detail }: { expected: number; times: numb
   const animExp = useCountUp(expected, 800)
   const animTimes = useCountUp(times, 700)
   return (
-    <div className="border-2 border-gray-900 rounded-xl overflow-hidden mb-6 anim-result">
-      <div className="bg-gray-900 px-4 py-2.5 flex items-center justify-between">
+    <div className="border-2 border-stone-800 rounded-xl overflow-hidden mb-6 anim-result">
+      <div className="bg-stone-800 px-4 py-2.5 flex items-center justify-between">
         <p className="text-sm font-black text-white">計算結果</p>
-        <span className="text-xs text-red-400 font-bold tracking-wider">RESULT</span>
+        <span className="text-xs text-shu font-bold tracking-wider">RESULT</span>
       </div>
       <div className="p-4">
         <div className="flex justify-between items-baseline mb-3">
           <div>
-            <p className="text-xs text-gray-400 mb-1">期待金額</p>
-            <p className="text-3xl font-black text-gray-900" style={{ fontVariantNumeric: "tabular-nums" }}>
-              {Math.round(animExp).toLocaleString()}<span className="text-sm text-gray-500 ml-1">円</span>
+            <p className="text-xs text-stone-400 mb-1">期待金額</p>
+            <p className="text-3xl font-black text-stone-800" style={{ fontVariantNumeric: "tabular-nums" }}>
+              {Math.round(animExp).toLocaleString()}<span className="text-sm text-stone-500 ml-1">円</span>
             </p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-gray-400 mb-1">平均回数</p>
-            <p className="text-3xl font-black text-gray-900" style={{ fontVariantNumeric: "tabular-nums" }}>
-              {Math.round(animTimes)}<span className="text-sm text-gray-500 ml-1">回</span>
+            <p className="text-xs text-stone-400 mb-1">平均回数</p>
+            <p className="text-3xl font-black text-stone-800" style={{ fontVariantNumeric: "tabular-nums" }}>
+              {Math.round(animTimes)}<span className="text-sm text-stone-500 ml-1">回</span>
             </p>
           </div>
         </div>
-        <p className="text-xs text-gray-400">{detail}</p>
+        <p className="text-xs text-stone-400">{detail}</p>
       </div>
     </div>
   )
@@ -219,7 +219,7 @@ function AffiliateLinks({ title }: { title: string }) {
   }, [title])
 
   const links = [
-    { href: `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM&a8ejpredirect=${encodeURIComponent(`https://jp.mercari.com/search?keyword=${encodeURIComponent(title)}`)}`, label: "メルカリで相場を見る【PR】", sub: "出品価格を確認", color: "bg-red-50 border-red-200 text-red-600", rel: "noopener noreferrer nofollow sponsored" },
+    { href: `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM&a8ejpredirect=${encodeURIComponent(`https://jp.mercari.com/search?keyword=${encodeURIComponent(title)}`)}`, label: "メルカリで相場を見る【PR】", sub: "出品価格を確認", color: "bg-shu-bg border-shu text-shu", rel: "noopener noreferrer nofollow sponsored" },
     { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(title)}`, label: "駿河屋で相場を見る【PR】", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600", rel: "nofollow noopener noreferrer" },
     { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502&url=${encodeURIComponent(`https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(title)}`)}`, label: "Yahoo!ショッピングで見る【PR】", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600", rel: "noopener noreferrer sponsored" },
     { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621&url=${encodeURIComponent(`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(title)}`)}`, label: "楽天市場で見る【PR】", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600", rel: "noopener noreferrer sponsored" },
@@ -227,7 +227,7 @@ function AffiliateLinks({ title }: { title: string }) {
   const surugaKaitoriUrl = `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=${encodeURIComponent('https://www.suruga-ya.jp/man/kaitori/kaitoritop.html')}`
   return (
     <div className="space-y-2">
-      <h2 className="text-sm font-black text-gray-900 mb-3 anim-fade-up">相場を確認・購入する</h2>
+      <h2 className="text-sm font-black text-stone-800 mb-3 anim-fade-up">相場を確認・購入する</h2>
       {links.map((link, i) => (
         <AffiliateLink
           key={link.href}
@@ -241,7 +241,7 @@ function AffiliateLinks({ title }: { title: string }) {
         />
       ))}
       <div className="pt-1">
-        <h2 className="text-sm font-black text-gray-900 mb-3 anim-fade-up" style={{ animationDelay: '460ms' }}>賞品を売る</h2>
+        <h2 className="text-sm font-black text-stone-800 mb-3 anim-fade-up" style={{ animationDelay: '460ms' }}>賞品を売る</h2>
         <AffiliateLink
           href={surugaKaitoriUrl}
           rel="nofollow noopener noreferrer"
@@ -251,14 +251,14 @@ function AffiliateLinks({ title }: { title: string }) {
           sub="宅配・出張買取に対応、査定無料"
           eventLabel={`駿河屋に売る_${title}`}
         />
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <p className="text-xs text-gray-400 font-bold tracking-wider mb-2">売り方を詳しく知る</p>
+        <div className="mt-3 pt-3 border-t border-stone-100">
+          <p className="text-xs text-stone-400 font-bold tracking-wider mb-2">売り方を詳しく知る</p>
           {[
             { href: '/blog/ichiban-kuji-sell-where', label: '駿河屋・メルカリ・ヤフオク、売るならどこ？' },
             { href: '/blog/ichiban-kuji-sell-tips', label: '外れ賞品を高く売る5つのコツ' },
             { href: '/blog/ichiban-kuji-kaitori-price', label: '買取相場はいくら？グレード別に解説' },
           ].map(item => (
-            <a key={item.href} href={item.href} className="flex items-center gap-2 py-2 border-t border-gray-100 text-xs text-gray-600 hover:text-green-700 transition-colors">
+            <a key={item.href} href={item.href} className="flex items-center gap-2 py-2 border-t border-stone-100 text-xs text-stone-600 hover:text-green-700 transition-colors">
               <span className="text-green-400">›</span>
               {item.label}
             </a>
@@ -271,7 +271,7 @@ function AffiliateLinks({ title }: { title: string }) {
 
 function KujiIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-shu" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
     </svg>
   )
@@ -377,30 +377,30 @@ function CalcContent() {
     const selectedCount = prizes.filter(p => p.checked).length
     return (
       <main style={{ background: "#fafafa" }}>
-        <div className="px-6 pt-6 pb-5 bg-gray-900">
-          <button onClick={() => router.back()} className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-red-400 mb-3 press">← 戻る</button>
-          <p className="text-[11px] font-bold tracking-[0.18em] text-gray-400 mb-1">CALCULATOR</p>
+        <div className="px-6 pt-6 pb-5 bg-stone-800">
+          <button onClick={() => router.back()} className="inline-flex items-center gap-1 text-xs text-stone-400 hover:text-shu mb-3 press">← 戻る</button>
+          <p className="text-[11px] font-bold tracking-[0.18em] text-stone-400 mb-1">CALCULATOR</p>
           <h1 className="text-2xl font-black text-white">期待値を計算</h1>
         </div>
 
         <div className="px-5 pt-5">
-          <div className="bg-white border border-gray-200 rounded-2xl p-4 anim-fade-up" style={{ animationDelay: "40ms" }}>
+          <div className="bg-white border border-stone-200 rounded-2xl p-4 anim-fade-up" style={{ animationDelay: "40ms" }}>
             <div className="flex items-start gap-3">
-              <div className="w-11 h-11 bg-red-50 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0">
+              <div className="w-11 h-11 bg-shu-bg rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0">
                 {kuji.image_url
                   ? <Image src={kuji.image_url} alt={kuji.title} width={44} height={44} className="w-full h-full object-cover" unoptimized />
                   : <KujiIcon />}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-gray-400 tracking-[0.15em] font-bold mb-1">SELECTED</p>
-                <p className="text-sm font-black text-gray-900 leading-snug mb-2">{kuji.title}</p>
+                <p className="text-[10px] text-stone-400 tracking-[0.15em] font-bold mb-1">SELECTED</p>
+                <p className="text-sm font-black text-stone-800 leading-snug mb-2">{kuji.title}</p>
                 <div className="flex gap-1.5 flex-wrap">
-                  <span className="text-[11px] bg-gray-900 text-white px-2 py-0.5 rounded-full font-semibold" style={{ fontVariantNumeric: "tabular-nums" }}>{kuji.price}円/回</span>
-                  {kuji.total > 0 && <span className="text-[11px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full" style={{ fontVariantNumeric: "tabular-nums" }}>全{kuji.total}本</span>}
+                  <span className="text-[11px] bg-stone-800 text-white px-2 py-0.5 rounded-full font-semibold" style={{ fontVariantNumeric: "tabular-nums" }}>{kuji.price}円/回</span>
+                  {kuji.total > 0 && <span className="text-[11px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full" style={{ fontVariantNumeric: "tabular-nums" }}>全{kuji.total}本</span>}
                 </div>
-                <div className="mt-3 bg-gray-800 rounded-xl px-4 py-2.5 flex items-center justify-between">
-                  <span className="text-xs text-gray-400 font-bold tracking-wide">総残数</span>
-                  <span className="text-2xl font-black text-white" style={{ fontVariantNumeric: "tabular-nums" }}>{totalRemaining}<span className="text-sm font-normal text-gray-400 ml-1">本</span></span>
+                <div className="mt-3 bg-stone-800 rounded-xl px-4 py-2.5 flex items-center justify-between">
+                  <span className="text-xs text-stone-400 font-bold tracking-wide">総残数</span>
+                  <span className="text-2xl font-black text-white" style={{ fontVariantNumeric: "tabular-nums" }}>{totalRemaining}<span className="text-sm font-normal text-stone-400 ml-1">本</span></span>
                 </div>
               </div>
             </div>
@@ -409,8 +409,8 @@ function CalcContent() {
 
         <div className="px-5 pt-6">
           <div className="flex items-baseline justify-between mb-3">
-            <h2 className="text-sm font-black text-gray-900">狙いの賞を選ぶ</h2>
-            <span className="text-[11px] text-gray-400">{selectedCount > 0 ? `${selectedCount}賞選択中` : "タップで選択"}</span>
+            <h2 className="text-sm font-black text-stone-800">狙いの賞を選ぶ</h2>
+            <span className="text-[11px] text-stone-400">{selectedCount > 0 ? `${selectedCount}賞選択中` : "タップで選択"}</span>
           </div>
 
           <div className="space-y-2">
@@ -418,14 +418,14 @@ function CalcContent() {
               <button
                 key={prize.id}
                 onClick={() => toggleCheck(prize.id)}
-                className={`w-full text-left flex items-center gap-3 p-3 rounded-xl press anim-fade-up transition-all ${prize.checked ? "bg-red-50" : "bg-white border border-gray-200"}`}
-                style={{ animationDelay: `${80 + i * 50}ms`, boxShadow: prize.checked ? "0 0 0 2px #dc2626 inset" : undefined }}
+                className={`w-full text-left flex items-center gap-3 p-3 rounded-xl press anim-fade-up transition-all ${prize.checked ? "bg-shu-bg" : "bg-white border border-stone-200"}`}
+                style={{ animationDelay: `${80 + i * 50}ms`, boxShadow: prize.checked ? "0 0 0 2px #E14B36 inset" : undefined }}
               >
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${prize.checked ? "bg-red-600 scale-100" : "bg-white border-2 border-gray-300 scale-95"}`}>
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${prize.checked ? "bg-shu scale-100" : "bg-white border-2 border-stone-300 scale-95"}`}>
                   {prize.checked && <span className="text-white text-[11px] font-black">✓</span>}
                 </div>
-                <span className={`text-xs font-bold w-8 text-center py-1 rounded ${gradeColors[prize.grade] || "bg-gray-100 text-gray-700"}`}>{prize.grade}</span>
-                <span className="flex-1 text-[13px] text-gray-900 font-medium truncate">{prize.name}</span>
+                <span className={`text-xs font-bold w-8 text-center py-1 rounded ${gradeColors[prize.grade] || "bg-stone-100 text-stone-700"}`}>{prize.grade}</span>
+                <span className="flex-1 text-[13px] text-stone-800 font-medium truncate">{prize.name}</span>
                 <Stepper value={prize.remaining} onChange={v => updateRemaining(prize.id, v)} min={0} max={kuji.total || 999} />
               </button>
             ))}
@@ -461,24 +461,24 @@ function CalcContent() {
   const pricePresets = [700, 800, 850, 1000]
   return (
     <main style={{ background: "#fafafa" }}>
-      <div className="px-6 pt-6 pb-5 bg-gray-900">
-        <p className="text-[11px] font-bold tracking-[0.18em] text-gray-400 mb-1">CALCULATOR</p>
+      <div className="px-6 pt-6 pb-5 bg-stone-800">
+        <p className="text-[11px] font-bold tracking-[0.18em] text-stone-400 mb-1">CALCULATOR</p>
         <h1 className="text-2xl font-black text-white">期待値を計算</h1>
-        <p className="text-xs text-gray-400 mt-1">情報を入力して期待値を算出</p>
+        <p className="text-xs text-stone-400 mt-1">情報を入力して期待値を算出</p>
       </div>
 
       <div className="px-5 pt-5">
-        <Link href="/schedule" className="w-full text-left flex items-center gap-3 p-3.5 bg-white border border-red-100 rounded-xl mb-5 press anim-fade-up" style={{ animationDelay: "40ms" }}>
-          <div className="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#dc2626">
+        <Link href="/schedule" className="w-full text-left flex items-center gap-3 p-3.5 bg-white border border-shu-bg rounded-xl mb-5 press anim-fade-up" style={{ animationDelay: "40ms" }}>
+          <div className="w-9 h-9 bg-shu-bg rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#E14B36">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-red-600">スケジュールから選ぶと自動入力</p>
-            <p className="text-[11px] text-gray-500 mt-0.5">賞情報がそのまま入力されます</p>
+            <p className="text-xs font-bold text-shu">スケジュールから選ぶと自動入力</p>
+            <p className="text-[11px] text-stone-500 mt-0.5">賞情報がそのまま入力されます</p>
           </div>
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-stone-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </Link>
@@ -489,7 +489,7 @@ function CalcContent() {
               <Stepper value={manualTotal} onChange={setManualTotal} min={1} max={300} />
               <div className="flex gap-1.5 flex-wrap">
                 {totalPresets.map(n => (
-                  <button key={n} onClick={() => setManualTotal(String(n))} className={`text-[11px] px-2.5 py-1 rounded-full press transition-colors ${manualTotal === String(n) ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-600"}`} style={{ fontVariantNumeric: "tabular-nums" }}>{n}本</button>
+                  <button key={n} onClick={() => setManualTotal(String(n))} className={`text-[11px] px-2.5 py-1 rounded-full press transition-colors ${manualTotal === String(n) ? "bg-stone-800 text-white" : "bg-stone-100 text-stone-600"}`} style={{ fontVariantNumeric: "tabular-nums" }}>{n}本</button>
                 ))}
               </div>
             </div>
@@ -502,7 +502,7 @@ function CalcContent() {
           <FormCard label="1回の金額" hint="くじ一回あたり">
             <div className="flex gap-1.5 flex-wrap">
               {pricePresets.map(p => (
-                <button key={p} onClick={() => setManualPrice(String(p))} className={`text-xs px-3 py-1.5 rounded-full font-semibold press transition-colors ${manualPrice === String(p) ? "bg-red-600 text-white" : "bg-gray-100 text-gray-700"}`} style={{ fontVariantNumeric: "tabular-nums" }}>{p}円</button>
+                <button key={p} onClick={() => setManualPrice(String(p))} className={`text-xs px-3 py-1.5 rounded-full font-semibold press transition-colors ${manualPrice === String(p) ? "bg-shu text-white" : "bg-stone-100 text-stone-700"}`} style={{ fontVariantNumeric: "tabular-nums" }}>{p}円</button>
               ))}
             </div>
           </FormCard>
@@ -529,7 +529,7 @@ function CalcContent() {
 
 export default function CalcPage() {
   return (
-    <Suspense fallback={<div className="p-6 text-sm text-gray-400">読み込み中...</div>}>
+    <Suspense fallback={<div className="p-6 text-sm text-stone-400">読み込み中...</div>}>
       <CalcContent />
     </Suspense>
   )

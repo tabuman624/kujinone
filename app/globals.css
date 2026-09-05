@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@theme {
+  --color-shu:      #E14B36;
+  --color-shu-dark: #C93C29;
+  --color-shu-bg:   #FDF0ED;
+}
+
 :root {
   --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
 }
@@ -31,9 +37,9 @@ body {
   100% { opacity: 1; transform: scale(1); }
 }
 @keyframes resultGlow {
-  0%   { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.45); }
-  80%  { box-shadow: 0 0 0 18px rgba(220, 38, 38, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(225, 75, 54, 0.45); }
+  80%  { box-shadow: 0 0 0 18px rgba(225, 75, 54, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(225, 75, 54, 0); }
 }
 @keyframes tabBounce {
   0%   { transform: scale(1); }
@@ -57,7 +63,7 @@ body {
    Article prose (used by blog detail)
    ========================================================= */
 .kuji-prose--article {
-  color: #374151;
+  color: #44403C;
   font-size: 14.5px;
   line-height: 1.85;
   letter-spacing: 0.005em;
@@ -65,7 +71,7 @@ body {
 .kuji-prose--article h2 {
   font-size: 17px;
   font-weight: 900;
-  color: #111827;
+  color: #292524;
   margin: 36px 0 12px;
   position: relative;
   padding-left: 14px;
@@ -76,28 +82,28 @@ body {
   left: 0; top: 0.35em; bottom: 0.35em;
   width: 4px;
   border-radius: 2px;
-  background: #dc2626;
+  background: var(--color-shu);
 }
 .kuji-prose--article h3 {
   font-size: 14.5px;
   font-weight: 800;
-  color: #1f2937;
+  color: #292524;
   margin: 24px 0 8px;
 }
 .kuji-prose--article p { margin: 10px 0; }
 .kuji-prose--article p:first-of-type {
   font-size: 15px;
-  color: #111827;
+  color: #292524;
   font-weight: 500;
 }
 .kuji-prose--article ul,
 .kuji-prose--article ol { padding-left: 1.25rem; margin: 10px 0; }
 .kuji-prose--article li { margin: 4px 0; }
-.kuji-prose--article strong { color: #111827; font-weight: 700; }
+.kuji-prose--article strong { color: #292524; font-weight: 700; }
 .kuji-prose--article blockquote {
-  border-left: 4px solid #ef4444;
-  background: #fef2f2;
-  color: #4b5563;
+  border-left: 4px solid var(--color-shu);
+  background: var(--color-shu-bg);
+  color: #57534E;
   font-size: 13px;
   margin: 14px 0;
   padding: 10px 14px;
@@ -110,27 +116,27 @@ body {
   margin: 12px 0;
 }
 .kuji-prose--article th {
-  background: #111827;
+  background: #292524;
   color: #fff;
   font-weight: 600;
   padding: 6px 8px;
   text-align: left;
 }
 .kuji-prose--article td {
-  color: #4b5563;
-  border: 1px solid #e5e7eb;
+  color: #57534E;
+  border: 1px solid #E7E5E4;
   padding: 6px 8px;
 }
 .kuji-prose--article code {
-  background: #f3f4f6;
-  color: #dc2626;
+  background: #F5F5F4;
+  color: var(--color-shu);
   font-size: 12px;
   padding: 1px 6px;
   border-radius: 4px;
 }
 .kuji-prose--article pre {
-  background: #111827;
-  color: #f3f4f6;
+  background: #292524;
+  color: #F5F5F4;
   font-size: 12px;
   padding: 12px 14px;
   border-radius: 12px;

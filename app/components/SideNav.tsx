@@ -58,14 +58,14 @@ export default function SideNav() {
   const activeHref = getActiveHref(pathname)
 
   return (
-    <div className="hidden md:flex md:fixed md:inset-y-0 md:left-0 md:w-60 md:flex-col md:bg-white md:border-r md:border-gray-200 md:shadow-sm">
+    <div className="hidden md:flex md:fixed md:inset-y-0 md:left-0 md:w-60 md:flex-col md:bg-white md:border-r md:border-stone-200 md:shadow-sm">
       {/* ロゴ */}
-      <div className="px-5 py-5 border-b border-gray-100">
+      <div className="px-5 py-5 border-b border-stone-100">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/icon.png" alt="くじのね" className="w-8 h-8 rounded-lg object-cover" />
+          <img src="/logo-mark.svg" alt="" className="w-8 h-8" />
           <div>
-            <div className="text-sm font-black text-gray-900 leading-tight">くじのね</div>
-            <div className="text-xs text-gray-400 leading-tight">期待値計算ツール</div>
+            <div className="text-sm font-black text-stone-800 leading-tight">くじのね</div>
+            <div className="text-xs text-stone-400 leading-tight">期待値計算ツール</div>
           </div>
         </Link>
       </div>
@@ -80,14 +80,14 @@ export default function SideNav() {
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group ${
                 active
-                  ? 'bg-red-50 text-red-600'
-                  : 'text-gray-600 hover:bg-red-50 hover:text-red-600'
+                  ? 'bg-shu-bg text-shu'
+                  : 'text-stone-600 hover:bg-shu-bg hover:text-shu'
               }`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className={`w-4 h-4 flex-shrink-0 transition-colors ${
-                  active ? 'text-red-500' : 'group-hover:text-red-500'
+                  active ? 'text-shu' : 'group-hover:text-shu'
                 }`}
                 fill="none"
                 viewBox="0 0 24 24"
@@ -99,12 +99,12 @@ export default function SideNav() {
                 <div className={`text-xs leading-tight ${active ? 'font-black' : 'font-semibold'}`}>
                   {item.label}
                 </div>
-                <div className={`text-xs leading-tight font-medium tracking-wider ${active ? 'text-red-400' : 'text-gray-400'}`}>
+                <div className={`text-xs leading-tight font-medium tracking-wider ${active ? 'text-shu' : 'text-stone-400'}`}>
                   {item.sub}
                 </div>
               </div>
               {active && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-shu flex-shrink-0" />
               )}
             </Link>
           )
@@ -112,20 +112,20 @@ export default function SideNav() {
       </nav>
 
       {/* フッターリンク */}
-      <div className="px-5 py-4 border-t border-gray-100">
+      <div className="px-5 py-4 border-t border-stone-100">
         <div className="flex flex-wrap gap-x-3 gap-y-1">
           {footerLinks.map(item => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-xs text-gray-400 hover:text-red-500 transition-colors"
+              className="text-xs text-stone-400 hover:text-shu transition-colors"
             >
               {item.label}
             </Link>
           ))}
         </div>
-        <p className="text-xs text-gray-400 mt-2">当サイトはアフィリエイト広告を利用しています</p>
-        <p className="text-xs text-gray-300 mt-1">© 2026 くじのね</p>
+        <p className="text-xs text-stone-400 mt-2">当サイトはアフィリエイト広告を利用しています</p>
+        <p className="text-xs text-stone-300 mt-1">© 2026 くじのね</p>
       </div>
     </div>
   )
