@@ -74,7 +74,7 @@ async function main() {
 title: "${title}"
 date: "${dateStr}"
 summary: "${summary}"
-category: "ranking"
+category: "相場"
 ---
 
 ## 一番くじ 景品 最高値ランキング TOP10
