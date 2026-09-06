@@ -3,6 +3,8 @@ import { supabase } from './lib/supabase'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import { getIpGroups, IP_NAMES } from './lib/ipGroups'
+import { getStoreGroups, STORE_NAMES } from './lib/storeGroups'
 
 const BASE = 'https://kujinone.com'
 
@@ -18,6 +20,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${BASE}/news`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: `${BASE}/about`, lastModified: STATIC_DATE, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${BASE}/ip`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.6 },
+    { url: `${BASE}/store`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.5 },
     { url: `${BASE}/howto`, lastModified: STATIC_DATE, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${BASE}/privacy`, lastModified: STATIC_DATE, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE}/terms`, lastModified: STATIC_DATE, changeFrequency: 'yearly', priority: 0.3 },
@@ -74,5 +78,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Supabase エラー時はくじページをサイトマップから除外して他ページは正常に返す
   }
 
-  return [...staticPages, ...blogPages, ...newsPages, ...kujiPages]
+  let ipPages: MetadataRoute.Sitemap = []
+  let storePages: MetadataRoute.Sitemap = []
+  try {
+    const ipGroups = await getIpGroups()
+    ipPages = Object.keys(IP_NAMES)
+      .filter(slug => (ipGroups[slug] ?? []).length > 0)
+      .map(slug => ({ url: `${BASE}/ip/${slug}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.6 }))
+
+    const storeGroups = await getStoreGroups()
+    storePages = Object.keys(STORE_NAMES)
+      .filter(slug => (storeGroups[slug] ?? []).length > 0)
+      .map(slug => ({ url: `${BASE}/store/${slug}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.5 }))
+  } catch {
+    // Supabaseエラー時はip/storeページをサイトマップから除外して他ページは正常に返す
+  }
+
+  return [...staticPages, ...blogPages, ...newsPages, ...kujiPages, ...ipPages, ...storePages]
 }

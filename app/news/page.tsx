@@ -8,7 +8,10 @@ import Image from 'next/image'
 export const metadata: Metadata = {
   title: '一番くじ 新作速報',
   description: '一番くじの新作・発売予定情報をいち早くお届け。賞品一覧・期待値・発売日をまとめてチェック。',
-  alternates: { canonical: '/news' },
+  alternates: {
+    canonical: '/news',
+    types: { 'application/rss+xml': '/news/feed.xml' },
+  },
 }
 
 function toDateStr(d: unknown): string {

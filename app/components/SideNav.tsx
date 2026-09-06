@@ -37,6 +37,8 @@ const navItems = [
 ]
 
 const footerLinks = [
+  { href: '/ip', label: '作品から探す' },
+  { href: '/store', label: '取扱店から探す' },
   { href: '/about', label: 'このサイトについて' },
   { href: '/howto', label: '使い方' },
   { href: '/terms', label: '利用規約' },
