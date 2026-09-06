@@ -63,6 +63,20 @@ export default async function KujiDetail({
     ],
   }
 
+  // Product/Offerは実態と合わないため削除済み（当サイトは販売主体ではない）。
+  // 代わりに賞品一覧をItemListとしてマークアップする。
+  const prizeListJsonLd = prizes && prizes.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${kuji.title} 賞品一覧`,
+    numberOfItems: prizes.length,
+    itemListElement: prizes.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: `${p.grade} ${p.name}`,
+    })),
+  } : null
+
   const isReleased = kuji.release_at <= today
   const searchKeyword = kuji.title.split(/\s+/).slice(0, 2).join(' ')
 
@@ -81,11 +95,18 @@ export default async function KujiDetail({
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      {prizeListJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(prizeListJsonLd) }} />
+      )}
       <KujiViewTracker kujiId={Number(id)} />
       <div className="bg-stone-800 px-6 py-8 text-white">
-        <Link href="/schedule" className="inline-flex items-center gap-1 text-xs text-stone-400 hover:text-white mb-3 transition-colors press">
-          ← 戻る
-        </Link>
+        <nav aria-label="パンくずリスト" className="flex items-center gap-1 text-xs text-stone-400 mb-3 overflow-x-auto whitespace-nowrap">
+          <Link href="/" className="hover:text-white transition-colors press">ホーム</Link>
+          <span className="mx-1">›</span>
+          <Link href="/schedule" className="hover:text-white transition-colors press">発売スケジュール</Link>
+          <span className="mx-1">›</span>
+          <span className="text-stone-300 truncate">{kuji.title}</span>
+        </nav>
         {(kuji.banner_url || kuji.image_url) && (
           <div className="mb-4 rounded-xl overflow-hidden w-full">
             <Image src={kuji.banner_url || kuji.image_url} alt={kuji.title} width={600} height={400} className="w-full h-auto" sizes="(max-width: 768px) 100vw, 640px" priority unoptimized />

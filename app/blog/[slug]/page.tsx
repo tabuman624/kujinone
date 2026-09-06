@@ -3,7 +3,7 @@ import Link from 'next/link'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import { marked } from 'marked'
+import { renderArticleMarkdown } from '../../lib/markdown'
 import { notFound } from 'next/navigation'
 import ReadingProgress from './ReadingProgress'
 
@@ -72,7 +72,7 @@ export default async function BlogDetailPage({
   if (!fs.existsSync(filePath)) notFound()
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { data, content } = matter(raw)
-  const html = await marked(content)
+  const html = await renderArticleMarkdown(content)
   const date = fmt(String(data.date))
   const readMins = Math.max(1, Math.round(content.length / 600))
 

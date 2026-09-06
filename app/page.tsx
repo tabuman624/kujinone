@@ -48,23 +48,10 @@ export default async function Home() {
     return { slug, title: String(data.title || ''), date: String(data.date || ''), summary: String(data.summary || '') }
   })
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'くじのね',
-    alternateName: '一番くじ 期待値計算ツール',
-    url: 'https://kujinone.com',
-    description: '一番くじ（いちばんくじ・1番くじ）の期待値を無料で計算。目当ての賞が当たるまでの平均費用を秒で算出できます。',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: { '@type': 'EntryPoint', urlTemplate: 'https://kujinone.com/schedule' },
-      'query-input': 'required name=search_term_string',
-    },
-  }
-
   return (
     <main>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      {/* Organization/WebSiteの構造化データはapp/layout.tsxで全ページ共通出力している。
+          旧SearchActionはサイト内検索機能が存在せずurlTemplateも無効だったため削除済み。 */}
       {/* Hero */}
       <div className="px-5 pt-[34px] pb-[26px] text-center">
         <img

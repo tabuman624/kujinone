@@ -50,6 +50,24 @@ export const metadata: Metadata = {
   },
 };
 
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'くじのね',
+  url: 'https://kujinone.com',
+  logo: 'https://kujinone.com/logo.png',
+  description: '一番くじの期待値計算・発売スケジュール・相場情報サイト',
+};
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'くじのね',
+  alternateName: '一番くじ 期待値計算ツール',
+  url: 'https://kujinone.com',
+  description: '一番くじ（いちばんくじ・1番くじ）の期待値を無料で計算。目当ての賞が当たるまでの平均費用を秒で算出できます。',
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -58,6 +76,8 @@ export default function RootLayout({
   return (
     <html lang="ja" className={geistSans.variable}>
       <head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9006140407795306" crossOrigin="anonymous"></script>
       </head>
       <Script src="https://www.googletagmanager.com/gtag/js?id=G-88R7X8E7B0" strategy="afterInteractive" />

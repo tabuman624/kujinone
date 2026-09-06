@@ -3,7 +3,7 @@ import Link from 'next/link'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import { marked } from 'marked'
+import { renderArticleMarkdown } from '../../lib/markdown'
 import { notFound } from 'next/navigation'
 
 export const revalidate = 86400
@@ -57,7 +57,7 @@ export default async function NewsDetailPage({
   if (!fs.existsSync(filePath)) notFound()
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { data, content } = matter(raw)
-  const html = await marked(content)
+  const html = await renderArticleMarkdown(content)
 
   const title = String(data.title || '')
   const releaseDate = toDateStr(data.release_date || data.date)

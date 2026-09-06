@@ -17,6 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/calc`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
     { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${BASE}/news`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+    { url: `${BASE}/about`, lastModified: STATIC_DATE, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE}/howto`, lastModified: STATIC_DATE, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${BASE}/privacy`, lastModified: STATIC_DATE, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE}/terms`, lastModified: STATIC_DATE, changeFrequency: 'yearly', priority: 0.3 },
@@ -61,7 +62,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (!error && kujiList) {
       kujiPages = kujiList.map(k => ({
         url: `${BASE}/kuji/${k.id}`,
-        lastModified: new Date(),
+        // kujiテーブルにupdated_at列が無いため、release_atを鮮度シグナルとして使う。
+        // new Date()固定だと「毎回今日更新」という信頼できないlastmodになり、
+        // Googleに無視されるようになるため避ける。
+        lastModified: k.release_at ? new Date(k.release_at) : new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.9,
       }))
