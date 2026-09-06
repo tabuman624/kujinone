@@ -84,12 +84,14 @@ async function fetchAuctionMedian(keyword: string): Promise<number | null> {
 
 // ─── 1景品を処理（価格取得→DB更新→履歴記録） ────────────────────────────────
 
+type ProcessResult = { status: 'updated_peak' | 'recorded' | 'no_data'; historyError: string | null }
+
 async function processPrize(
   prize: { id: number; name: string; grade: string; kuji_id: number; auction_price_peak: number | null },
   kujiTitleMap: Record<number, string>,
   todayStr: string,
   nowIso: string,
-): Promise<'updated_peak' | 'recorded' | 'no_data'> {
+): Promise<ProcessResult> {
   const kujiTitle = kujiTitleMap[prize.kuji_id] ?? ''
   const keywords = buildKeywords(prize.name, kujiTitle, prize.grade)
 
@@ -99,7 +101,7 @@ async function processPrize(
     if (price !== null) { currentPrice = price; break }
   }
 
-  if (currentPrice === null) return 'no_data'
+  if (currentPrice === null) return { status: 'no_data', historyError: null }
 
   // prizes テーブルを更新
   const updates: Record<string, unknown> = {
@@ -115,13 +117,18 @@ async function processPrize(
   }
   await supabase.from('prizes').update(updates).eq('id', prize.id)
 
-  // price_history に記録（同日の重複はupsertで無視）
-  await supabase.from('price_history').upsert(
+  // price_history に記録（同日の重複はupsertで無視）。
+  // 以前はここのerrorを一切見ておらず、書き込みが数ヶ月ずっと失敗していても
+  // Cronのレスポンスは正常に見えてしまっていた。
+  const { error: historyError } = await supabase.from('price_history').upsert(
     { prize_id: prize.id, price: currentPrice, recorded_at: todayStr },
     { onConflict: 'prize_id,recorded_at', ignoreDuplicates: true }
   )
+  if (historyError) {
+    console.error(`price_history upsert failed (prize_id=${prize.id}):`, historyError.message)
+  }
 
-  return peakUpdated ? 'updated_peak' : 'recorded'
+  return { status: peakUpdated ? 'updated_peak' : 'recorded', historyError: historyError?.message ?? null }
 }
 
 // ─── 並列バッチ処理 ──────────────────────────────────────────────────────────
@@ -131,18 +138,25 @@ async function processBatch(
   kujiTitleMap: Record<number, string>,
   todayStr: string,
   nowIso: string,
-): Promise<{ scanned: number; peakUpdated: number }> {
+): Promise<{ scanned: number; peakUpdated: number; historyErrors: number; firstHistoryError: string | null }> {
   let peakUpdated = 0
+  let historyErrors = 0
+  let firstHistoryError: string | null = null
   for (let i = 0; i < prizes.length; i += CONCURRENCY) {
     const chunk = prizes.slice(i, i + CONCURRENCY)
     const results = await Promise.allSettled(
       chunk.map(p => processPrize(p, kujiTitleMap, todayStr, nowIso))
     )
     for (const r of results) {
-      if (r.status === 'fulfilled' && r.value === 'updated_peak') peakUpdated++
+      if (r.status !== 'fulfilled') continue
+      if (r.value.status === 'updated_peak') peakUpdated++
+      if (r.value.historyError) {
+        historyErrors++
+        firstHistoryError ??= r.value.historyError
+      }
     }
   }
-  return { scanned: prizes.length, peakUpdated }
+  return { scanned: prizes.length, peakUpdated, historyErrors, firstHistoryError }
 }
 
 // ─── Route Handler ──────────────────────────────────────────────────────────
@@ -168,7 +182,8 @@ export async function GET(req: Request) {
   const day7Str = day7.toISOString().slice(0, 10)
   const day90Str = day90.toISOString().slice(0, 10)
 
-  const stats = { newKuji: 0, oldKuji: 0, peakUpdated: 0 }
+  const stats = { newKuji: 0, oldKuji: 0, peakUpdated: 0, historyErrors: 0 }
+  let firstHistoryError: string | null = null
 
   // ── ① 発売7日以内のくじ（毎日計測） ────────────────────────────────────────
   const { data: newKujiList } = await supabase
@@ -188,6 +203,8 @@ export async function GET(req: Request) {
       const result = await processBatch(newPrizes, kujiTitleMap, todayStr, nowIso)
       stats.newKuji = result.scanned
       stats.peakUpdated += result.peakUpdated
+      stats.historyErrors += result.historyErrors
+      firstHistoryError ??= result.firstHistoryError
     }
   }
 
@@ -213,8 +230,14 @@ export async function GET(req: Request) {
         const result = await processBatch(oldPrizes, kujiTitleMap, todayStr, nowIso)
         stats.oldKuji = result.scanned
         stats.peakUpdated += result.peakUpdated
+        stats.historyErrors += result.historyErrors
+        firstHistoryError ??= result.firstHistoryError
       }
     }
+  }
+
+  if (stats.historyErrors > 0) {
+    console.error(`price_historyへの書き込みが${stats.historyErrors}件失敗しました。例: ${firstHistoryError}`)
   }
 
   return NextResponse.json({
@@ -223,5 +246,6 @@ export async function GET(req: Request) {
     newKujiPrizes: stats.newKuji,
     oldKujiPrizes: stats.oldKuji,
     peakUpdated: stats.peakUpdated,
+    historyErrors: stats.historyErrors,
   })
 }

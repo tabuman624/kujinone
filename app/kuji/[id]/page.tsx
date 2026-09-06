@@ -92,12 +92,6 @@ export default async function KujiDetail({
   const newsSlug = `kuji-${kuji.product_id}`
   const newsExists = fs.existsSync(path.join(process.cwd(), 'news-posts', `${newsSlug}.md`))
 
-  const tweetUrls: string[] = Array.isArray(kuji.tweet_urls)
-    ? kuji.tweet_urls
-    : typeof kuji.tweet_urls === 'string'
-    ? [kuji.tweet_urls]
-    : []
-
   const availableStores: string[] = Array.isArray(kuji.available_stores) ? kuji.available_stores : []
 
   return (
@@ -144,23 +138,21 @@ export default async function KujiDetail({
           </div>
         )}
 
-        {tweetUrls.length > 0 && (
+        {kuji.source_url && (
           <div className="mb-6 anim-fade-up" style={{ animationDelay: '140ms' }}>
             <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">公式情報 / OFFICIAL</h2>
-            {tweetUrls.map((url, i) => (
-              <div key={i} className="bg-stone-50 border border-stone-200 rounded-xl p-4 mb-2">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-7 h-7 rounded-full bg-black flex items-center justify-center text-white text-xs font-black">X</div>
-                  <div>
-                    <p className="text-xs font-bold text-stone-800">一番くじ公式</p>
-                    <p className="text-xs text-stone-400">@ichibanKUJI</p>
-                  </div>
-                </div>
-                <a href={url} target="_blank" rel="noopener noreferrer" className="text-xs text-shu font-semibold hover:underline">
-                  公式ポストを見る →
-                </a>
+            <a
+              href={kuji.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between gap-3 p-4 bg-stone-50 border border-stone-200 rounded-xl press hover:border-shu transition-colors"
+            >
+              <div>
+                <p className="text-sm font-bold text-stone-800">公式商品ページを見る</p>
+                <p className="text-xs text-stone-400 mt-0.5">発売日・賞品の詳細を確認</p>
               </div>
-            ))}
+              <span className="text-shu text-sm flex-shrink-0">↗</span>
+            </a>
           </div>
         )}
 
