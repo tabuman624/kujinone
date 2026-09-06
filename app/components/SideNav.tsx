@@ -37,6 +37,8 @@ const navItems = [
 ]
 
 const footerLinks = [
+  { href: '/today', label: '今日・今週発売' },
+  { href: '/ranking/wanted', label: '狙われている賞ランキング' },
   { href: '/ip', label: '作品から探す' },
   { href: '/store', label: '取扱店から探す' },
   { href: '/about', label: 'このサイトについて' },

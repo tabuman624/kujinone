@@ -159,6 +159,26 @@ async function processBatch(
   return { scanned: prizes.length, peakUpdated, historyErrors, firstHistoryError }
 }
 
+// ─── kuji_views の日次スナップショット ───────────────────────────────────────
+// 「注目急上昇」判定に使う伸び率を計算するには時系列データが要る。kuji_views は
+// 累積カウンタのみでタイムスタンプを持たないため、毎日この時点の値を
+// kuji_views_daily にコピーしておく（同日の重複はupsertで無視）。
+// kuji_views_daily テーブルが未作成の環境でも他の処理に影響しないよう、
+// エラーはログのみに留める。
+
+async function snapshotKujiViews(todayStr: string): Promise<{ snapshotted: number; error: string | null }> {
+  const { data: views, error: fetchError } = await supabase.from('kuji_views').select('kuji_id, view_count')
+  if (fetchError || !views?.length) return { snapshotted: 0, error: fetchError?.message ?? null }
+
+  const rows = views.map(v => ({ kuji_id: v.kuji_id, view_count: v.view_count, recorded_at: todayStr }))
+  const { error } = await supabase.from('kuji_views_daily').upsert(rows, { onConflict: 'kuji_id,recorded_at', ignoreDuplicates: true })
+  if (error) {
+    console.error('kuji_views_daily upsert failed:', error.message)
+    return { snapshotted: 0, error: error.message }
+  }
+  return { snapshotted: rows.length, error: null }
+}
+
 // ─── Route Handler ──────────────────────────────────────────────────────────
 
 export async function GET(req: Request) {
@@ -240,6 +260,8 @@ export async function GET(req: Request) {
     console.error(`price_historyへの書き込みが${stats.historyErrors}件失敗しました。例: ${firstHistoryError}`)
   }
 
+  const viewSnapshot = await snapshotKujiViews(todayStr)
+
   return NextResponse.json({
     date: todayStr,
     isSaturday,
@@ -247,5 +269,7 @@ export async function GET(req: Request) {
     oldKujiPrizes: stats.oldKuji,
     peakUpdated: stats.peakUpdated,
     historyErrors: stats.historyErrors,
+    viewSnapshotted: viewSnapshot.snapshotted,
+    viewSnapshotError: viewSnapshot.error,
   })
 }

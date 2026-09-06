@@ -244,6 +244,8 @@ export default async function Home() {
       <div className="md:hidden px-5 pb-8 pt-2 border-t border-stone-100">
         <div className="flex flex-wrap gap-x-4 gap-y-2 mb-2">
           {[
+            { href: '/today', label: '今日・今週発売' },
+            { href: '/ranking/wanted', label: '狙われている賞ランキング' },
             { href: '/ip', label: '作品から探す' },
             { href: '/store', label: '取扱店から探す' },
             { href: '/privacy', label: 'プライバシーポリシー' },
