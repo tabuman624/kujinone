@@ -32,11 +32,27 @@ function fmtRelease(d: string) {
 
 export default async function Home() {
   const today = new Date().toISOString().slice(0, 10)
+  const sevenDaysAgoDate = new Date()
+  sevenDaysAgoDate.setDate(sevenDaysAgoDate.getDate() - 7)
+  const sevenDaysAgo = sevenDaysAgoDate.toISOString().slice(0, 10)
+
+  // 発売中（直近1週間〜当日発売）。長く残すと売り切れ済みの商品が並び続けるため、
+  // ホームでは「今まさに店頭にありそうな」直近1週間に絞る。
+  const { data: onSaleList } = await supabase
+    .from('kuji')
+    .select('*')
+    .eq('is_active', true)
+    .gte('release_at', sevenDaysAgo)
+    .lte('release_at', today)
+    .order('release_at', { ascending: false })
+    .limit(5)
+
+  // 近日発売（当日発売はON SALE側に含めるため、ここは翌日以降のみ）
   const { data: kujiList } = await supabase
     .from('kuji')
     .select('*')
     .eq('is_active', true)
-    .gte('release_at', today)
+    .gt('release_at', today)
     .order('release_at', { ascending: true })
     .limit(5)
 
@@ -98,12 +114,53 @@ export default async function Home() {
         ))}
       </div>
 
+      {/* On Sale Now */}
+      {onSaleList && onSaleList.length > 0 && (
+        <div className="px-5 pt-7 pb-2">
+          <div className="flex items-baseline justify-between mb-5">
+            <div>
+              <h2 className="text-base font-black text-stone-800">発売中のくじ</h2>
+              <p className="text-xs text-shu font-bold tracking-wider">ON SALE</p>
+            </div>
+            <Link href="/schedule" className="text-xs text-shu font-semibold hover:underline press">一覧を見る →</Link>
+          </div>
+          <div className="space-y-3">
+            {onSaleList.map((kuji, i) => (
+              <Link
+                key={kuji.id}
+                href={`/kuji/${kuji.id}`}
+                className="flex items-center gap-4 p-4 bg-white border border-stone-200 rounded-xl card-hover hover:border-shu hover:shadow-md press anim-fade-up"
+                style={{ animationDelay: `${80 + i * 70}ms` }}
+              >
+                <div className="w-12 h-12 bg-shu-bg rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0">
+                  {kuji.image_url ? (
+                    <Image src={kuji.image_url} alt={kuji.title} width={48} height={48} className="w-full h-full object-cover" sizes="48px" unoptimized />
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-shu" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                    </svg>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full font-semibold">発売中</span>
+                  <p className="text-sm font-bold text-stone-800 mt-0.5 truncate">{kuji.title}</p>
+                  <p className="text-xs text-stone-500">{kuji.price}円/回{kuji.total ? ` · 全${kuji.total}本` : ''}</p>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-stone-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Schedule */}
       <div className="px-5 py-7">
         <div className="flex items-baseline justify-between mb-5">
           <div>
-            <h2 className="text-base font-black text-stone-800">発売スケジュール</h2>
-            <p className="text-xs text-shu font-bold tracking-wider">SCHEDULE</p>
+            <h2 className="text-base font-black text-stone-800">近日発売</h2>
+            <p className="text-xs text-shu font-bold tracking-wider">UPCOMING</p>
           </div>
           <Link href="/schedule" className="text-xs text-shu font-semibold hover:underline press">一覧を見る →</Link>
         </div>
