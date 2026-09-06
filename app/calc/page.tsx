@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { supabase } from "../lib/supabase"
 import AffiliateLink from "../components/AffiliateLink"
+import { buildTitleKeyword, buildPrizeKeyword } from "../lib/searchKeyword"
 
 type Kuji = { id: number; title: string; price: number; total: number; release_at: string; image_url: string | null }
 type Prize = {
@@ -89,17 +90,25 @@ function EmptyResultCard({ title, hint }: { title: string; hint: string }) {
   )
 }
 
+// MarketPriceSectionの賞品単位リンクは以前AffiliateLinkコンポーネントを
+// 経由しない生<a>タグだったためGA4計測から漏れていた。カードUIのAffiliateLink
+// をそのまま使うとレイアウトが崩れるため、同じイベント発火だけをここに実装する。
+// ヤフオクリンクは非アフィリエイトなので、収益クリックと混同しないよう
+// 別イベント名で計測する。
+function trackAffiliateClick(label: string) {
+  window.gtag?.('event', 'affiliate_click', { link_label: label, page_path: window.location.pathname })
+}
+function trackMarketLinkClick(label: string) {
+  window.gtag?.('event', 'market_link_click', { link_label: label, page_path: window.location.pathname })
+}
+
 function buildYahooAuctionUrl(kujiTitle: string, prize: PrizeWithInput): string {
-  const titleCore = kujiTitle.replace(/^一番くじ\s*/, '').trim()
-  const titlePrefix = titleCore.split(/\s+/)[0] ?? ''
-  const keyword = [`一番くじ`, titlePrefix, prize.grade, prize.name.replace(/^[A-ZＡ-Ｚa-z\w]*賞\s*/, '').trim()].filter(Boolean).join(' ')
+  const keyword = buildPrizeKeyword(kujiTitle, prize.grade, prize.name)
   return `https://auctions.yahoo.co.jp/search/search?p=${encodeURIComponent(keyword)}&va=${encodeURIComponent(keyword)}&istatus=1`
 }
 
 function buildYahooShoppingAffUrl(kujiTitle: string, prize: PrizeWithInput): string {
-  const titleCore = kujiTitle.replace(/^一番くじ\s*/, '').trim()
-  const titlePrefix = titleCore.split(/\s+/)[0] ?? ''
-  const keyword = [`一番くじ`, titlePrefix, prize.grade, prize.name.replace(/^[A-ZＡ-Ｚa-z\w]*賞\s*/, '').trim()].filter(Boolean).join(' ')
+  const keyword = buildPrizeKeyword(kujiTitle, prize.grade, prize.name)
   return `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502&url=${encodeURIComponent(`https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(keyword)}`)}`
 }
 
@@ -144,6 +153,7 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
                           target="_blank"
                           rel="noopener noreferrer sponsored"
                           className="text-[10px] text-blue-500 font-medium hover:underline"
+                          onClick={() => trackAffiliateClick(`Yahoo! Shoppingで探す【PR】_${kujiTitle}`)}
                         >
                           Yahoo! Shoppingで探す【PR】
                         </a>
@@ -159,6 +169,7 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-[10px] text-blue-500 font-medium hover:underline"
+                          onClick={() => trackMarketLinkClick(`ヤフオクで探す_${kujiTitle}`)}
                         >
                           ヤフオクで探す
                         </a>
@@ -179,6 +190,26 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
       <div className="px-4 py-2 bg-stone-50 border-t border-stone-100">
         <p className="text-[10px] text-stone-400">参考：ヤフオク落札相場・Yahooショッピング</p>
       </div>
+    </div>
+  )
+}
+
+function BuyVsDrawBanner({ expected, prizes }: { expected: number; prizes: PrizeWithInput[] }) {
+  // 相場データのあるチェック中の賞のうち最安値と期待金額を比較する。
+  // 引く方が得(または同額)のときは煽らずに何も表示しない。
+  const pricePoints = prizes
+    .map(p => p.market_price ?? p.auction_price_min)
+    .filter((v): v is number => v != null)
+  if (pricePoints.length === 0) return null
+  const cheapest = Math.min(...pricePoints)
+  const diff = expected - cheapest
+  if (diff <= 0) return null
+  return (
+    <div className="mb-6 rounded-xl border border-shu-bg bg-shu-bg px-4 py-3.5 anim-fade-up">
+      <p className="text-xs font-black text-shu-dark mb-1">💡 買った方が安いかもしれません</p>
+      <p className="text-[11px] text-stone-600 leading-relaxed">
+        期待金額は約{expected.toLocaleString()}円ですが、中古相場は約{cheapest.toLocaleString()}円〜です。約{diff.toLocaleString()}円安く手に入る可能性があります（店頭の残数によって変わります）。下の相場リンクから確認してみましょう。
+      </p>
     </div>
   )
 }
@@ -218,11 +249,12 @@ function AffiliateLinks({ title }: { title: string }) {
     (window as any).a8linkmgr?.({ config_id: 'xLVEUKG6qLmgP54TvR6L' })
   }, [title])
 
+  const keyword = buildTitleKeyword(title)
   const links = [
-    { href: `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM&a8ejpredirect=${encodeURIComponent(`https://jp.mercari.com/search?keyword=${encodeURIComponent(title)}`)}`, label: "メルカリで相場を見る【PR】", sub: "出品価格を確認", color: "bg-shu-bg border-shu text-shu", rel: "noopener noreferrer nofollow sponsored" },
-    { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(title)}`, label: "駿河屋で相場を見る【PR】", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600", rel: "nofollow noopener noreferrer" },
-    { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502&url=${encodeURIComponent(`https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(title)}`)}`, label: "Yahoo!ショッピングで見る【PR】", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600", rel: "noopener noreferrer sponsored" },
-    { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621&url=${encodeURIComponent(`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(title)}`)}`, label: "楽天市場で見る【PR】", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600", rel: "noopener noreferrer sponsored" },
+    { href: `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM&a8ejpredirect=${encodeURIComponent(`https://jp.mercari.com/search?keyword=${encodeURIComponent(keyword)}`)}`, label: "メルカリで相場を見る【PR】", sub: "出品価格を確認", color: "bg-shu-bg border-shu text-shu", rel: "noopener noreferrer nofollow sponsored" },
+    { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(keyword)}`, label: "駿河屋で相場を見る【PR】", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600", rel: "nofollow noopener noreferrer" },
+    { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502&url=${encodeURIComponent(`https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(keyword)}`)}`, label: "Yahoo!ショッピングで見る【PR】", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600", rel: "noopener noreferrer sponsored" },
+    { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621&url=${encodeURIComponent(`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(keyword)}`)}`, label: "楽天市場で見る【PR】", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600", rel: "noopener noreferrer sponsored" },
   ]
   const surugaKaitoriUrl = `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=${encodeURIComponent('https://www.suruga-ya.jp/man/kaitori/kaitoritop.html')}`
   return (
@@ -445,6 +477,7 @@ function CalcContent() {
                 times={liveResult.times}
                 detail={`残数${totalRemaining}本 / ${liveResult.gradeStr}${liveResult.targetCount}本 / ${kuji.price}円 × ${liveResult.times}回`}
               />
+              <BuyVsDrawBanner expected={liveResult.expected} prizes={prizes.filter(p => p.checked)} />
               <MarketPriceSection prizes={prizes.filter(p => p.checked)} loading={marketLoading} kujiTitle={kuji.title} />
               <AffiliateLinks title={kuji.title} />
             </>

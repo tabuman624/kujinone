@@ -9,6 +9,7 @@ import PrizeList from './PrizeList'
 import PrizePopularity from './PrizePopularity'
 import KujiViewTracker from './KujiViewTracker'
 import AffiliateLink from '../../components/AffiliateLink'
+import { buildTitleKeyword } from '../../lib/searchKeyword'
 
 export const revalidate = 3600
 
@@ -78,7 +79,14 @@ export default async function KujiDetail({
   } : null
 
   const isReleased = kuji.release_at <= today
-  const searchKeyword = kuji.title.split(/\s+/).slice(0, 2).join(' ')
+  const searchKeyword = buildTitleKeyword(kuji.title)
+
+  const pricePoints = (prizes ?? [])
+    .map(p => p.market_price ?? p.auction_price_min)
+    .filter((v): v is number => v != null)
+  const priceRangeText = pricePoints.length > 0
+    ? `現在の相場は約¥${Math.min(...pricePoints).toLocaleString()}〜¥${Math.max(...pricePoints).toLocaleString()}です。`
+    : ''
 
   // 対応する新作速報記事の有無を確認
   const newsSlug = `kuji-${kuji.product_id}`
@@ -179,7 +187,7 @@ export default async function KujiDetail({
           <div className="mb-6 anim-fade-up" style={{ animationDelay: `${260 + (prizes?.length || 0) * 60}ms` }}>
             <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">相場を確認・購入する / MARKET</h2>
             <p className="text-xs text-stone-500 mb-3 leading-relaxed">
-              『{kuji.title}』の中古相場はメルカリ・駿河屋などで確認できます。発売直後は定価に近い価格で取引されることが多く、時間が経つにつれて相場が下がっていく傾向があります。
+              『{kuji.title}』の中古相場はメルカリ・駿河屋などで確認できます。{priceRangeText}発売直後は定価に近い価格で取引されることが多く、時間が経つにつれて相場が下がっていく傾向があります。
             </p>
             <div className="space-y-2">
               {[

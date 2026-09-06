@@ -6,6 +6,12 @@ import matter from 'gray-matter'
 import { renderArticleMarkdown } from '../../lib/markdown'
 import { notFound } from 'next/navigation'
 import ReadingProgress from './ReadingProgress'
+import { CompareCTA, SellCTA } from '../../components/BlogAffiliateCTA'
+
+// 「相場と比較して判断しよう」「駿河屋の買取がラク」と本文で明言しているのに
+// 外部リンクが1本も無かった記事だけに、対応するCTAを差し込む。
+const COMPARE_CTA_SLUGS = new Set(['ichiban-kuji-last-one', 'kuji-vs-mercari', 'ichiban-kuji-toha'])
+const SELL_CTA_SLUGS = new Set(['ichiban-kuji-sell-where', 'ichiban-kuji-sell-tips', 'ichiban-kuji-kaitori-price'])
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
@@ -149,6 +155,9 @@ export default async function BlogDetailPage({
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </div>
+
+      {COMPARE_CTA_SLUGS.has(slug) && <CompareCTA />}
+      {SELL_CTA_SLUGS.has(slug) && <SellCTA />}
 
       {relatedPosts.length > 0 && (
         <div className="px-5 pb-6 border-t border-stone-100 pt-6">

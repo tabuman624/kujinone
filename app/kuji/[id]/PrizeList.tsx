@@ -16,6 +16,8 @@ type Prize = {
   name: string
   total: number
   image_url: string | null
+  market_price?: number | null
+  auction_price_min?: number | null
 }
 
 export default function PrizeList({ prizes }: { prizes: Prize[] }) {
@@ -44,7 +46,14 @@ export default function PrizeList({ prizes }: { prizes: Prize[] }) {
               <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${gradeColors[prize.grade] || 'bg-stone-100 text-stone-700'}`}>{prize.grade}</span>
               <p className="text-sm text-stone-800 font-medium mt-0.5 truncate">{prize.name}</p>
             </div>
-            <span className="text-xs text-stone-400 flex-shrink-0">{prize.total}種</span>
+            <div className="flex flex-col items-end flex-shrink-0">
+              <span className="text-xs text-stone-400">{prize.total}種</span>
+              {(prize.market_price ?? prize.auction_price_min) != null && (
+                <span className="text-xs font-bold text-shu mt-0.5" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                  ¥{(prize.market_price ?? prize.auction_price_min)!.toLocaleString()}〜
+                </span>
+              )}
+            </div>
           </div>
         ))}
       </div>
