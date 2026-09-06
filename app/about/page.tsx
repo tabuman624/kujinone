@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'このサイトについて | くじのね',
+  title: 'このサイトについて',
   description: '引くたびにメルカリで後悔する。それでもやめられない。そんな経験から生まれた期待値計算ツールです。',
 }
 

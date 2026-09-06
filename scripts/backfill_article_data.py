@@ -40,7 +40,7 @@ def backfill_file(path):
         return None
 
     prizes = get_prizes(kuji_id)
-    total = sum(p['total'] for p in prizes) if prizes else 0
+    total = kuji.get('total') or 0  # 全本数はkuji.totalのみを正とする（prizesは種類数であり本数ではない）
     if total <= 0:
         return None  # まだ本数が未公開のまま → 対象外
 

@@ -5,7 +5,7 @@ import ScheduleList from './ScheduleList'
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: '一番くじ 最新発売スケジュール2026 | くじのね',
+  title: '一番くじ 最新発売スケジュール2026',
   description: '2026年の一番くじ最新発売日程を随時更新。ドラゴンボール・ワンピース・鬼滅の刃など人気タイトルの発売日をまとめてチェック。',
   alternates: { canonical: '/schedule' },
 }

@@ -14,7 +14,10 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://kujinone.com'),
-  title: "一番くじ 期待値計算ツール | くじのね",
+  title: {
+    default: "一番くじ 期待値計算ツール | くじのね",
+    template: "%s | くじのね",
+  },
   description: "一番くじ（いちばんくじ・1番くじ）の期待値を無料で計算。目当ての賞が当たるまでの平均費用を秒で算出。発売スケジュール・ヤフオク落札相場も確認できます。",
   openGraph: {
     title: "一番くじ 期待値計算ツール | くじのね",
@@ -30,6 +33,11 @@ export const metadata: Metadata = {
     title: "一番くじ 期待値計算ツール | くじのね",
     description: "一番くじ（いちばんくじ・1番くじ）の期待値を無料で計算。目当ての賞が当たるまでの平均費用を秒で算出。",
     images: ["/logo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    "max-image-preview": "large",
   },
   verification: {
     google: "Sjo1gHcZIajNjfXIWQqWzgsLlCAT19ePlb3SnTbUwZ4",

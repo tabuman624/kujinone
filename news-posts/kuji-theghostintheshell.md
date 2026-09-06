@@ -1,11 +1,11 @@
 ---
-title: 2026年9月26日発売「一番くじ 攻殻機動隊 THE GHOST IN THE SHELL」賞品一覧と期待値を解説
+title: 一番くじ 攻殻機動隊 THE GHOST IN THE …｜賞品一覧と期待値【9/26発売】
 date: 2026-07-28
 release_date: 2026-09-26
 kuji_id: 3970
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10736/855bd2e6-0e35-466f-ab5b-cc7da0979501.webp
-summary: 2026年9月26日発売「一番くじ 攻殻機動隊 THE GHOST IN THE SHELL」の賞品一覧と期待値。1回850円、全3本。くじのねで期待値を計算できます。
+summary: 2026年9月26日発売「一番くじ 攻殻機動隊 THE GHOST IN THE SHELL」の賞品一覧と期待値。1回850円、本数未発表。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ 攻殻機動隊 THE GHOST IN THE SHELL](https://assets.1kuji.com/uploads/product/top_banner/10736/855bd2e6-0e35-466f-ab5b-cc7da0979501.webp)
@@ -25,18 +25,5 @@ summary: 2026年9月26日発売「一番くじ 攻殻機動隊 THE GHOST IN THE 
 |---|---|---|
 | A賞 | 草薙素子＆フチコマ フィギュア | 2種 |
 | ラストワン賞 | 草薙素子＆フチコマ フィギュア ラストワンVer. | 1種 |
-
-## 期待値を計算してみた
-
-以下はくじのねの期待値計算ツールで算出した実データです（2026年07月時点）。
-
-**全本数：3本 / 1回850円 / 全部引いたら2,550円**
-
-| 賞 | 本数 | 平均当選回数 | 平均費用 |
-|---|---|---|---|
-| A賞 | 2本 | 約1回 | 約850円 |
-| ラストワン賞 | 1本 | 約2回 | 約1,700円 |
-
-※ 非復元抽出（引いたくじは戻さない）での理論値です。実際の費用は引く順番により異なります。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/3970)

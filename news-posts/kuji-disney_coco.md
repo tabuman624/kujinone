@@ -1,5 +1,5 @@
 ---
-title: 【2026年10月31日発売】一番くじ〈リメンバー・ミー〉Colorful Memoriesの賞品・期待値まとめ
+title: 一番くじ〈リメンバー・ミー〉Colorful Memor… 全賞品ラインナップ｜10/31発売
 date: 2026-09-01
 release_date: 2026-10-31
 kuji_id: 7122

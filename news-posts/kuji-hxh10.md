@@ -1,11 +1,11 @@
 ---
-title: 一番くじ HUNTER×HUNTER ZAOLDYECK FAMILY 全賞品・期待値まとめ｜2026年5月22日発売
+title: 一番くじ HUNTER×HUNTER ZAOLDYECK… 全賞品ラインナップ｜5/22発売
 date: 2026-05-12
 release_date: 2026-05-22
 kuji_id: 14
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10646/6726458c-d90b-4f7e-87b6-57e037c07c45.png
-summary: 2026年5月22日発売「一番くじ HUNTER×HUNTER ZAOLDYECK FAMILY」の賞品一覧と期待値。1回850円、全40本。くじのねで期待値を計算できます。
+summary: 2026年5月22日発売「一番くじ HUNTER×HUNTER ZAOLDYECK FAMILY」の賞品一覧と期待値。1回850円、本数未発表。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ HUNTER×HUNTER ZAOLDYECK FAMILY](https://assets.1kuji.com/uploads/product/top_banner/10646/6726458c-d90b-4f7e-87b6-57e037c07c45.png)
@@ -34,27 +34,5 @@ summary: 2026年5月22日発売「一番くじ HUNTER×HUNTER ZAOLDYECK FAMILY�
 | I賞 | ダイカットメモコレクション | 8種 |
 | J賞 | ステッカーコレクション | 10種 |
 | ラストワン賞 | ミケ MASTERLISE EXTRA | 1種 |
-
-## 期待値を計算してみた
-
-以下はくじのねの期待値計算ツールで算出した実データです（2026年6月時点）。
-
-**全本数：40本 / 1回850円 / 全部引いたら34,000円**
-
-| 賞 | 本数 | 平均当選回数 | 平均費用 |
-|---|---|---|---|
-| A賞 | 1本 | 20.5回 | 約17,425円 |
-| B賞 | 1本 | 20.5回 | 約17,425円 |
-| C賞 | 1本 | 20.5回 | 約17,425円 |
-| D賞 | 1本 | 20.5回 | 約17,425円 |
-| E賞 | 2本 | 13.7回 | 約11,617円 |
-| F賞 | 1本 | 20.5回 | 約17,425円 |
-| G賞 | 6本 | 5.9回 | 約4,979円 |
-| H賞 | 8本 | 4.6回 | 約3,872円 |
-| I賞 | 8本 | 4.6回 | 約3,872円 |
-| J賞 | 10本 | 3.7回 | 約3,168円 |
-| ラストワン賞 | 1本 | 40回 | 約34,000円 |
-
-※ 非復元抽出（引いたくじは戻さない）での理論値です。実際の費用は引く順番により異なります。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/14)

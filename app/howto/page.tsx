@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
+  title: 'くじのねの使い方｜期待値計算の3ステップ',
+  description: '残り本数を入力するだけ。スケジュールから選ぶ→店頭で残数カウント→相場と比較、の3ステップで一番くじの期待値を出す方法を解説します。',
   alternates: { canonical: '/howto' },
 }
 

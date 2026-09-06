@@ -1,11 +1,11 @@
 ---
-title: 一番くじ ムーミン ～A day like this～ 全賞品・期待値まとめ｜2026年10月23日発売
+title: 一番くじ ムーミン ～A day like this～ 全賞品ラインナップ｜10/23発売
 date: 2026-08-25
 release_date: 2026-10-23
 kuji_id: 7463
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10778/f50bb4da-3624-43e7-91af-a7095f29a7aa.webp
-summary: 2026年10月23日発売「一番くじ ムーミン ～A day like this～」の賞品一覧と期待値。1回880円、全1本。くじのねで期待値を計算できます。
+summary: 2026年10月23日発売「一番くじ ムーミン ～A day like this～」の賞品一覧と期待値。1回880円、本数未発表。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ ムーミン ～A day like this～](https://assets.1kuji.com/uploads/product/top_banner/10778/f50bb4da-3624-43e7-91af-a7095f29a7aa.webp)
@@ -24,17 +24,5 @@ summary: 2026年10月23日発売「一番くじ ムーミン ～A day like this�
 | 賞 | 景品名 | 種類 |
 |---|---|---|
 | A賞 | ルームライト | 1種 |
-
-## 期待値を計算してみた
-
-以下はくじのねの期待値計算ツールで算出した実データです（2026年08月時点）。
-
-**全本数：1本 / 1回880円 / 全部引いたら880円**
-
-| 賞 | 本数 | 平均当選回数 | 平均費用 |
-|---|---|---|---|
-| A賞 | 1本 | 約1回 | 約880円 |
-
-※ 非復元抽出（引いたくじは戻さない）での理論値です。実際の費用は引く順番により異なります。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/7463)

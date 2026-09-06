@@ -19,18 +19,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const description = String(data.summary || '')
   const ogImage = String(data.image_url || '/logo.png')
   return {
-    title: `${data.title} | くじのね`,
+    title: String(data.title),
     description,
     alternates: { canonical: `/news/${slug}` },
     openGraph: {
-      title: `${data.title} | くじのね`,
+      title: String(data.title),
       description,
       url: `https://kujinone.com/news/${slug}`,
       images: [{ url: ogImage, alt: String(data.title) }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${data.title} | くじのね`,
+      title: String(data.title),
       description,
       images: [ogImage],
     },

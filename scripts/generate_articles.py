@@ -17,16 +17,20 @@ POSTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'news-posts')
 LINKSYNERGY_URL = "https://click.linksynergy.com/fs-bin/click?id=txstqLlFvt4&offerid=1366097.2&type=3&subid=0"
 
 # ⑥ タイトルバリエーション（product_idのハッシュで安定的に選択）
+# 商品名（＝検索クエリ）を必ず先頭に置き、日付は短縮形にしてSERPでの表示落ちを防ぐ。
 TITLE_TEMPLATES = [
-    "「{title}」発売日・賞品一覧＆期待値まとめ【{release_ja}発売】",
-    "{title} 全賞品・期待値まとめ｜{release_ja}発売",
-    "{release_ja}発売「{title}」賞品一覧と期待値を解説",
-    "【{release_ja}発売】{title}の賞品・期待値まとめ",
+    "{title}｜賞品一覧と期待値【{release_md}発売】",
+    "{title} 全賞品ラインナップ｜{release_md}発売",
 ]
 
-def pick_title(product_id, title, release_ja):
+TITLE_NAME_MAX_LEN = 28  # SERP表示枠を確保するための商品名の上限文字数
+
+def truncate_title_name(title, max_len=TITLE_NAME_MAX_LEN):
+    return title if len(title) <= max_len else title[:max_len] + "…"
+
+def pick_title(product_id, title, release_md):
     idx = sum(ord(c) for c in product_id) % len(TITLE_TEMPLATES)
-    return TITLE_TEMPLATES[idx].format(title=title, release_ja=release_ja)
+    return TITLE_TEMPLATES[idx].format(title=truncate_title_name(title), release_md=release_md)
 
 
 def get_target_kuji():
@@ -89,6 +93,11 @@ def format_date_ja(date_str):
     return f"{d.year}年{d.month}月{d.day}日"
 
 
+def format_date_short(date_str):
+    d = datetime.strptime(date_str, "%Y-%m-%d")
+    return f"{d.month}/{d.day}"
+
+
 def build_prizes_table(prizes):
     if not prizes:
         return "（賞品情報未公開）"
@@ -98,59 +107,40 @@ def build_prizes_table(prizes):
     return "\n".join(lines)
 
 
-def calc_expected(total, target_count, price):
-    if target_count <= 0 or total <= 0:
-        return None
-    times = round((total + 1) / (target_count + 1))
-    return times * price, times
+def build_ev_section(total, price, as_of):
+    """全本数（kuji.total）が判明している場合のみ、期待値の目安を表示する。
 
-
-def build_ev_section(prizes, total, price, as_of):
-    """賞品ごとの期待値テーブルを生成する（calc_expectedと同じ式を全賞品に適用）。"""
-    if total <= 0 or not prizes:
+    prizes[].total は賞ごとの「バリエーション数（種）」であり、賞ごとの実際の
+    本数ではない。以前はこれを本数として合計・按分して期待値テーブルを生成して
+    いたため、実在しない本数・平均費用がSERP上のdescriptionにまで露出していた。
+    賞ごとの実本数はこのパイプラインでは取得できないため、按分した表は作らず、
+    全体の総額のみを示す。
+    """
+    if total <= 0:
         return ""
 
-    rows = []
-    for p in prizes:
-        result = calc_expected(total, p['total'], price)
-        if not result:
-            continue
-        cost, times = result
-        rows.append(f"| {p['grade']} | {p['total']}本 | 約{times}回 | 約{cost:,}円 |")
-
-    if not rows:
-        return ""
-
-    table   = "\n".join(rows)
     all_cost = total * price
     as_of_ja = datetime.strptime(as_of, "%Y-%m-%d").strftime("%Y年%m月") if as_of else ""
 
-    return f"""## 期待値を計算してみた
+    return f"""## 期待値の目安
 
-以下はくじのねの期待値計算ツールで算出した実データです（{as_of_ja}時点）。
-
-**全本数：{total}本 / 1回{price}円 / 全部引いたら{all_cost:,}円**
-
-| 賞 | 本数 | 平均当選回数 | 平均費用 |
-|---|---|---|---|
-{table}
-
-※ 非復元抽出（引いたくじは戻さない）での理論値です。実際の費用は引く順番により異なります。"""
+全{total}本・1回{price}円のくじです（{as_of_ja}時点）。全部引いた場合の総額は**約{all_cost:,}円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。"""
 
 
 def generate_markdown(kuji, prizes, title_override=None, date_override=None):
     title      = kuji['title']
     release_at = kuji['release_at']
     price      = kuji.get('price') or 800
-    total      = sum(p['total'] for p in prizes) if prizes else 0
+    total      = kuji.get('total') or 0  # 全本数はkuji.totalのみを正とする（prizesは種類数であり本数ではない）
     kuji_id    = kuji['id']
     product_id = kuji['product_id']
     today      = date_override or datetime.now().strftime("%Y-%m-%d")
 
     release_ja   = format_date_ja(release_at)
+    release_md   = format_date_short(release_at)
     total_str    = f"全{total}本" if total > 0 else "本数未発表"
     prizes_table = build_prizes_table(prizes)
-    ev_section   = build_ev_section(prizes, total, price, datetime.now().strftime("%Y-%m-%d"))
+    ev_section   = build_ev_section(total, price, datetime.now().strftime("%Y-%m-%d"))
     cta_link     = f"[→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/{kuji_id})"
 
     # ④ バナー画像
@@ -159,7 +149,7 @@ def generate_markdown(kuji, prizes, title_override=None, date_override=None):
     image_block = f"![{title}]({image_url})\n\n" if image_url else ""
 
     # ⑥ タイトルバリエーション（既存記事の再生成時はtitle_overrideで維持）
-    article_title = title_override or pick_title(product_id, title, release_ja)
+    article_title = title_override or pick_title(product_id, title, release_md)
 
     body_tail = f"{ev_section}\n\n{cta_link}" if ev_section else cta_link
 

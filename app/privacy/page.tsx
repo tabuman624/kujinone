@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
+  title: 'プライバシーポリシー',
+  description: 'くじのねにおける個人情報の取り扱い、アクセス解析・広告配信に関するプライバシーポリシーです。',
   alternates: { canonical: '/privacy' },
 }
 

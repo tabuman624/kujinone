@@ -15,18 +15,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { data } = matter(raw)
   const description = String(data.summary || '')
   return {
-    title: `${data.title} | くじのね`,
+    title: String(data.title),
     description,
     alternates: { canonical: `/blog/${slug}` },
     openGraph: {
-      title: `${data.title} | くじのね`,
+      title: String(data.title),
       description,
       url: `https://kujinone.com/blog/${slug}`,
       images: [{ url: '/logo.png', alt: 'くじのね' }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${data.title} | くじのね`,
+      title: String(data.title),
       description,
       images: ['/logo.png'],
     },

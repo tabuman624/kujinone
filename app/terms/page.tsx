@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
+  title: '利用規約',
+  description: 'くじのねのご利用にあたっての利用規約です。免責事項・禁止事項などを掲載しています。',
   alternates: { canonical: '/terms' },
 }
 
