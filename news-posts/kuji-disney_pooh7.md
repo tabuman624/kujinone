@@ -4,7 +4,7 @@ date: 2026-08-25
 release_date: 2026-10-10
 kuji_id: 7107
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10751/51d0ddc7-d46c-47b9-83fa-0aeaa4afd39b.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10751/d2b38822-85f0-4dfb-a84e-9103a9607536.webp
 summary: 2026年10月10日発売「一番くじ 〈くまのプーさん〉100th Anniversary」の賞品一覧と期待値。1回790円、本数未発表。くじのねで期待値を計算できます。
 ---
 

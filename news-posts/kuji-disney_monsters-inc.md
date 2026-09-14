@@ -4,7 +4,7 @@ date: 2026-08-25
 release_date: 2026-10-17
 kuji_id: 7110
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10752/02904c0a-0a91-4ef4-883e-fbb4cb7fb70e.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10752/b86bb919-5eab-4caa-9752-1f2fad6dbda4.webp
 summary: 2026年10月17日発売「一番くじ 〈モンスターズ・インク〉」の賞品一覧と期待値。1回750円、本数未発表。くじのねで期待値を計算できます。
 ---
 
