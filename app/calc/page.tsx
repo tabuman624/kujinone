@@ -194,26 +194,6 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
   )
 }
 
-function BuyVsDrawBanner({ expected, prizes }: { expected: number; prizes: PrizeWithInput[] }) {
-  // 相場データのあるチェック中の賞のうち最安値と期待金額を比較する。
-  // 引く方が得(または同額)のときは煽らずに何も表示しない。
-  const pricePoints = prizes
-    .map(p => p.market_price ?? p.auction_price_min)
-    .filter((v): v is number => v != null)
-  if (pricePoints.length === 0) return null
-  const cheapest = Math.min(...pricePoints)
-  const diff = expected - cheapest
-  if (diff <= 0) return null
-  return (
-    <div className="mb-6 rounded-xl border border-shu-bg bg-shu-bg px-4 py-3.5 anim-fade-up">
-      <p className="text-xs font-black text-shu-dark mb-1">💡 買った方が安いかもしれません</p>
-      <p className="text-[11px] text-stone-600 leading-relaxed">
-        期待金額は約{expected.toLocaleString()}円ですが、中古相場は約{cheapest.toLocaleString()}円〜です。約{diff.toLocaleString()}円安く手に入る可能性があります（店頭の残数によって変わります）。下の相場リンクから確認してみましょう。
-      </p>
-    </div>
-  )
-}
-
 function ResultCard({ expected, times, detail }: { expected: number; times: number; detail: string }) {
   const animExp = useCountUp(expected, 800)
   const animTimes = useCountUp(times, 700)
@@ -407,6 +387,8 @@ function CalcContent() {
   // ----- With selected kuji -----
   if (kujiId && kuji) {
     const selectedCount = prizes.filter(p => p.checked).length
+    // 未発売のくじには二次流通が存在しないため、相場データを表示しない
+    const isReleased = kuji.release_at <= new Date().toISOString().slice(0, 10)
     return (
       <main style={{ background: "#fafafa" }}>
         <div className="px-6 pt-6 pb-5 bg-stone-800">
@@ -477,8 +459,9 @@ function CalcContent() {
                 times={liveResult.times}
                 detail={`残数${totalRemaining}本 / ${liveResult.gradeStr}${liveResult.targetCount}本 / ${kuji.price}円 × ${liveResult.times}回`}
               />
-              <BuyVsDrawBanner expected={liveResult.expected} prizes={prizes.filter(p => p.checked)} />
-              <MarketPriceSection prizes={prizes.filter(p => p.checked)} loading={marketLoading} kujiTitle={kuji.title} />
+              {isReleased && (
+                <MarketPriceSection prizes={prizes.filter(p => p.checked)} loading={marketLoading} kujiTitle={kuji.title} />
+              )}
               <AffiliateLinks title={kuji.title} />
             </>
           ) : (

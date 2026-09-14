@@ -20,7 +20,22 @@ type Prize = {
   auction_price_min?: number | null
 }
 
-export default function PrizeList({ prizes }: { prizes: Prize[] }) {
+// /calc のチェックと同じキー(ki_{prizeId})・同じ24時間クールダウンを共有する。
+// 同じ賞に対して詳細ページとcalcのどちらで操作しても、同日中は二重カウントされない。
+function trackInterest(prizeId: number) {
+  const key = `ki_${prizeId}`
+  const last = localStorage.getItem(key)
+  const now = Date.now()
+  if (last && now - parseInt(last) < 86_400_000) return
+  fetch('/api/track-interest', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prize_id: prizeId }),
+  })
+  localStorage.setItem(key, String(now))
+}
+
+export default function PrizeList({ prizes, isReleased }: { prizes: Prize[]; isReleased: boolean }) {
   const [active, setActive] = useState<{ url: string; name: string } | null>(null)
 
   return (
@@ -35,7 +50,10 @@ export default function PrizeList({ prizes }: { prizes: Prize[] }) {
             {prize.image_url ? (
               <button
                 className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-stone-50 press"
-                onClick={() => setActive({ url: prize.image_url!, name: prize.name })}
+                onClick={() => {
+                  setActive({ url: prize.image_url!, name: prize.name })
+                  trackInterest(Number(prize.id))
+                }}
               >
                 <Image src={prize.image_url} alt={prize.name} width={48} height={48} className="w-full h-full object-cover" unoptimized />
               </button>
@@ -48,7 +66,7 @@ export default function PrizeList({ prizes }: { prizes: Prize[] }) {
             </div>
             <div className="flex flex-col items-end flex-shrink-0">
               <span className="text-xs text-stone-400">{prize.total}種</span>
-              {(prize.market_price ?? prize.auction_price_min) != null && (
+              {isReleased && (prize.market_price ?? prize.auction_price_min) != null && (
                 <span className="text-xs font-bold text-shu mt-0.5" style={{ fontVariantNumeric: 'tabular-nums' }}>
                   ¥{(prize.market_price ?? prize.auction_price_min)!.toLocaleString()}〜
                 </span>

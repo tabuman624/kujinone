@@ -34,16 +34,22 @@ export default async function WantedRankingPage() {
 
   const kujiIds = [...new Set((prizes ?? []).map(p => p.kuji_id))]
   const { data: kujiList } = kujiIds.length > 0
-    ? await supabase.from('kuji').select('id, title').in('id', kujiIds)
-    : { data: [] as Array<{ id: number; title: string }> }
+    ? await supabase.from('kuji').select('id, title, release_at').in('id', kujiIds)
+    : { data: [] as Array<{ id: number; title: string; release_at: string | null }> }
 
   const prizeMap = Object.fromEntries((prizes ?? []).map(p => [p.id, p]))
   const kujiMap = Object.fromEntries((kujiList ?? []).map(k => [k.id, k.title as string]))
+  const kujiReleaseMap = Object.fromEntries((kujiList ?? []).map(k => [k.id, k.release_at as string | null]))
+  const today = new Date().toISOString().slice(0, 10)
 
   const ranking = (interests ?? [])
     .map(i => {
       const prize = prizeMap[i.prize_id]
       if (!prize) return null
+      // 未発売のくじには二次流通が存在しないため、相場データが付いていても
+      // ランキングには出さない（ラベルなど誤情報の露出を避ける）
+      const releaseAt = kujiReleaseMap[prize.kuji_id]
+      if (!releaseAt || releaseAt > today) return null
       return { ...prize, checkCount: i.check_count as number, kujiTitle: kujiMap[prize.kuji_id] ?? '' }
     })
     .filter((r): r is NonNullable<typeof r> => r !== null)

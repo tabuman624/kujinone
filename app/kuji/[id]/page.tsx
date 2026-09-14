@@ -159,7 +159,7 @@ export default async function KujiDetail({
         {prizes && prizes.length > 0 && (
           <div className="mb-6">
             <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3 anim-fade-up" style={{ animationDelay: '180ms' }}>賞一覧 / PRIZES</h2>
-            <PrizeList prizes={prizes} />
+            <PrizeList prizes={prizes} isReleased={isReleased} />
           </div>
         )}
 
