@@ -4,7 +4,7 @@ date: 2026-09-01
 release_date: 2026-10-31
 kuji_id: 7122
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10757/fd96e0dc-488c-40d1-bf08-79fb85a8b4a7.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10757/203ea70b-6b57-409c-a10e-e0521e4e9d28.webp
 summary: 2026年10月31日発売「一番くじ〈リメンバー・ミー〉Colorful Memories」の賞品一覧と期待値。1回781円、本数未発表。くじのねで期待値を計算できます。
 ---
 
