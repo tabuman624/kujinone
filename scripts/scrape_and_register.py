@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
+from datetime import datetime, timezone
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://jydztbogaxevxjsdjohy.supabase.co")
 ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZHp0Ym9nYXhldnhqc2Rqb2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDg5NzQsImV4cCI6MjA5NDI4NDk3NH0.9X1C_EwKKXk0h_g0ONNLT53BZctO9zu7o-2oLlZbl2s"
@@ -113,6 +114,22 @@ def scrape_detail(url):
         prizes.append({"grade": grade, "name": item_name, "total": total, "sort_order": i, "image_url": image_url})
     return {"price": price, "banner_url": banner_url, "prizes": prizes, "available_stores": available_stores}
 
+def init_total_count_default(kuji_id):
+    """total_countが未設定(NULL)の新規レコードにのみデフォルト値を入れる。
+    既存レコード(total_count設定済み)は対象外のクエリなので上書きされない。"""
+    res = requests.patch(
+        f"{SUPABASE_URL}/rest/v1/kuji?id=eq.{kuji_id}&total_count=is.null",
+        headers={**SB_HEADERS, "Prefer": "return=minimal"},
+        json={
+            "total_count": 80,
+            "total_count_source": "default",
+            "total_count_updated_at": datetime.now(timezone.utc).isoformat(),
+        }
+    )
+    if res.status_code not in (200, 204):
+        print(f"  total_countデフォルト設定エラー: {res.text}")
+
+
 def upsert_kuji(kuji_data):
     res = requests.post(
         f"{SUPABASE_URL}/rest/v1/kuji?on_conflict=product_id",
@@ -199,6 +216,7 @@ def main():
 
             kuji_id = upsert_kuji(kuji)
             if kuji_id:
+                init_total_count_default(kuji_id)
                 insert_prizes(kuji_id, detail["prizes"])
                 print(f"  ✅ 登録完了 (id={kuji_id}, 賞{len(detail['prizes'])}件)")
         except Exception as e:

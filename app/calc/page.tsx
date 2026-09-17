@@ -8,7 +8,11 @@ import { supabase } from "../lib/supabase"
 import AffiliateLink from "../components/AffiliateLink"
 import { buildTitleKeyword, buildPrizeKeyword } from "../lib/searchKeyword"
 
-type Kuji = { id: number; title: string; price: number; total: number; release_at: string; image_url: string | null }
+type Kuji = {
+  id: number; title: string; price: number; total: number; release_at: string; image_url: string | null
+  total_count: number | null
+  total_count_source: 'measured' | 'default' | null
+}
 type Prize = {
   id: number; name: string; grade: string; total: number
   market_price?: number | null       // Yahoo Shopping（安定価格）
@@ -301,13 +305,17 @@ function CalcContent() {
   const [manualTotal, setManualTotal] = useState("")
   const [manualTarget, setManualTarget] = useState("")
   const [manualPrice, setManualPrice] = useState("800")
+  const [totalCountInput, setTotalCountInput] = useState("")
 
   useEffect(() => {
     if (!kujiId) return
     const fetchData = async () => {
       const { data: k } = await supabase.from("kuji").select("*").eq("id", kujiId).single()
       const { data: p } = await supabase.from("prizes").select("*").eq("kuji_id", kujiId).order("sort_order", { ascending: true })
-      if (k) setKuji(k)
+      if (k) {
+        setKuji(k)
+        setTotalCountInput(String(k.total_count ?? 80))
+      }
       if (p) {
         setPrizes(p.map((prize: Prize) => ({ ...prize, checked: false, remaining: String(prize.total) })))
 
@@ -358,10 +366,13 @@ function CalcContent() {
   }))
   const updateRemaining = (id: number, value: string) => setPrizes(prev => prev.map(p => p.id === id ? { ...p, remaining: value } : p))
 
-  const totalRemaining = useMemo(() =>
-    prizes.reduce((sum, p) => { const v = parseInt(p.remaining); return sum + (isNaN(v) ? p.total : v) }, 0),
-    [prizes]
-  )
+  // 総本数(ロットの全本数)。kuji.total_countを初期値とし、ユーザーが上書きできる。
+  // 以前は賞ごとの残数(=種類数がデフォルト)を合計した値を代用しており、
+  // 種類数と本数の混同が期待値の分母を歪めていた。
+  const totalRemaining = useMemo(() => {
+    const v = parseInt(totalCountInput)
+    return isNaN(v) ? 0 : v
+  }, [totalCountInput])
 
   const liveResult = useMemo(() => {
     if (!kuji) return null
@@ -413,12 +424,25 @@ function CalcContent() {
                   {kuji.total > 0 && <span className="text-[11px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full" style={{ fontVariantNumeric: "tabular-nums" }}>全{kuji.total}本</span>}
                 </div>
                 <div className="mt-3 bg-stone-800 rounded-xl px-4 py-2.5 flex items-center justify-between">
-                  <span className="text-xs text-stone-400 font-bold tracking-wide">総残数</span>
-                  <span className="text-2xl font-black text-white" style={{ fontVariantNumeric: "tabular-nums" }}>{totalRemaining}<span className="text-sm font-normal text-stone-400 ml-1">本</span></span>
+                  <span className="text-xs text-stone-400 font-bold tracking-wide">
+                    総本数
+                    {kuji.total_count_source === 'measured' && (
+                      <span className="ml-1.5 text-[9px] font-bold text-emerald-400 bg-emerald-900/40 px-1.5 py-0.5 rounded-full tracking-normal">実測</span>
+                    )}
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <Stepper value={totalCountInput} onChange={setTotalCountInput} min={1} max={200} />
+                    <span className="text-sm font-normal text-stone-400">本</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <p className="text-[11px] text-stone-400 mt-2 leading-relaxed px-1">
+            {kuji.total_count_source === 'measured'
+              ? 'ロット販売の出品情報にもとづく実測値です。店頭で異なる場合は上の数値を書き換えてください。'
+              : `※ 総本数はメーカー非公開のため、${kuji.total_count ?? 80}本と仮定して計算しています。実際の本数は店頭の半券表でご確認のうえ、上の数値を書き換えてください。`}
+          </p>
         </div>
 
         <div className="px-5 pt-6">
@@ -440,7 +464,7 @@ function CalcContent() {
                 </div>
                 <span className={`text-xs font-bold w-8 text-center py-1 rounded ${gradeColors[prize.grade] || "bg-stone-100 text-stone-700"}`}>{prize.grade}</span>
                 <span className="flex-1 text-[13px] text-stone-800 font-medium truncate">{prize.name}</span>
-                <Stepper value={prize.remaining} onChange={v => updateRemaining(prize.id, v)} min={0} max={kuji.total || 999} />
+                <Stepper value={prize.remaining} onChange={v => updateRemaining(prize.id, v)} min={0} max={totalRemaining || 200} />
               </button>
             ))}
           </div>
@@ -457,7 +481,7 @@ function CalcContent() {
               <ResultCard
                 expected={liveResult.expected}
                 times={liveResult.times}
-                detail={`残数${totalRemaining}本 / ${liveResult.gradeStr}${liveResult.targetCount}本 / ${kuji.price}円 × ${liveResult.times}回`}
+                detail={`総本数${totalRemaining}本 / ${liveResult.gradeStr}残${liveResult.targetCount}本 / ${kuji.price}円 × ${liveResult.times}回`}
               />
               {isReleased && (
                 <MarketPriceSection prizes={prizes.filter(p => p.checked)} loading={marketLoading} kujiTitle={kuji.title} />
