@@ -4,7 +4,7 @@ date: 2026-09-06
 release_date: 2026-11-05
 kuji_id: 8185
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10766/dbfbb161-c89f-4b40-b753-234479876be9.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10766/7f88e3a1-8185-4d1f-b5bf-b09044c2dd39.webp
 summary: 2026年11月5日発売「一番くじ 機動戦士ガンダム UNIVERSAL CENTURY SAGA INTERLUDE」の賞品一覧と期待値。1回900円、本数未発表。くじのねで期待値を計算できます。
 ---
 
