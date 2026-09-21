@@ -45,7 +45,20 @@ export default async function Home() {
     .gte('release_at', sevenDaysAgo)
     .lte('release_at', today)
     .order('release_at', { ascending: false })
-    .limit(5)
+
+  // PICKUP: 発売中のくじの中から閲覧数が多い順に3件（店頭にない商品を含めないよう母集団はonSaleListに限定）
+  let pickupList: NonNullable<typeof onSaleList> = []
+  if (onSaleList && onSaleList.length > 0) {
+    const { data: views } = await supabase
+      .from('kuji_views')
+      .select('kuji_id, view_count')
+      .in('kuji_id', onSaleList.map(k => k.id))
+    const viewMap = Object.fromEntries((views ?? []).map(v => [v.kuji_id, v.view_count as number]))
+    pickupList = [...onSaleList]
+      .sort((a, b) => (viewMap[b.id] ?? 0) - (viewMap[a.id] ?? 0))
+      .slice(0, 3)
+      .map(k => ({ ...k, view_count: viewMap[k.id] ?? 0 }))
+  }
 
   // 近日発売（当日発売はON SALE側に含めるため、ここは翌日以降のみ）
   const { data: kujiList } = await supabase
@@ -124,6 +137,54 @@ export default async function Home() {
             </div>
             <Link href="/schedule" className="text-xs text-shu font-semibold hover:underline press">一覧を見る →</Link>
           </div>
+
+          {pickupList.length > 0 && (
+            <div className="mb-5">
+              <p className="text-[11px] font-bold tracking-[0.18em] text-stone-400 mb-3">PICKUP · よく見られている順</p>
+              <div
+                className="flex gap-3 -mx-5 px-5 pb-2 overflow-x-auto"
+                style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
+              >
+                {pickupList.map((kuji, i) => (
+                  <Link
+                    key={kuji.id}
+                    href={`/kuji/${kuji.id}`}
+                    className="flex-shrink-0 w-48 bg-white border border-stone-200 rounded-xl overflow-hidden card-hover hover:border-shu hover:shadow-md press anim-fade-up group"
+                    style={{ animationDelay: `${i * 70}ms` }}
+                  >
+                    <div className="relative w-full bg-shu-bg" style={{ aspectRatio: '3 / 2' }}>
+                      {(kuji.banner_url || kuji.image_url) ? (
+                        <Image
+                          src={kuji.banner_url || kuji.image_url}
+                          alt={kuji.title}
+                          fill
+                          className="object-cover"
+                          sizes="192px"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-shu" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                          </svg>
+                        </div>
+                      )}
+                      <div className="absolute top-2 left-2">
+                        <span className="text-[9px] font-bold text-white bg-black/60 px-1.5 py-0.5 rounded-full backdrop-blur-sm">発売中</span>
+                      </div>
+                    </div>
+                    <div className="p-2.5">
+                      <p className="text-[12px] font-bold text-stone-800 leading-snug line-clamp-2 group-hover:text-shu transition-colors">
+                        {kuji.title}
+                      </p>
+                      <p className="text-[10px] text-stone-400 mt-1">{kuji.price}円/回 ・ 閲覧数：{kuji.view_count}回</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="space-y-3">
             {onSaleList.map((kuji, i) => (
               <Link
