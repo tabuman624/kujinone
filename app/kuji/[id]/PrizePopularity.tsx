@@ -32,7 +32,7 @@ export default async function PrizePopularity({ kujiId, prizes }: { kujiId: numb
       <div className="flex items-baseline justify-between mb-3">
         <h2 className="text-xs font-black text-stone-400 tracking-wider">注目度 / POPULARITY</h2>
         {viewCount > 0 && (
-          <span className="text-xs text-stone-400">{viewCount.toLocaleString()}人が閲覧</span>
+          <span className="text-xs text-stone-400">累計{viewCount.toLocaleString()}回閲覧</span>
         )}
       </div>
       {hasInterest && (
