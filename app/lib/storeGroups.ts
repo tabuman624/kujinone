@@ -25,6 +25,12 @@ export type StoreKuji = {
   image_url: string | null
 }
 
+export function storeSlugsFor(availableStores: string[]): string[] {
+  return Object.entries(STORE_NAMES)
+    .filter(([, name]) => availableStores.includes(name))
+    .map(([slug]) => slug)
+}
+
 export async function getStoreGroups(): Promise<Record<string, StoreKuji[]>> {
   const { data } = await supabase
     .from('kuji')
@@ -34,8 +40,7 @@ export async function getStoreGroups(): Promise<Record<string, StoreKuji[]>> {
   const groups: Record<string, StoreKuji[]> = {}
   for (const k of data ?? []) {
     const stores: string[] = Array.isArray(k.available_stores) ? k.available_stores : []
-    for (const [slug, name] of Object.entries(STORE_NAMES)) {
-      if (!stores.includes(name)) continue
+    for (const slug of storeSlugsFor(stores)) {
       ;(groups[slug] ??= []).push({
         id: k.id, title: k.title, price: k.price, release_at: k.release_at, image_url: k.image_url,
       })
