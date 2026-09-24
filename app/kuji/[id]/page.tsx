@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation'
 import { supabase } from '../../lib/supabase'
 import PrizeList from './PrizeList'
 import PrizePopularity from './PrizePopularity'
+import ExpectedValueSection from './ExpectedValueSection'
 import KujiViewTracker from './KujiViewTracker'
 import AffiliateLink from '../../components/AffiliateLink'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
@@ -120,7 +121,7 @@ export default async function KujiDetail({
         <h1 className="text-lg font-black leading-snug">{kuji.title}</h1>
         <div className="flex gap-2 mt-2">
           <span className="text-xs bg-white/10 text-stone-300 px-2 py-0.5 rounded-full">{kuji.price}円/回</span>
-          {kuji.total > 0 && <span className="text-xs bg-white/10 text-stone-300 px-2 py-0.5 rounded-full">全{kuji.total}本</span>}
+          {kuji.total_count > 0 && <span className="text-xs bg-white/10 text-stone-300 px-2 py-0.5 rounded-full">全{kuji.total_count}本</span>}
         </div>
       </div>
 
@@ -163,6 +164,13 @@ export default async function KujiDetail({
           </div>
         )}
 
+        <ExpectedValueSection
+          price={kuji.price}
+          totalCount={kuji.total_count}
+          totalCountSource={kuji.total_count_source}
+          prizes={prizes ?? []}
+        />
+
         {prizes && prizes.length > 0 && (
           <PrizePopularity kujiId={Number(id)} prizes={prizes.map(p => ({ id: p.id, name: p.name, grade: p.grade }))} />
         )}
@@ -172,7 +180,7 @@ export default async function KujiDetail({
           className="flex items-center justify-center gap-2 w-full py-3.5 bg-shu text-white text-sm font-black rounded-xl hover:bg-shu-dark press anim-fade-up mb-6"
           style={{ animationDelay: `${200 + (prizes?.length || 0) * 60}ms`, boxShadow: '0 6px 16px rgba(225, 75, 54, 0.35)' }}
         >
-          この商品の期待値を計算する →
+          自分で条件を変えて計算する →
         </Link>
 
         {isReleased && (

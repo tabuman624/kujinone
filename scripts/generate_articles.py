@@ -108,7 +108,7 @@ def build_prizes_table(prizes):
 
 
 def build_ev_section(total, price, as_of):
-    """全本数（kuji.total）が判明している場合のみ、期待値の目安を表示する。
+    """全本数（kuji.total_count）が判明している場合のみ、期待値の目安を表示する。
 
     prizes[].total は賞ごとの「バリエーション数（種）」であり、賞ごとの実際の
     本数ではない。以前はこれを本数として合計・按分して期待値テーブルを生成して
@@ -131,7 +131,7 @@ def generate_markdown(kuji, prizes, title_override=None, date_override=None):
     title      = kuji['title']
     release_at = kuji['release_at']
     price      = kuji.get('price') or 800
-    total      = kuji.get('total') or 0  # 全本数はkuji.totalのみを正とする（prizesは種類数であり本数ではない）
+    total      = kuji.get('total_count') or 0  # 全本数はkuji.total_countのみを正とする（prizesは種類数であり本数ではない）
     kuji_id    = kuji['id']
     product_id = kuji['product_id']
     today      = date_override or datetime.now().strftime("%Y-%m-%d")

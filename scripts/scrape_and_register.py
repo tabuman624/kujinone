@@ -207,7 +207,6 @@ def main():
         try:
             detail = scrape_detail(kuji["source_url"])
             kuji["price"] = detail["price"] or 800
-            kuji["total"] = 0
             kuji["is_active"] = True
             kuji["available_stores"] = detail.get("available_stores") or []
             if detail.get("banner_url"):

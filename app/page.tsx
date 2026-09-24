@@ -161,7 +161,7 @@ export default async function Home() {
                 <div className="flex-1 min-w-0">
                   <span className="text-xs bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full font-semibold">発売中</span>
                   <p className="text-sm font-bold text-stone-800 mt-0.5 truncate">{kuji.title}</p>
-                  <p className="text-xs text-stone-500">{kuji.price}円/回{kuji.total ? ` · 全${kuji.total}本` : ''}</p>
+                  <p className="text-xs text-stone-500">{kuji.price}円/回</p>
                 </div>
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-stone-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -201,7 +201,7 @@ export default async function Home() {
               <div className="flex-1 min-w-0">
                 <span className="text-xs bg-shu-bg text-shu px-2 py-0.5 rounded-full font-semibold">{fmtRelease(kuji.release_at)}発売</span>
                 <p className="text-sm font-bold text-stone-800 mt-0.5 truncate">{kuji.title}</p>
-                <p className="text-xs text-stone-500">{kuji.price}円/回{kuji.total ? ` · 全${kuji.total}本` : ''}</p>
+                <p className="text-xs text-stone-500">{kuji.price}円/回</p>
               </div>
               <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-stone-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

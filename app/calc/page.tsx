@@ -9,7 +9,7 @@ import AffiliateLink from "../components/AffiliateLink"
 import { buildTitleKeyword, buildPrizeKeyword } from "../lib/searchKeyword"
 
 type Kuji = {
-  id: number; title: string; price: number; total: number; release_at: string; image_url: string | null
+  id: number; title: string; price: number; release_at: string; image_url: string | null
   total_count: number | null
   total_count_source: 'measured' | 'default' | null
 }
@@ -421,7 +421,7 @@ function CalcContent() {
                 <p className="text-sm font-black text-stone-800 leading-snug mb-2">{kuji.title}</p>
                 <div className="flex gap-1.5 flex-wrap">
                   <span className="text-[11px] bg-stone-800 text-white px-2 py-0.5 rounded-full font-semibold" style={{ fontVariantNumeric: "tabular-nums" }}>{kuji.price}円/回</span>
-                  {kuji.total > 0 && <span className="text-[11px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full" style={{ fontVariantNumeric: "tabular-nums" }}>全{kuji.total}本</span>}
+                  {kuji.total_count != null && kuji.total_count > 0 && <span className="text-[11px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full" style={{ fontVariantNumeric: "tabular-nums" }}>全{kuji.total_count}本</span>}
                 </div>
                 <div className="mt-3 bg-stone-800 rounded-xl px-4 py-2.5 flex items-center justify-between">
                   <span className="text-xs text-stone-400 font-bold tracking-wide">
