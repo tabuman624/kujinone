@@ -129,7 +129,7 @@ export default async function NewsDetailPage({
       </div>
 
       {/* CTAs */}
-      <div className="px-5 pb-8 space-y-3 border-t border-stone-100 pt-6">
+      <div className="px-5 pb-2 space-y-3 border-t border-stone-100 pt-6">
         {data.kuji_id && (
           <Link
             href={`/kuji/${data.kuji_id}`}
@@ -145,6 +145,31 @@ export default async function NewsDetailPage({
         >
           新作速報一覧に戻る
         </Link>
+      </div>
+
+      {/* 関連コラム */}
+      <div className="px-5 pb-6 pt-4">
+        <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">一番くじの基礎知識 / COLUMN</h2>
+        <div className="space-y-0">
+          {[
+            { href: '/blog/ichiban-kuji-toha', title: '一番くじとは？1回700〜880円・ハズレなしの仕組みを解説' },
+            { href: '/blog/ichiban-kuji-probability', title: '一番くじの確率の計算方法｜A賞〜D賞・ラストワン賞の当たる確率を解説' },
+            { href: '/blog/ichiban-kuji-last-one', title: 'ラストワン賞とは？仕組み・確率・狙い方を一番くじで解説' },
+            { href: '/blog/kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説' },
+          ].map((post, i) => (
+            <Link
+              key={post.href}
+              href={post.href}
+              className="flex items-center gap-3 py-3 border-t border-stone-100 group press"
+            >
+              <span className="text-[13px] font-black text-stone-200" style={{ minWidth: 24 }}>{String(i + 1).padStart(2, '0')}</span>
+              <p className="flex-1 text-[13px] font-bold text-stone-800 leading-snug group-hover:text-shu transition-colors">{post.title}</p>
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-stone-300 flex-shrink-0 group-hover:text-shu transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          ))}
+        </div>
       </div>
     </main>
   )
