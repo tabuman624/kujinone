@@ -5,7 +5,7 @@ release_date: 2026-10-24
 kuji_id: 7113
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10742/fb0bd820-84cc-4239-9510-31c3472da15c.webp
-summary: 2026年10月24日発売「一番くじ カグラバチ」の賞品一覧と期待値。1回850円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年10月24日発売「一番くじ カグラバチ」の賞品一覧と期待値。1回850円、全80本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ カグラバチ](https://assets.1kuji.com/uploads/product/top_banner/10742/fb0bd820-84cc-4239-9510-31c3472da15c.webp)
@@ -22,5 +22,9 @@ summary: 2026年10月24日発売「一番くじ カグラバチ」の賞品一�
 ## 賞品一覧
 
 （賞品情報未公開）
+
+## 期待値の目安
+
+全80本・1回850円のくじです（2026年09月時点）。全部引いた場合の総額は**約68,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/7113)

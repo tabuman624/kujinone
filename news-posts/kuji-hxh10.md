@@ -5,7 +5,7 @@ release_date: 2026-05-22
 kuji_id: 14
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10646/6726458c-d90b-4f7e-87b6-57e037c07c45.png
-summary: 2026年5月22日発売「一番くじ HUNTER×HUNTER ZAOLDYECK FAMILY」の賞品一覧と期待値。1回850円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年5月22日発売「一番くじ HUNTER×HUNTER ZAOLDYECK FAMILY」の賞品一覧と期待値。1回850円、全80本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ HUNTER×HUNTER ZAOLDYECK FAMILY](https://assets.1kuji.com/uploads/product/top_banner/10646/6726458c-d90b-4f7e-87b6-57e037c07c45.png)
@@ -34,5 +34,9 @@ summary: 2026年5月22日発売「一番くじ HUNTER×HUNTER ZAOLDYECK FAMILY�
 | I賞 | ダイカットメモコレクション | 8種 |
 | J賞 | ステッカーコレクション | 10種 |
 | ラストワン賞 | ミケ MASTERLISE EXTRA | 1種 |
+
+## 期待値の目安
+
+全80本・1回850円のくじです（2026年09月時点）。全部引いた場合の総額は**約68,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/14)

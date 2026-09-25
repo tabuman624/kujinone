@@ -5,10 +5,10 @@ release_date: 2026-09-19
 kuji_id: 3964
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10733/bb97c3a4-7941-4f9c-a7f2-83867cf8ee8d.webp
-summary: 2026年9月19日発売「一番くじ 学園アイドルマスター Part6」の賞品一覧と期待値。1回850円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年9月19日発売「一番くじ 学園アイドルマスター Part6」の賞品一覧と期待値。1回850円、全80本。くじのねで期待値を計算できます。
 ---
 
-![一番くじ 学園アイドルマスター Part6](https://assets.1kuji.com/uploads/product/top_banner/10733/53fbf406-d28a-4488-b1a3-fc21b033d72c.webp)
+![一番くじ 学園アイドルマスター Part6](https://assets.1kuji.com/uploads/product/top_banner/10733/bb97c3a4-7941-4f9c-a7f2-83867cf8ee8d.webp)
 
 ## 基本情報
 
@@ -26,5 +26,15 @@ summary: 2026年9月19日発売「一番くじ 学園アイドルマスター Pa
 | A賞 | 有村麻央 フィギュア 1/7 Gracemaster | 1種 |
 | B賞 | 倉本千奈 フィギュア 1/7 Gracemaster | 1種 |
 | C賞 | 篠澤 広 フィギュア 1/7 Gracemaster | 1種 |
+| D賞 | 描きおろし メタリックポスター | 13種 |
+| E賞 | きららいずマスコット | 3種 |
+| F賞 | 描きおろし バンダナタオル | 13種 |
+| G賞 | 描きおろし ラバーチャーム | 13種 |
+| H賞 | 描きおろし アクリルスタンド | 13種 |
+| ラストワン賞 | 有村麻央 フィギュア 1/7 Gracemaster ラストワンVer. | 1種 |
+
+## 期待値の目安
+
+全80本・1回850円のくじです（2026年09月時点）。全部引いた場合の総額は**約68,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/3964)

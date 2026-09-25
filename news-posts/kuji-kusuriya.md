@@ -5,7 +5,7 @@ release_date: 2026-06-05
 kuji_id: 238
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10624/0688dd11-b025-42cd-8215-aeef42f2bc08.webp
-summary: 2026年6月5日発売「一番くじ TVアニメ『薬屋のひとりごと』」の賞品一覧と期待値。1回770円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年6月5日発売「一番くじ TVアニメ『薬屋のひとりごと』」の賞品一覧と期待値。1回770円、全80本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ TVアニメ『薬屋のひとりごと』](https://assets.1kuji.com/uploads/product/top_banner/10624/0688dd11-b025-42cd-8215-aeef42f2bc08.webp)
@@ -32,5 +32,9 @@ summary: 2026年6月5日発売「一番くじ TVアニメ『薬屋のひとり�
 | G賞 | 絵皿 | 10種 |
 | H賞 | ステーショナリーアソート | 6種 |
 | ラストワン賞 | 猫猫 MASTERLISE OPカラーver. | 1種 |
+
+## 期待値の目安
+
+全80本・1回770円のくじです（2026年09月時点）。全部引いた場合の総額は**約61,600円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/238)

@@ -5,7 +5,7 @@ release_date: 2026-09-12
 kuji_id: 3961
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10718/3f6ca38e-9291-45d1-89a4-77c35c9a3b2a.webp
-summary: 2026年9月12日発売「一番くじ 崩壊：スターレイル Vol.3」の賞品一覧と期待値。1回800円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年9月12日発売「一番くじ 崩壊：スターレイル Vol.3」の賞品一覧と期待値。1回800円、全80本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ 崩壊：スターレイル Vol.3](https://assets.1kuji.com/uploads/product/top_banner/10718/3f6ca38e-9291-45d1-89a4-77c35c9a3b2a.webp)
@@ -32,5 +32,9 @@ summary: 2026年9月12日発売「一番くじ 崩壊：スターレイル Vol.3
 | G賞 | アクリルチャーム | 13種 |
 | H賞 | クリアファイル＆チケットケース | 13種 |
 | ラストワン賞 | POTEPOTTEぬいぐるみ カスライナ | 1種 |
+
+## 期待値の目安
+
+全80本・1回800円のくじです（2026年09月時点）。全部引いた場合の総額は**約64,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/3961)

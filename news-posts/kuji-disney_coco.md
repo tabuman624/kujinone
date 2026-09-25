@@ -5,14 +5,14 @@ release_date: 2026-10-31
 kuji_id: 7122
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10757/203ea70b-6b57-409c-a10e-e0521e4e9d28.webp
-summary: 2026年10月31日発売「一番くじ〈リメンバー・ミー〉Colorful Memories」の賞品一覧と期待値。1回781円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年10月31日発売「一番くじ 〈リメンバー・ミー〉Colorful Memories」の賞品一覧と期待値。1回781円、全80本。くじのねで期待値を計算できます。
 ---
 
-![一番くじ〈リメンバー・ミー〉Colorful Memories](https://assets.1kuji.com/uploads/product/top_banner/10757/fd96e0dc-488c-40d1-bf08-79fb85a8b4a7.webp)
+![一番くじ 〈リメンバー・ミー〉Colorful Memories](https://assets.1kuji.com/uploads/product/top_banner/10757/203ea70b-6b57-409c-a10e-e0521e4e9d28.webp)
 
 ## 基本情報
 
-2026年10月31日発売予定の「一番くじ〈リメンバー・ミー〉Colorful Memories」をまとめます。
+2026年10月31日発売予定の「一番くじ 〈リメンバー・ミー〉Colorful Memories」をまとめます。
 
 | 項目 | 内容 |
 |---|---|
@@ -21,6 +21,20 @@ summary: 2026年10月31日発売「一番くじ〈リメンバー・ミー〉Col
 
 ## 賞品一覧
 
-（賞品情報未公開）
+| 賞 | 景品名 | 種類 |
+|---|---|---|
+| A賞 | 〈ミゲル〉＆〈ヘクター〉シーンフィギュア | 1種 |
+| B賞 | ブランケット | 1種 |
+| C賞 | トートバッグ | 1種 |
+| D賞 | ポーチ | 2種 |
+| E賞 | ビーズストラップ | 2種 |
+| F賞 | ミニキャンバスボードコレクション | 6種 |
+| G賞 | ラバー雑貨コレクション | 6種 |
+| H賞 | ポスター＆ステッカーコレクション | 6種 |
+| ラストワン賞 | 〈DAY OF THE DEAD〉ライト | 1種 |
+
+## 期待値の目安
+
+全80本・1回781円のくじです（2026年09月時点）。全部引いた場合の総額は**約62,480円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/7122)

@@ -5,7 +5,7 @@ release_date: 2026-05-26
 kuji_id: 19
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10670/76906b06-9ed2-4c11-97df-f7454784de93.webp
-summary: 2026年5月26日発売「一番くじちょこっと いぬとの暮らし illustration by てらおかなつみ」の賞品一覧と期待値。1回550円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年5月26日発売「一番くじちょこっと いぬとの暮らし illustration by てらおかなつみ」の賞品一覧と期待値。1回550円、全80本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじちょこっと いぬとの暮らし illustration by てらおかなつみ](https://assets.1kuji.com/uploads/product/top_banner/10670/76906b06-9ed2-4c11-97df-f7454784de93.webp)
@@ -28,5 +28,9 @@ summary: 2026年5月26日発売「一番くじちょこっと いぬとの暮ら
 | C賞 | いぬのアクリルキーホルダー | 6種 |
 | D賞 | いろんないぬのハンドタオル | 6種 |
 | ラストワン賞 | お花畑といぬのブランケット | 1種 |
+
+## 期待値の目安
+
+全80本・1回550円のくじです（2026年09月時点）。全部引いた場合の総額は**約44,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/19)

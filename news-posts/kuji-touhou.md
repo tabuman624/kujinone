@@ -5,10 +5,10 @@ release_date: 2026-08-14
 kuji_id: 1226
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10713/bebf87c6-9d17-4578-ac50-c91a1232507c.webp
-summary: 2026年8月14日発売「一番くじ 東方Project」の賞品一覧と期待値。1回700円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年8月14日発売「一番くじ 東方Project」の賞品一覧と期待値。1回700円、全80本。くじのねで期待値を計算できます。
 ---
 
-![一番くじ 東方Project](https://assets.1kuji.com/uploads/product/top_banner/10713/971f6bae-2a44-46a3-bc71-f08f1645b75c.webp)
+![一番くじ 東方Project](https://assets.1kuji.com/uploads/product/top_banner/10713/bebf87c6-9d17-4578-ac50-c91a1232507c.webp)
 
 ## 基本情報
 
@@ -28,5 +28,9 @@ summary: 2026年8月14日発売「一番くじ 東方Project」の賞品一覧�
 | C賞 | ちょこのっこぬいぐるみ  ぷらす フランドール・スカーレット | 1種 |
 | D賞 | 博麗神社 賽銭箱風貯金箱 | 1種 |
 | ラストワン賞 | ちょこのっこぬいぐるみ ぷらす 霧雨魔理沙 | 1種 |
+
+## 期待値の目安
+
+全80本・1回700円のくじです（2026年09月時点）。全部引いた場合の総額は**約56,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/1226)

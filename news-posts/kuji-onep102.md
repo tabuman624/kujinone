@@ -5,7 +5,7 @@ release_date: 2026-06-06
 kuji_id: 240
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10679/825f6438-bde5-4d4f-a4e5-da2c2c74909b.webp
-summary: 2026年6月6日発売「一番くじ ワンピース 赤髪海賊団」の賞品一覧と期待値。1回790円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年6月6日発売「一番くじ ワンピース 赤髪海賊団」の賞品一覧と期待値。1回790円、全80本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ ワンピース 赤髪海賊団](https://assets.1kuji.com/uploads/product/top_banner/10679/825f6438-bde5-4d4f-a4e5-da2c2c74909b.webp)
@@ -34,5 +34,9 @@ summary: 2026年6月6日発売「一番くじ ワンピース 赤髪海賊団」
 | I賞 | デコレーションマグネット | 10種 |
 | J賞 | アクリルチャームアソート | 10種 |
 | ラストワン賞 | シャンクス＆ルフィ Revible Moment | 1種 |
+
+## 期待値の目安
+
+全80本・1回790円のくじです（2026年09月時点）。全部引いた場合の総額は**約63,200円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/240)

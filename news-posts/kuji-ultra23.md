@@ -5,7 +5,7 @@ release_date: 2026-07-24
 kuji_id: 260
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10702/25ed435e-1161-473c-97ef-72df674071fd.png
-summary: 2026年7月24日発売「一番くじ ウルトラマン 60th Anniversary」の賞品一覧と期待値。1回900円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年7月24日発売「一番くじ ウルトラマン 60th Anniversary」の賞品一覧と期待値。1回900円、全80本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ ウルトラマン 60th Anniversary](https://assets.1kuji.com/uploads/product/top_banner/10702/25ed435e-1161-473c-97ef-72df674071fd.png)
@@ -32,5 +32,8 @@ summary: 2026年7月24日発売「一番くじ ウルトラマン 60th Anniversa
 | G賞 | アクリルスタンド | 20種 |
 | ラストワン賞 | ゼットン（クライマックスver.） 空創ノスタルジオ | 1種 |
 
-[→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/260)
+## 期待値の目安
 
+全80本・1回900円のくじです（2026年09月時点）。全部引いた場合の総額は**約72,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
+
+[→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/260)

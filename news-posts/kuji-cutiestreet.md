@@ -5,7 +5,7 @@ release_date: 2026-08-04
 kuji_id: 1220
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10731/0eab5e0e-5b2c-4b5b-8751-6b57480c22d6.webp
-summary: 2026年8月4日発売「一番くじ CUTIE STREET くじを手にする戦いなのです！」の賞品一覧と期待値。1回700円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年8月4日発売「一番くじ CUTIE STREET くじを手にする戦いなのです！」の賞品一覧と期待値。1回700円、全80本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ CUTIE STREET くじを手にする戦いなのです！](https://assets.1kuji.com/uploads/product/top_banner/10731/0eab5e0e-5b2c-4b5b-8751-6b57480c22d6.webp)
@@ -32,5 +32,9 @@ summary: 2026年8月4日発売「一番くじ CUTIE STREET くじを手にする
 | G賞 | 推したい名！ラバーチャーム | 8種 |
 | H賞 | コレクションステッカー | 9種 |
 | ラストワン賞 | キュン４させちゃう！アラームクロック | 1種 |
+
+## 期待値の目安
+
+全80本・1回700円のくじです（2026年09月時点）。全部引いた場合の総額は**約56,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/1220)

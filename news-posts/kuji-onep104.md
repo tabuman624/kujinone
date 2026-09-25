@@ -5,7 +5,7 @@ release_date: 2026-08-08
 kuji_id: 1223
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10710/6adb2b73-5524-41fc-9a9d-40a4cd30d690.webp
-summary: 2026年8月8日発売「一番くじ ワンピース -エルバフ編- GIANT BASH!! Vol.2」の賞品一覧と期待値。1回790円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年8月8日発売「一番くじ ワンピース -エルバフ編- GIANT BASH!! Vol.2」の賞品一覧と期待値。1回790円、全80本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ ワンピース -エルバフ編- GIANT BASH!! Vol.2](https://assets.1kuji.com/uploads/product/top_banner/10710/6adb2b73-5524-41fc-9a9d-40a4cd30d690.webp)
@@ -27,5 +27,10 @@ summary: 2026年8月8日発売「一番くじ ワンピース -エルバフ編- 
 | B賞 | サンジ MASTERLISE EXPIECE | 1種 |
 | C賞 | トニートニー・チョッパー MASTERLISE EXPIECE | 1種 |
 | D賞 | ブロギー MASTERLISE EXPIECE | 1種 |
+| ラストワン賞 | 軍子宮 MASTERLISE EXPIECE | 1種 |
+
+## 期待値の目安
+
+全80本・1回790円のくじです（2026年09月時点）。全部引いた場合の総額は**約63,200円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/1223)

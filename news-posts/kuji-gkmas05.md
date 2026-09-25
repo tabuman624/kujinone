@@ -5,7 +5,7 @@ release_date: 2026-06-19
 kuji_id: 244
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10642/e616103f-d37c-40ea-892d-d87d8a84d25f.webp
-summary: 2026年6月19日発売「一番くじ 学園アイドルマスター Part5」の賞品一覧と期待値。1回850円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年6月19日発売「一番くじ 学園アイドルマスター Part5」の賞品一覧と期待値。1回850円、全80本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ 学園アイドルマスター Part5](https://assets.1kuji.com/uploads/product/top_banner/10642/e616103f-d37c-40ea-892d-d87d8a84d25f.webp)
@@ -31,5 +31,9 @@ summary: 2026年6月19日発売「一番くじ 学園アイドルマスター Pa
 | F賞 | 描きおろし アクリルキーホルダー | 13種 |
 | G賞 | 描きおろし アクリルスタンド | 13種 |
 | ラストワン賞 | 月村手毬 フィギュア 1/7 Gracemaster ラストワンVer. | 1種 |
+
+## 期待値の目安
+
+全80本・1回850円のくじです（2026年09月時点）。全部引いた場合の総額は**約68,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/244)

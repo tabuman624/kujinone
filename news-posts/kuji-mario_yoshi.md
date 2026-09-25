@@ -5,7 +5,7 @@ release_date: 2026-05-23
 kuji_id: 18
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10682/86d30df3-4e11-42bd-85a8-4c007eea735a.webp
-summary: 2026年5月23日発売「一番くじ スーパーマリオ with YOSHI」の賞品一覧と期待値。1回750円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年5月23日発売「一番くじ スーパーマリオ with YOSHI」の賞品一覧と期待値。1回750円、全80本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ スーパーマリオ with YOSHI](https://assets.1kuji.com/uploads/product/top_banner/10682/86d30df3-4e11-42bd-85a8-4c007eea735a.webp)
@@ -31,5 +31,9 @@ summary: 2026年5月23日発売「一番くじ スーパーマリオ with YOSHI�
 | F賞 | ジッパーバッグ・メモコレクション | 6種 |
 | G賞 | ファブリックコレクション | 6種 |
 | ラストワン賞 | おやすみヨッシーのぬいぐるみ | 1種 |
+
+## 期待値の目安
+
+全80本・1回750円のくじです（2026年09月時点）。全部引いた場合の総額は**約60,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/18)

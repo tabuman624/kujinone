@@ -5,7 +5,7 @@ release_date: 2026-10-24
 kuji_id: 7114
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10750/eb91981b-b5f8-42ff-bbff-549e39650598.webp
-summary: 2026年10月24日発売「一番くじ すみっコぐらし（仮）」の賞品一覧と期待値。1回800円、本数未発表。くじのねで期待値を計算できます。
+summary: 2026年10月24日発売「一番くじ すみっコぐらし（仮）」の賞品一覧と期待値。1回800円、全80本。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ すみっコぐらし（仮）](https://assets.1kuji.com/uploads/product/top_banner/10750/eb91981b-b5f8-42ff-bbff-549e39650598.webp)
@@ -22,5 +22,9 @@ summary: 2026年10月24日発売「一番くじ すみっコぐらし（仮）�
 ## 賞品一覧
 
 （賞品情報未公開）
+
+## 期待値の目安
+
+全80本・1回800円のくじです（2026年09月時点）。全部引いた場合の総額は**約64,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/7114)
