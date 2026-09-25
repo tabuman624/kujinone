@@ -45,37 +45,45 @@ export default function ExpectedValueSection({
       </div>
 
       {topPrizes.length > 0 && (
-        <div className="space-y-4 mb-3">
-          {topPrizes.map(prize => (
-            <div key={`${prize.grade}-${prize.name}`}>
-              <p className="text-xs font-bold text-stone-700 mb-2">【{prize.grade}】{prize.name}</p>
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs border-collapse" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                  <thead>
-                    <tr className="text-stone-400 border-b border-stone-200">
-                      <th className="text-left font-bold py-1.5 pr-2">本数の仮定</th>
-                      <th className="text-right font-bold py-1.5 pr-2">平均</th>
-                      <th className="text-right font-bold py-1.5">目安金額</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ASSUMED_COUNTS.map(k => {
-                      const avg = averageDrawsUntilHit(totalCount, k)
-                      const cost = Math.round(avg * price)
-                      return (
-                        <tr key={k} className="border-b border-stone-100 last:border-0">
-                          <td className="py-1.5 pr-2 text-stone-600 whitespace-nowrap">{prize.grade}が{k}本の場合</td>
-                          <td className="py-1.5 pr-2 text-right font-bold text-stone-800 whitespace-nowrap">平均 {avg.toFixed(1)}回目</td>
-                          <td className="py-1.5 text-right text-stone-500 whitespace-nowrap">約{cost.toLocaleString()}円</td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
+        <details className="mb-3 group">
+          <summary className="text-xs font-bold text-stone-500 py-1 cursor-pointer select-none flex items-center gap-1">
+            本数別の平均回数を見る
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-stone-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </summary>
+          <div className="space-y-4 mt-3">
+            {topPrizes.map(prize => (
+              <div key={`${prize.grade}-${prize.name}`}>
+                <p className="text-xs font-bold text-stone-700 mb-2">【{prize.grade}】{prize.name}</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs border-collapse" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    <thead>
+                      <tr className="text-stone-400 border-b border-stone-200">
+                        <th className="text-left font-bold py-1.5 pr-2">本数の仮定</th>
+                        <th className="text-right font-bold py-1.5 pr-2">平均</th>
+                        <th className="text-right font-bold py-1.5">目安金額</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ASSUMED_COUNTS.map(k => {
+                        const avg = averageDrawsUntilHit(totalCount, k)
+                        const cost = Math.round(avg * price)
+                        return (
+                          <tr key={k} className="border-b border-stone-100 last:border-0">
+                            <td className="py-1.5 pr-2 text-stone-600 whitespace-nowrap">{prize.grade}が{k}本の場合</td>
+                            <td className="py-1.5 pr-2 text-right font-bold text-stone-800 whitespace-nowrap">平均 {avg.toFixed(1)}回目</td>
+                            <td className="py-1.5 text-right text-stone-500 whitespace-nowrap">約{cost.toLocaleString()}円</td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </details>
       )}
 
       <p className="text-xs text-gray-400 leading-relaxed mt-2">

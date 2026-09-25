@@ -180,7 +180,7 @@ export default async function KujiDetail({
           className="flex items-center justify-center gap-2 w-full py-3.5 bg-shu text-white text-sm font-black rounded-xl hover:bg-shu-dark press anim-fade-up mb-6"
           style={{ animationDelay: `${200 + (prizes?.length || 0) * 60}ms`, boxShadow: '0 6px 16px rgba(225, 75, 54, 0.35)' }}
         >
-          自分で条件を変えて計算する →
+          期待値を計算する →
         </Link>
 
         {isReleased && (
