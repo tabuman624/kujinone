@@ -13,6 +13,16 @@ import AffiliateLink from '../../components/AffiliateLink'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
 
 export const revalidate = 3600
+export const dynamicParams = true
+
+// ビルド時に全件を静的生成する。Supabase取得に失敗した場合は空配列を返し、
+// ビルド全体を失敗させない（sitemap-ip.xml等と異なり、このpage routeは失敗を握りつぶす方針）。
+// dynamicParams=trueのため、ここに含まれなかったIDも初回アクセス時にオンデマンドで生成される。
+export async function generateStaticParams() {
+  const { data, error } = await supabase.from('kuji').select('id')
+  if (error || !data) return []
+  return data.map(k => ({ id: String(k.id) }))
+}
 
 // 全角文字は2、半角文字は1として数える。SERPでのタイトル見切れ(目安: 全角32文字前後)を避けるための簡易な表示幅換算。
 function weightedLength(str: string): number {
