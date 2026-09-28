@@ -14,12 +14,33 @@ import { buildTitleKeyword } from '../../lib/searchKeyword'
 
 export const revalidate = 3600
 
+// 全角文字は2、半角文字は1として数える。SERPでのタイトル見切れ(目安: 全角32文字前後)を避けるための簡易な表示幅換算。
+function weightedLength(str: string): number {
+  let len = 0
+  for (const ch of str) len += ch.charCodeAt(0) > 255 ? 2 : 1
+  return len
+}
+
+const TITLE_SUFFIX_FULL = '｜賞品一覧・相場・期待値'
+const TITLE_SUFFIX_SHORT = '｜期待値'
+const TITLE_MAX_WEIGHTED_LENGTH = 64 // 全角32文字相当
+
+// 商品名は公式の表記をそのまま優先し、削るのは後ろに付ける修飾語（suffix）から。
+// フルsuffixで収まらなければ短縮suffix、それでも収まらなければ商品名のみにする。
+function buildKujiTitle(kujiTitle: string): string {
+  const full = `${kujiTitle}${TITLE_SUFFIX_FULL}`
+  if (weightedLength(full) <= TITLE_MAX_WEIGHTED_LENGTH) return full
+  const short = `${kujiTitle}${TITLE_SUFFIX_SHORT}`
+  if (weightedLength(short) <= TITLE_MAX_WEIGHTED_LENGTH) return short
+  return kujiTitle
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
   const { data: kuji } = await supabase.from('kuji').select('title, price, release_at, banner_url, image_url').eq('id', id).single()
   if (!kuji) return {}
   const ogImage = kuji.banner_url || kuji.image_url || '/logo.png'
-  const title = `${kuji.title}｜賞品一覧・相場・期待値`
+  const title = buildKujiTitle(kuji.title)
   const releaseJa = kuji.release_at
     ? `${Number(kuji.release_at.slice(5, 7))}月${Number(kuji.release_at.slice(8, 10))}日`
     : null
