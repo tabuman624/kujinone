@@ -4,7 +4,7 @@ date: 2026-08-25
 release_date: 2026-10-17
 kuji_id: 7108
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10726/8bc745ec-1c0d-4531-9b1c-ec480d742c10.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10726/83adc030-5a0f-4362-af96-afd1c38c4bf7.webp
 summary: 2026年10月17日発売「一番くじ ウマ娘 プリティーダービー 14弾」の賞品一覧と期待値。1回920円、全80本。くじのねで期待値を計算できます。
 ---
 
