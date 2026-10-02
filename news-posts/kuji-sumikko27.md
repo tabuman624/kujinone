@@ -4,7 +4,7 @@ date: 2026-08-25
 release_date: 2026-10-24
 kuji_id: 7114
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10750/eb91981b-b5f8-42ff-bbff-549e39650598.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10750/86f07f60-2d2a-4f4b-816f-e0ba671e4cf5.webp
 summary: 2026年10月24日発売「一番くじ すみっコぐらし（仮）」の賞品一覧と期待値。1回800円、全80本。くじのねで期待値を計算できます。
 ---
 
