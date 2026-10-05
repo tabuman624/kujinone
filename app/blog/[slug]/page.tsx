@@ -7,6 +7,7 @@ import { renderArticleMarkdown } from '../../lib/markdown'
 import { notFound } from 'next/navigation'
 import ReadingProgress from './ReadingProgress'
 import { CompareCTA, SellCTA } from '../../components/BlogAffiliateCTA'
+import XIcon from '../../components/XIcon'
 
 // 「相場と比較して判断しよう」「駿河屋の買取がラク」と本文で明言しているのに
 // 外部リンクが1本も無かった記事だけに、対応するCTAを差し込む。
@@ -66,6 +67,28 @@ function extractFAQ(content: string): { q: string; a: string }[] {
     }
   }
   return items
+}
+
+// .kuji-prose--article(dangerouslySetInnerHTMLのmarkdown本文)の兄弟要素として
+// 配置する。本文直後・関連記事の前という位置は、読み終わった瞬間に効く導線。
+function XFollowCTA() {
+  return (
+    <div className="px-5 pb-6 border-t border-stone-100 pt-6">
+      <a
+        href="https://x.com/kujinone"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="くじのねのXアカウント"
+        className="flex items-center gap-3 p-3 border rounded-xl bg-shu-bg border-shu text-shu press"
+      >
+        <XIcon className="w-5 h-5 flex-shrink-0" />
+        <div className="flex-1">
+          <p className="text-sm font-bold">新作くじの期待値は X で更新中</p>
+          <p className="text-xs opacity-70">@kujinone をフォロー</p>
+        </div>
+      </a>
+    </div>
+  )
 }
 
 export default async function BlogDetailPage({
@@ -155,6 +178,8 @@ export default async function BlogDetailPage({
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </div>
+
+      <XFollowCTA />
 
       {COMPARE_CTA_SLUGS.has(slug) && <CompareCTA />}
       {SELL_CTA_SLUGS.has(slug) && <SellCTA />}

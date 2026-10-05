@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import XIcon from './XIcon'
 
 const navItems = [
   {
@@ -128,6 +129,16 @@ export default function SideNav() {
             </Link>
           ))}
         </div>
+        <a
+          href="https://x.com/kujinone"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="くじのねのXアカウント"
+          className="inline-flex items-center gap-1.5 mt-3 text-xs text-stone-400 hover:text-shu transition-colors"
+        >
+          <XIcon className="w-3.5 h-3.5" />
+          <span>X (旧Twitter)</span>
+        </a>
         <p className="text-xs text-stone-400 mt-2">当サイトはアフィリエイト広告を利用しています</p>
         <p className="text-xs text-stone-300 mt-1">© 2026 くじのね</p>
       </div>

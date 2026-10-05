@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { supabase } from "../lib/supabase"
 import AffiliateLink from "../components/AffiliateLink"
+import XIcon from "../components/XIcon"
 import { buildTitleKeyword, buildPrizeKeyword } from "../lib/searchKeyword"
 
 type Kuji = {
@@ -225,6 +226,41 @@ function ResultCard({ expected, times, detail }: { expected: number; times: numb
         <p className="text-xs text-stone-400">{detail}</p>
       </div>
     </div>
+  )
+}
+
+// targetGradeは「・」区切りで複数賞を連結したgradeStr。計算ロジック上、
+// liveResultのtimesは「選んだ賞の残数を合算した母集団のうち、いずれか1つが
+// 最初に出るまでの平均回数」(負の超幾何分布)なので、複数選択時は「のいずれか」
+// を明示しないと「両方当たるまで」と誤読される。
+function buildShareText(kujiTitle: string, kujiId: number, targetGrade: string, expected: number): string {
+  const isMultiple = targetGrade.includes("・")
+  const verb = isMultiple ? "のいずれかが当たるまでの平均費用" : "が当たるまでの平均費用"
+  const amount = `約${expected.toLocaleString()}円`
+  const url = `https://kujinone.com/kuji/${kujiId}`
+  const build = (title: string) => `【${title}】\n${targetGrade}${verb}：${amount}\n\n#一番くじ\n${url}`
+
+  let title = kujiTitle
+  let text = build(title)
+  while (text.length > 140 && title.length > 0) {
+    title = title.slice(0, -1)
+    text = build(`${title}…`)
+  }
+  return text
+}
+
+function ShareResultButton({ kujiId, kujiTitle, targetGrade, expected }: { kujiId: number; kujiTitle: string; targetGrade: string; expected: number }) {
+  const intentUrl = `https://x.com/intent/post?text=${encodeURIComponent(buildShareText(kujiTitle, kujiId, targetGrade, expected))}`
+  return (
+    <a
+      href={intentUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center justify-center gap-2 w-full py-3 mb-6 bg-shu-bg border border-shu text-shu text-sm font-black rounded-xl hover:bg-shu hover:text-white press anim-fade-up transition-colors"
+    >
+      <XIcon className="w-4 h-4" />
+      結果をXでシェア
+    </a>
   )
 }
 
@@ -482,6 +518,12 @@ function CalcContent() {
                 expected={liveResult.expected}
                 times={liveResult.times}
                 detail={`総本数${totalRemaining}本 / ${liveResult.gradeStr}残${liveResult.targetCount}本 / ${kuji.price}円 × ${liveResult.times}回`}
+              />
+              <ShareResultButton
+                kujiId={kuji.id}
+                kujiTitle={kuji.title}
+                targetGrade={liveResult.gradeStr}
+                expected={liveResult.expected}
               />
               {isReleased && (
                 <MarketPriceSection prizes={prizes.filter(p => p.checked)} loading={marketLoading} kujiTitle={kuji.title} />
