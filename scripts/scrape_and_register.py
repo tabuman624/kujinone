@@ -143,9 +143,14 @@ def upsert_kuji(kuji_data):
         return None
 
 def insert_prizes(kuji_id, prizes):
+    """戻り値は呼び出し元がログに実際の結果を出すためのステータス文字列。
+    以前はこの関数の結果にかかわらず呼び出し元が無条件に「✅ 登録完了」と出力しており、
+    実際には後述のFK制約で大半のくじが更新されていないにもかかわらず、約100日間
+    (2026-06-28〜10-06)気づかれなかった(2026-10-06 Oupas監査F2・A3、
+    [[kujinone-prizes-upsert-future]])。"""
     if not prizes:
         print(f"  ⚠️  賞品が0件のため取得失敗とみなし、既存データを保持してスキップします。")
-        return
+        return "skipped_no_prizes"
 
     # 既存の market_price を sort_order をキーに退避（毎日の再挿入で消えないように）
     backup_res = requests.get(
@@ -173,18 +178,27 @@ def insert_prizes(kuji_id, prizes):
                     headers={**SB_HEADERS, "Prefer": "return=minimal"})
     if test_res.status_code not in [200, 201, 204]:
         print(f"  ⚠️  prizes書き込み権限なし（RLSブロック）。スキップします。")
-        return
+        return "skipped_permission"
 
-    # 既存データを削除して件数を確認
-    requests.delete(f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}",
-                    headers={**SB_HEADERS, "Prefer": "return=minimal"})
-    remaining = requests.get(
-        f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}&select=id&limit=1",
-        headers=SB_HEADERS
-    ).json()
-    if remaining:
-        print(f"  ⚠️  DELETE後も既存データが残っています。重複を避けるためスキップします。")
-        return
+    # 既存データを削除。削除件数はDELETE自身のレスポンス(return=representation)で
+    # 確認する(別リクエストでの残存確認より確実)。
+    #
+    # 【訂正】この修正を書いた当初は「read-after-writeのタイムラグによる誤検知」が
+    # 原因と考えていたが、2026-10-06のOupas監査で誤りと判明した。実際には
+    # price_history / prize_interest の2テーブルがprizes.idをFK参照しており
+    # (ON DELETE CASCADEなし)、参照されている賞品を含むくじは複数行DELETE文が
+    # Postgres側で丸ごとロールバックされ、409で確実に失敗する。タイムラグではなく
+    # 毎回必ず起きる制約違反であり、このDELETEレスポンス読み取り化だけでは
+    # 1件も解除できない(詳細は[[kujinone-prizes-upsert-future]]のTier B参照。
+    # そちらで(kuji_id, grade, name)キーのPATCH/INSERT/DELETEに置き換える予定)。
+    delete_res = requests.delete(
+        f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}",
+        headers={**SB_HEADERS, "Prefer": "return=representation"}
+    )
+    if delete_res.status_code != 200:
+        print(f"  ⚠️  既存prizesのDELETEに失敗しました(status={delete_res.status_code})。重複を避けるためスキップします。")
+        return "skipped_delete_failed"
+    deleted_count = len(delete_res.json())
 
     res = requests.post(
         f"{SUPABASE_URL}/rest/v1/prizes",
@@ -193,6 +207,8 @@ def insert_prizes(kuji_id, prizes):
     )
     if res.status_code not in [200, 201]:
         print(f"  prizes登録エラー: {res.text}")
+        return "insert_error"
+    return f"updated(削除{deleted_count}件→挿入{len(prize_data)}件)"
 
 def main():
     print("一番くじ情報を取得中（全月）...")
@@ -200,6 +216,8 @@ def main():
     print(f"\n合計 {len(kuji_list)}件取得")
 
     errors = []
+    prizes_updated = 0
+    prizes_not_updated = 0
     for kuji in kuji_list:
         print(f"\n処理中: {kuji['title']}")
         time.sleep(1)
@@ -216,11 +234,18 @@ def main():
             kuji_id = upsert_kuji(kuji)
             if kuji_id:
                 init_total_count_default(kuji_id)
-                insert_prizes(kuji_id, detail["prizes"])
-                print(f"  ✅ 登録完了 (id={kuji_id}, 賞{len(detail['prizes'])}件)")
+                prizes_result = insert_prizes(kuji_id, detail["prizes"])
+                if prizes_result and prizes_result.startswith("updated"):
+                    print(f"  ✅ 登録完了 (id={kuji_id}, {prizes_result})")
+                    prizes_updated += 1
+                else:
+                    print(f"  ⚠️  登録完了だがprizesは未更新 (id={kuji_id}, 理由={prizes_result})")
+                    prizes_not_updated += 1
         except Exception as e:
             print(f"  ❌ エラー（スキップ）: {e}")
             errors.append({"title": kuji["title"], "error": str(e)})
+
+    print(f"\nprizes更新サマリ: 更新{prizes_updated}件 / 未更新{prizes_not_updated}件")
 
     if errors:
         print(f"\n⚠️  {len(errors)}件スキップ:")

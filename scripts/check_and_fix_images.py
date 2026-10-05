@@ -43,6 +43,28 @@ def is_broken(url):
         return True
 
 
+def get_all_rows(url, headers, page_size=1000):
+    """PostgRESTのmax-rows(既定1000)による打ち切りを避けるため、Rangeヘッダでページネーションして全件取得する。
+    以前はlimit=5000を指定していたが実際には1000件で切られ、order=kuji_idの並びにより
+    新しいくじ(kuji_idが大きい)が構造的にチェック対象から漏れていた
+    (2026-10-06 Oupas監査で特定、[[kujinone-prizes-upsert-future]])。"""
+    rows = []
+    offset = 0
+    while True:
+        res = requests.get(
+            url,
+            headers={**headers, "Range": f"{offset}-{offset + page_size - 1}"},
+        )
+        batch = res.json()
+        if not isinstance(batch, list):
+            break
+        rows.extend(batch)
+        if len(batch) < page_size:
+            break
+        offset += page_size
+    return rows
+
+
 def check_urls_parallel(items, url_key="image_url", workers=20):
     """URLリストを並列チェックして壊れているものだけ返す"""
     broken = []
@@ -75,9 +97,10 @@ def scrape_kuji_detail(source_url):
         name_text = name_el.text.strip()
         m = re.match(r'^([A-ZＡ-Ｚ\w]+賞)\s+(.+)$', name_text)
         grade = m.group(1) if m else "その他"
+        item_name = m.group(2) if m else name_text
         img_el = item.select_one("div.itemColGallery ul.slider-item li img")
         image_url = img_el["src"] if img_el else None
-        prizes.append({"sort_order": i, "grade": grade, "image_url": image_url})
+        prizes.append({"sort_order": i, "grade": grade, "name": item_name, "image_url": image_url})
 
     return banner_url, prizes
 
@@ -97,12 +120,16 @@ def fix_kuji_image(kuji_id, kuji_title, source_url, current_url):
         print(f"    ⚠️  新しいURLが見つかりませんでした")
 
 
-def fix_prize_images(kuji_id, source_url, broken_sort_orders):
+def fix_prize_images(kuji_id, source_url, broken_grade_names):
+    # sort_orderは発売前のくじでソース側に賞品が追加されるとズレる(実測: 481件中10件)ため、
+    # キーには(grade, name)を使う。この組み合わせは現行データ全1481行で重複が無いことを確認済み
+    # (2026-10-06 Oupas監査F8、[[kujinone-prizes-upsert-future]])。
     _, scraped_prizes = scrape_kuji_detail(source_url)
     for sp in scraped_prizes:
-        if sp["sort_order"] in broken_sort_orders and sp.get("image_url"):
+        key = (sp["grade"], sp["name"])
+        if key in broken_grade_names and sp.get("image_url"):
             r = requests.patch(
-                f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}&sort_order=eq.{sp['sort_order']}",
+                f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}&grade=eq.{requests.utils.quote(sp['grade'])}&name=eq.{requests.utils.quote(sp['name'])}",
                 headers=SB_HEADERS,
                 json={"image_url": sp["image_url"]},
             )
@@ -130,18 +157,17 @@ def main():
         print("  ✅ 全件OK")
 
     print(f"\n【prizes テーブル】")
-    res = requests.get(
-        f"{SUPABASE_URL}/rest/v1/prizes?select=kuji_id,sort_order,grade,image_url&image_url=not.is.null&order=kuji_id,sort_order&limit=5000",
-        headers=SB_HEADERS,
+    prizes = get_all_rows(
+        f"{SUPABASE_URL}/rest/v1/prizes?select=kuji_id,grade,name,image_url&image_url=not.is.null&order=kuji_id",
+        SB_HEADERS,
     )
-    prizes = res.json()
     print(f"  {len(prizes)}件を並列チェック中...")
     broken_prizes = check_urls_parallel(prizes)
 
-    broken_by_kuji: dict[int, list[int]] = {}
+    broken_by_kuji: dict[int, set[tuple[str, str]]] = {}
     for p in broken_prizes:
         print(f"  ❌ 404: kuji_id={p['kuji_id']} {p['grade']}")
-        broken_by_kuji.setdefault(p["kuji_id"], []).append(p["sort_order"])
+        broken_by_kuji.setdefault(p["kuji_id"], set()).add((p["grade"], p["name"]))
 
     if broken_by_kuji:
         kuji_ids = list(broken_by_kuji.keys())
@@ -152,7 +178,7 @@ def main():
         )
         for k in res2.json():
             print(f"\n  🔧 prizes修復: {k['title']}")
-            fix_prize_images(k["id"], k["source_url"], set(broken_by_kuji[k["id"]]))
+            fix_prize_images(k["id"], k["source_url"], broken_by_kuji[k["id"]])
             time.sleep(1)
     else:
         print("  ✅ 全件OK")

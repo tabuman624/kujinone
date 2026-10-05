@@ -206,11 +206,15 @@ export async function GET(req: Request) {
   let firstHistoryError: string | null = null
 
   // ── ① 発売7日以内のくじ（毎日計測） ────────────────────────────────────────
+  // 上限(.lte)が無いと未発売の全くじ(数ヶ月先まで)が対象になってしまい、発売前の
+  // price_historyがprizesのFK参照を生んでscrape_and_register.pyのdelete-then-insert
+  // を永久にブロックする(2026-10-06 Oupas監査で特定、[[kujinone-prizes-upsert-future]])。
   const { data: newKujiList } = await supabase
     .from('kuji')
     .select('id, title')
     .eq('is_active', true)
     .gte('release_at', day7Str)
+    .lte('release_at', todayStr)
 
   if (newKujiList?.length) {
     const kujiTitleMap = Object.fromEntries(newKujiList.map(k => [k.id, k.title as string]))
