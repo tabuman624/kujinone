@@ -1,4 +1,5 @@
 import os
+import sys
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -142,75 +143,101 @@ def upsert_kuji(kuji_data):
         print(f"  kuji登録エラー: {res.text}")
         return None
 
-def insert_prizes(kuji_id, prizes):
-    """戻り値は呼び出し元がログに実際の結果を出すためのステータス文字列。
-    以前はこの関数の結果にかかわらず呼び出し元が無条件に「✅ 登録完了」と出力しており、
-    実際には後述のFK制約で大半のくじが更新されていないにもかかわらず、約100日間
-    (2026-06-28〜10-06)気づかれなかった(2026-10-06 Oupas監査F2・A3、
-    [[kujinone-prizes-upsert-future]])。"""
+def reconcile_prizes(kuji_id, prizes, dry_run=False):
+    """delete-then-insert(旧insert_prizes)を(kuji_id, grade, name)キーでの
+    突き合わせ更新に置き換えたもの。
+
+    旧方式はkuji_idの全prizesを毎日削除→再挿入しており、price_history /
+    prize_interestの2テーブルがprizes.idをFK参照している(ON DELETE CASCADEなし)
+    ため、参照されている賞品を1件でも含むくじは複数行DELETE文がPostgres側で
+    丸ごとロールバックされ、409で確実に失敗していた(2026-06-28〜10-06の間、
+    51.7%のくじで最大100日間、賞品データが凍結)。
+
+    (kuji_id, grade, name)は現行データ全件で重複が無く、実スクレイプとの照合でも
+    100%一致することを確認済み(2026-10-06 Oupas監査F8、[[kujinone-prizes-upsert-future]])。
+    この組み合わせをキーに、一致行はPATCH・新規行はINSERT・消えた行だけDELETE
+    する。prizeのidが保たれるため、market_price / auction_price_* の退避ロジックは
+    不要になった(行自体を消さないので退避する必要が無い)。DELETEがFKで失敗しても
+    その1行だけスキップし、くじ全体の更新は妨げない。
+
+    dry_run=Trueの場合は書き込みを一切行わず、差分件数だけを返す。
+    """
     if not prizes:
         print(f"  ⚠️  賞品が0件のため取得失敗とみなし、既存データを保持してスキップします。")
         return "skipped_no_prizes"
 
-    # 既存の market_price を sort_order をキーに退避（毎日の再挿入で消えないように）
-    backup_res = requests.get(
-        f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}&select=sort_order,market_price",
+    existing_res = requests.get(
+        f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}&select=id,grade,name,total,sort_order,image_url",
         headers=SB_HEADERS
     )
-    price_backup = {}
-    if backup_res.status_code == 200:
-        for p in backup_res.json():
-            if p.get("market_price") is not None:
-                price_backup[p["sort_order"]] = p["market_price"]
+    if existing_res.status_code != 200:
+        print(f"  ⚠️  既存prizesの取得に失敗しました(status={existing_res.status_code})。スキップします。")
+        return "fetch_error"
 
-    prize_data = [
-        {"kuji_id": kuji_id, **p, "market_price": price_backup.get(p["sort_order"])}
-        for p in prizes
-    ]
+    existing_by_key = {(r["grade"], r["name"]): r for r in existing_res.json()}
+    scraped_by_key = {(p["grade"], p["name"]): p for p in prizes}
 
-    # テスト挿入で書き込み権限を確認（kuji_id=-1 は FK なしなので必ず通る）
-    test_res = requests.post(
-        f"{SUPABASE_URL}/rest/v1/prizes",
-        headers={**SB_HEADERS, "Prefer": "return=minimal"},
-        json=[{**prize_data[0], "kuji_id": -1}]
-    )
-    requests.delete(f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.-1",
-                    headers={**SB_HEADERS, "Prefer": "return=minimal"})
-    if test_res.status_code not in [200, 201, 204]:
-        print(f"  ⚠️  prizes書き込み権限なし（RLSブロック）。スキップします。")
-        return "skipped_permission"
+    to_update = []
+    to_insert = []
+    for key, p in scraped_by_key.items():
+        ex = existing_by_key.get(key)
+        if ex is None:
+            to_insert.append(p)
+        elif (ex["total"], ex["sort_order"], ex["image_url"]) != (p["total"], p["sort_order"], p["image_url"]):
+            to_update.append((ex, p))
+    to_delete = [ex for key, ex in existing_by_key.items() if key not in scraped_by_key]
 
-    # 既存データを削除。削除件数はDELETE自身のレスポンス(return=representation)で
-    # 確認する(別リクエストでの残存確認より確実)。
-    #
-    # 【訂正】この修正を書いた当初は「read-after-writeのタイムラグによる誤検知」が
-    # 原因と考えていたが、2026-10-06のOupas監査で誤りと判明した。実際には
-    # price_history / prize_interest の2テーブルがprizes.idをFK参照しており
-    # (ON DELETE CASCADEなし)、参照されている賞品を含むくじは複数行DELETE文が
-    # Postgres側で丸ごとロールバックされ、409で確実に失敗する。タイムラグではなく
-    # 毎回必ず起きる制約違反であり、このDELETEレスポンス読み取り化だけでは
-    # 1件も解除できない(詳細は[[kujinone-prizes-upsert-future]]のTier B参照。
-    # そちらで(kuji_id, grade, name)キーのPATCH/INSERT/DELETEに置き換える予定)。
-    delete_res = requests.delete(
-        f"{SUPABASE_URL}/rest/v1/prizes?kuji_id=eq.{kuji_id}",
-        headers={**SB_HEADERS, "Prefer": "return=representation"}
-    )
-    if delete_res.status_code != 200:
-        print(f"  ⚠️  既存prizesのDELETEに失敗しました(status={delete_res.status_code})。重複を避けるためスキップします。")
-        return "skipped_delete_failed"
-    deleted_count = len(delete_res.json())
+    if dry_run:
+        return f"dry_run(更新{len(to_update)}件/追加{len(to_insert)}件/削除候補{len(to_delete)}件)"
 
-    res = requests.post(
-        f"{SUPABASE_URL}/rest/v1/prizes",
-        headers=SB_HEADERS,
-        json=prize_data
-    )
-    if res.status_code not in [200, 201]:
-        print(f"  prizes登録エラー: {res.text}")
-        return "insert_error"
-    return f"updated(削除{deleted_count}件→挿入{len(prize_data)}件)"
+    updated_count = 0
+    for ex, p in to_update:
+        r = requests.patch(
+            f"{SUPABASE_URL}/rest/v1/prizes?id=eq.{ex['id']}",
+            headers={**SB_HEADERS, "Prefer": "return=minimal"},
+            json={"total": p["total"], "sort_order": p["sort_order"], "image_url": p["image_url"]},
+        )
+        if r.status_code in (200, 204):
+            updated_count += 1
+        else:
+            print(f"  ⚠️  PATCH失敗 id={ex['id']}({ex['grade']} {ex['name']}) status={r.status_code}: {r.text}")
 
-def main():
+    inserted_count = 0
+    if to_insert:
+        payload = [{"kuji_id": kuji_id, **p, "market_price": None} for p in to_insert]
+        r = requests.post(
+            f"{SUPABASE_URL}/rest/v1/prizes",
+            headers={**SB_HEADERS, "Prefer": "return=minimal"},
+            json=payload,
+        )
+        if r.status_code in (200, 201):
+            inserted_count = len(to_insert)
+        else:
+            print(f"  ⚠️  INSERT失敗 status={r.status_code}: {r.text}")
+
+    deleted_count = 0
+    delete_locked = 0
+    for ex in to_delete:
+        r = requests.delete(
+            f"{SUPABASE_URL}/rest/v1/prizes?id=eq.{ex['id']}",
+            headers={**SB_HEADERS, "Prefer": "return=minimal"},
+        )
+        if r.status_code in (200, 204):
+            deleted_count += 1
+        elif r.status_code == 409:
+            delete_locked += 1
+        else:
+            print(f"  ⚠️  DELETE失敗 id={ex['id']}({ex['grade']} {ex['name']}) status={r.status_code}: {r.text}")
+
+    summary = f"reconciled(更新{updated_count}/追加{inserted_count}/削除{deleted_count}"
+    if delete_locked:
+        summary += f"/削除保留{delete_locked}件・FK参照中のため個別スキップ"
+    summary += ")"
+    return summary
+
+def main(dry_run=False):
+    if dry_run:
+        print("=== DRY RUN モード: 書き込みは一切行いません ===")
     print("一番くじ情報を取得中（全月）...")
     kuji_list = scrape_list()
     print(f"\n合計 {len(kuji_list)}件取得")
@@ -224,6 +251,21 @@ def main():
 
         try:
             detail = scrape_detail(kuji["source_url"])
+
+            if dry_run:
+                # kuji自体の更新も行わず、prizesの差分件数だけを読み取り専用で確認する
+                existing_res = requests.get(
+                    f"{SUPABASE_URL}/rest/v1/kuji?product_id=eq.{kuji['product_id']}&select=id",
+                    headers=SB_HEADERS
+                )
+                rows = existing_res.json() if existing_res.status_code == 200 else []
+                if not rows:
+                    print(f"  [dry-run] 新規くじのため差分プレビュー対象外")
+                    continue
+                prizes_result = reconcile_prizes(rows[0]["id"], detail["prizes"], dry_run=True)
+                print(f"  [dry-run] {prizes_result}")
+                continue
+
             kuji["price"] = detail["price"] or 800
             kuji["is_active"] = True
             kuji["available_stores"] = detail.get("available_stores") or []
@@ -234,8 +276,8 @@ def main():
             kuji_id = upsert_kuji(kuji)
             if kuji_id:
                 init_total_count_default(kuji_id)
-                prizes_result = insert_prizes(kuji_id, detail["prizes"])
-                if prizes_result and prizes_result.startswith("updated"):
+                prizes_result = reconcile_prizes(kuji_id, detail["prizes"])
+                if prizes_result and prizes_result.startswith("reconciled"):
                     print(f"  ✅ 登録完了 (id={kuji_id}, {prizes_result})")
                     prizes_updated += 1
                 else:
@@ -245,7 +287,8 @@ def main():
             print(f"  ❌ エラー（スキップ）: {e}")
             errors.append({"title": kuji["title"], "error": str(e)})
 
-    print(f"\nprizes更新サマリ: 更新{prizes_updated}件 / 未更新{prizes_not_updated}件")
+    if not dry_run:
+        print(f"\nprizes更新サマリ: 更新{prizes_updated}件 / 未更新{prizes_not_updated}件")
 
     if errors:
         print(f"\n⚠️  {len(errors)}件スキップ:")
@@ -255,4 +298,4 @@ def main():
     print("\n完了！")
 
 if __name__ == "__main__":
-    main()
+    main(dry_run="--dry-run" in sys.argv)
