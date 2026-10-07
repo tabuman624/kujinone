@@ -4,7 +4,7 @@ date: 2026-09-14
 release_date: 2026-11-07
 kuji_id: 8188
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10773/7c4ee720-abb7-4708-b687-8a3b6b95224d.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10773/2fc0f55c-a1c4-4e70-a029-59c3d0ad1343.webp
 summary: 2026年11月7日発売「一番くじ エスターバニー（仮）」の賞品一覧と期待値。1回750円、全80本。くじのねで期待値を計算できます。
 ---
 
