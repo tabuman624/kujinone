@@ -4,7 +4,7 @@ date: 2026-08-25
 release_date: 2026-10-17
 kuji_id: 7111
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10762/4320c7fd-8d32-437c-8db4-def9423f78cb.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10762/89887183-6920-4a5c-90fd-38e2fac2f365.webp
 summary: 2026年10月17日発売「一番くじ GLAY」の賞品一覧と期待値。1回880円、全80本。くじのねで期待値を計算できます。
 ---
 
