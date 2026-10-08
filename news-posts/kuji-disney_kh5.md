@@ -1,5 +1,5 @@
 ---
-title: 一番くじ KINGDOM HEARTS 第５弾（仮称） 全賞品ラインナップ｜8/15発売
+title: 一番くじ KINGDOM… 全賞品ラインナップ｜8/15発売
 date: 2026-06-16
 release_date: 2026-08-15
 kuji_id: 1228

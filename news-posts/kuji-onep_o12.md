@@ -1,5 +1,5 @@
 ---
-title: 一番くじ ONE PIECE -空に奏でる"島の歌声"（… 全賞品ラインナップ｜10/29発売
+title: 一番くじ ONE PIECE… 全賞品ラインナップ｜10/29発売
 date: 2026-08-30
 release_date: 2026-10-29
 kuji_id: 7118

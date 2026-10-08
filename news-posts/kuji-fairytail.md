@@ -1,5 +1,5 @@
 ---
-title: 一番くじ FAIRY TAIL 20th ANNIVER… 全賞品ラインナップ｜10/3発売
+title: 一番くじ FAIRY TAIL… 全賞品ラインナップ｜10/3発売
 date: 2026-08-25
 release_date: 2026-10-03
 kuji_id: 7106

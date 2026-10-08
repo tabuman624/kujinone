@@ -1,5 +1,5 @@
 ---
-title: 一番くじ HUNTER×HUNTER CHMERA AN… 全賞品ラインナップ｜11/14発売
+title: 一番くじ HUNTER×HUNTE… 全賞品ラインナップ｜11/14発売
 date: 2026-09-15
 release_date: 2026-11-14
 kuji_id: 8191

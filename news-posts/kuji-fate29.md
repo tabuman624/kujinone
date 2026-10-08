@@ -1,5 +1,5 @@
 ---
-title: 一番くじ Fate/Grand Order（仮） 全賞品ラインナップ｜10/31発売
+title: 一番くじ Fate/Grand… 全賞品ラインナップ｜10/31発売
 date: 2026-09-01
 release_date: 2026-10-31
 kuji_id: 7121

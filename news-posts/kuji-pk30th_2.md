@@ -1,5 +1,5 @@
 ---
-title: 一番くじ Pokémon 30th ANNIVERSAR… 全賞品ラインナップ｜7/18発売
+title: 一番くじ Pokémon 30th… 全賞品ラインナップ｜7/18発売
 date: 2026-05-23
 release_date: 2026-07-18
 kuji_id: 262

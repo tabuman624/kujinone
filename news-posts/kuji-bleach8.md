@@ -1,5 +1,5 @@
 ---
-title: 一番くじ BLEACH Stirring Souls v… 全賞品ラインナップ｜9/19発売
+title: 一番くじ BLEACH… 全賞品ラインナップ｜9/19発売
 date: 2026-07-21
 release_date: 2026-09-19
 kuji_id: 3965

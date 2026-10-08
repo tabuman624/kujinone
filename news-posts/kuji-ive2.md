@@ -1,5 +1,5 @@
 ---
-title: 一番くじ IVE FROM STARSHIP ENTER…｜賞品一覧と期待値【9/19発売】
+title: 一番くじ IVE FROM…｜賞品一覧と期待値【9/19発売】
 date: 2026-07-21
 release_date: 2026-09-19
 kuji_id: 3963

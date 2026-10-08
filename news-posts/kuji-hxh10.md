@@ -1,5 +1,5 @@
 ---
-title: 一番くじ HUNTER×HUNTER ZAOLDYECK… 全賞品ラインナップ｜5/22発売
+title: 一番くじ HUNTER×HUNTER… 全賞品ラインナップ｜5/22発売
 date: 2026-05-12
 release_date: 2026-05-22
 kuji_id: 14

@@ -1,5 +1,5 @@
 ---
-title: 一番くじ CUTIE STREET くじを手にする戦いな… 全賞品ラインナップ｜8/4発売
+title: 一番くじ CUTIE STREET… 全賞品ラインナップ｜8/4発売
 date: 2026-06-05
 release_date: 2026-08-04
 kuji_id: 1220

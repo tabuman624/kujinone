@@ -23,14 +23,46 @@ TITLE_TEMPLATES = [
     "{title} 全賞品ラインナップ｜{release_md}発売",
 ]
 
-TITLE_NAME_MAX_LEN = 28  # SERP表示枠を確保するための商品名の上限文字数
+# サイト全体のtitleテンプレート（layout.tsxの`%s | くじのね`）を含めたSERP表示幅の上限。
+# app/kuji/[id]/page.tsxのbuildKujiTitleと同じ考え方（全角=2・半角=1の重み付け、全角32文字相当）。
+TITLE_TOTAL_MAX_WEIGHTED_LEN = 64
+ROOT_TITLE_SUFFIX_WEIGHTED_LEN = 11  # " | くじのね"
 
-def truncate_title_name(title, max_len=TITLE_NAME_MAX_LEN):
-    return title if len(title) <= max_len else title[:max_len] + "…"
+def weighted_length(s):
+    return sum(2 if ord(c) > 255 else 1 for c in s)
+
+def truncate_title_name(title, fixed_part_weighted_len):
+    """商品名を、テンプレート固定部分とサイト名サフィックスを差し引いた残り予算に
+    全角/半角を区別して収める。単純な文字数カットは全角主体の商品名で予算を
+    超過し、半角英単語の途中で「…」が付くと見た目が崩れるため、単語境界
+    （半角スペース）があればそこで切ってから付ける。"""
+    budget = TITLE_TOTAL_MAX_WEIGHTED_LEN - ROOT_TITLE_SUFFIX_WEIGHTED_LEN - fixed_part_weighted_len
+    if weighted_length(title) <= budget:
+        return title
+
+    ellipsis_weight = weighted_length("…")
+    cut_budget = budget - ellipsis_weight
+    acc = 0
+    cut_at = len(title)
+    for i, ch in enumerate(title):
+        w = 2 if ord(ch) > 255 else 1
+        if acc + w > cut_budget:
+            cut_at = i
+            break
+        acc += w
+
+    truncated = title[:cut_at]
+    last_space = truncated.rfind(' ')
+    if last_space > len(truncated) * 0.5:
+        truncated = truncated[:last_space]
+    return truncated.rstrip() + "…"
 
 def pick_title(product_id, title, release_md):
     idx = sum(ord(c) for c in product_id) % len(TITLE_TEMPLATES)
-    return TITLE_TEMPLATES[idx].format(title=truncate_title_name(title), release_md=release_md)
+    template = TITLE_TEMPLATES[idx]
+    fixed_part_weighted_len = weighted_length(template.format(title='', release_md=release_md))
+    safe_title = truncate_title_name(title, fixed_part_weighted_len)
+    return template.format(title=safe_title, release_md=release_md)
 
 
 def get_target_kuji():
