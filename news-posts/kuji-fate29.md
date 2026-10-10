@@ -4,7 +4,7 @@ date: 2026-09-01
 release_date: 2026-10-31
 kuji_id: 7121
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10756/7e1e0530-0310-4381-961b-6930189ba124.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10756/5f55c805-da19-4a27-9e4e-10f7bd768bd0.webp
 summary: 2026年10月31日発売「一番くじ Fate/Grand Order（仮）」の賞品一覧と期待値。1回850円、全80本。くじのねで期待値を計算できます。
 ---
 
