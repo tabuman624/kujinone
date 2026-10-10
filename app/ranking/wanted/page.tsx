@@ -1,19 +1,22 @@
 import type { Metadata } from 'next'
 import { supabase } from '../../lib/supabase'
-import RankingTabs, { type TotalRankingItem, type WeeklyRankingItem } from './RankingTabs'
+import RankingTabs, { type PopularPrizeRankingItem, type WeeklyRankingItem, type UpcomingRankingItem } from './RankingTabs'
 
 export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: '人気ランキング｜みんなが狙っている賞・週間急上昇くじ',
-  description: '一番くじの期待値計算ツールで実際にチェックされた回数をもとにした総合ランキングと、直近1週間の閲覧数の伸びをもとにした週間急上昇ランキング。ヤフオク相場もあわせてチェックできます。',
+  description: '一番くじの期待値計算ツールで実際にチェックされた回数をもとにした人気の賞ランキングと、直近1週間の閲覧数の伸びをもとにした週間急上昇ランキング、発売前の注目くじランキング。ヤフオク相場もあわせてチェックできます。',
   alternates: { canonical: '/ranking/wanted' },
 }
 
 export default async function WantedRankingPage() {
   const today = new Date().toISOString().slice(0, 10)
+  const thirtyDaysAgoDate = new Date()
+  thirtyDaysAgoDate.setDate(thirtyDaysAgoDate.getDate() - 30)
+  const thirtyDaysAgo = thirtyDaysAgoDate.toISOString().slice(0, 10)
 
-  // ── 総合: 期待値計算でチェックされた回数（全期間の累積）───────────────────
+  // ── 人気の賞: 期待値計算でチェックされた回数（直近30日に発売したくじに限定）──
   const { data: interests } = await supabase
     .from('prize_interest')
     .select('prize_id, check_count')
@@ -35,14 +38,16 @@ export default async function WantedRankingPage() {
   const kujiTitleMap = Object.fromEntries((kujiList ?? []).map(k => [k.id, k.title as string]))
   const kujiReleaseMap = Object.fromEntries((kujiList ?? []).map(k => [k.id, k.release_at as string | null]))
 
-  const totalRanking: TotalRankingItem[] = (interests ?? [])
+  const popularPrizeRanking: PopularPrizeRankingItem[] = (interests ?? [])
     .map(i => {
       const prize = prizeMap[i.prize_id]
       if (!prize) return null
       // 未発売のくじには二次流通が存在しないため、相場データが付いていても
-      // ランキングには出さない（ラベルなど誤情報の露出を避ける）
+      // ランキングには出さない（ラベルなど誤情報の露出を避ける）。
+      // さらに発売から30日より前のくじは定番として延々と居座ってしまうため除外し、
+      // 直近発売のくじだけで「今人気の賞」を見せる。
       const releaseAt = kujiReleaseMap[prize.kuji_id]
-      if (!releaseAt || releaseAt > today) return null
+      if (!releaseAt || releaseAt > today || releaseAt < thirtyDaysAgo) return null
       return { ...prize, checkCount: i.check_count as number, kujiTitle: kujiTitleMap[prize.kuji_id] ?? '' }
     })
     .filter((r): r is NonNullable<typeof r> => r !== null)
@@ -105,6 +110,25 @@ export default async function WantedRankingPage() {
     .filter((r): r is NonNullable<typeof r> => r !== null)
     .slice(0, 20)
 
+  // ── 発売前注目: 未発売くじを閲覧数順に（相場は出さず、閲覧数だけで見せる）──
+  const { data: upcomingKuji } = await supabase
+    .from('kuji')
+    .select('id, title, price, image_url, banner_url, release_at')
+    .gt('release_at', today)
+
+  const upcomingIds = (upcomingKuji ?? []).map(k => k.id)
+  const { data: upcomingViews } = upcomingIds.length > 0
+    ? await supabase.from('kuji_views').select('kuji_id, view_count').in('kuji_id', upcomingIds)
+    : { data: [] as Array<{ kuji_id: number; view_count: number }> }
+
+  const upcomingViewMap = Object.fromEntries((upcomingViews ?? []).map(v => [v.kuji_id, v.view_count as number]))
+
+  const upcomingRanking: UpcomingRankingItem[] = (upcomingKuji ?? [])
+    .map(k => ({ ...k, viewCount: upcomingViewMap[k.id] ?? 0 }))
+    .filter(k => k.viewCount > 0)
+    .sort((a, b) => b.viewCount - a.viewCount)
+    .slice(0, 20)
+
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -121,10 +145,10 @@ export default async function WantedRankingPage() {
       <div className="bg-stone-800 px-6 py-8 text-white">
         <p className="text-xs font-bold tracking-widest text-stone-400 mb-1">RANKING</p>
         <h1 className="text-xl font-black">人気ランキング</h1>
-        <p className="text-xs text-stone-400 mt-2">総合は期待値計算でチェックされた回数、週間急上昇は直近1週間の閲覧数の伸びをもとにしています</p>
+        <p className="text-xs text-stone-400 mt-2">週間急上昇は直近1週間の閲覧数の伸び、人気の賞は直近30日に発売したくじでチェックされた回数、発売前注目は未発売くじの閲覧数をもとにしています</p>
       </div>
 
-      <RankingTabs totalRanking={totalRanking} weeklyRanking={weeklyRanking} />
+      <RankingTabs popularPrizeRanking={popularPrizeRanking} weeklyRanking={weeklyRanking} upcomingRanking={upcomingRanking} />
     </main>
   )
 }
