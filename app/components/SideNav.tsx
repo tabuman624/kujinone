@@ -24,10 +24,10 @@ const navItems = [
     icon: 'M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z',
   },
   {
-    href: '/news',
-    label: '新作速報',
-    sub: 'NEWS',
-    icon: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9',
+    href: '/ranking/wanted',
+    label: 'ランキング',
+    sub: 'RANKING',
+    icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
   },
   {
     href: '/blog',
@@ -39,7 +39,7 @@ const navItems = [
 
 const footerLinks = [
   { href: '/today', label: '今日・今週発売' },
-  { href: '/ranking/wanted', label: '狙われている賞ランキング' },
+  { href: '/news', label: '新作速報' },
   { href: '/ip', label: '作品から探す' },
   { href: '/store', label: '取扱店から探す' },
   { href: '/about', label: 'このサイトについて' },
@@ -53,7 +53,7 @@ function getActiveHref(pathname: string): string {
   if (pathname === '/') return '/'
   if (pathname.startsWith('/schedule') || pathname.startsWith('/kuji')) return '/schedule'
   if (pathname.startsWith('/calc')) return '/calc'
-  if (pathname.startsWith('/news')) return '/news'
+  if (pathname.startsWith('/ranking')) return '/ranking/wanted'
   if (pathname.startsWith('/blog')) return '/blog'
   return ''
 }
