@@ -26,8 +26,8 @@ export default async function WantedRankingPage() {
 
   const prizeIds = (interests ?? []).map(i => i.prize_id)
   const { data: prizes } = prizeIds.length > 0
-    ? await supabase.from('prizes').select('id, name, grade, kuji_id, image_url, auction_price_peak, auction_price_updated_at').in('id', prizeIds)
-    : { data: [] as Array<{ id: number; name: string; grade: string; kuji_id: number; image_url: string | null; auction_price_peak: number | null; auction_price_updated_at: string | null }> }
+    ? await supabase.from('prizes').select('id, name, grade, kuji_id, image_url, market_price, market_price_updated_at, auction_price_min, auction_price_updated_at').in('id', prizeIds)
+    : { data: [] as Array<{ id: number; name: string; grade: string; kuji_id: number; image_url: string | null; market_price: number | null; market_price_updated_at: string | null; auction_price_min: number | null; auction_price_updated_at: string | null }> }
 
   const kujiIds = [...new Set((prizes ?? []).map(p => p.kuji_id))]
   const { data: kujiList } = kujiIds.length > 0
@@ -48,7 +48,17 @@ export default async function WantedRankingPage() {
       // 直近発売のくじだけで「今人気の賞」を見せる。
       const releaseAt = kujiReleaseMap[prize.kuji_id]
       if (!releaseAt || releaseAt > today || releaseAt < thirtyDaysAgo) return null
-      return { ...prize, checkCount: i.check_count as number, kujiTitle: kujiTitleMap[prize.kuji_id] ?? '' }
+      // 現在の相場感が分かればよいので、安定価格(market_price)優先、無ければヤフオク最安値を採用する
+      // （/calc・PrizeListと同じ優先順位）。全期間の最高値ではなく「今いくらか」を見せる。
+      const currentPrice = prize.market_price ?? prize.auction_price_min
+      const priceUpdatedAt = prize.market_price != null ? prize.market_price_updated_at : prize.auction_price_updated_at
+      return {
+        ...prize,
+        checkCount: i.check_count as number,
+        kujiTitle: kujiTitleMap[prize.kuji_id] ?? '',
+        currentPrice,
+        priceUpdatedAt,
+      }
     })
     .filter((r): r is NonNullable<typeof r> => r !== null)
     .slice(0, 30)
@@ -145,7 +155,7 @@ export default async function WantedRankingPage() {
       <div className="bg-stone-800 px-6 py-8 text-white">
         <p className="text-xs font-bold tracking-widest text-stone-400 mb-1">RANKING</p>
         <h1 className="text-xl font-black">人気ランキング</h1>
-        <p className="text-xs text-stone-400 mt-2">週間急上昇は直近1週間の閲覧数の伸び、人気の賞は直近30日に発売したくじでチェックされた回数、発売前注目は未発売くじの閲覧数をもとにしています</p>
+        <p className="text-xs text-stone-400 mt-2">いま狙われているくじ・賞をチェック</p>
       </div>
 
       <RankingTabs popularPrizeRanking={popularPrizeRanking} weeklyRanking={weeklyRanking} upcomingRanking={upcomingRanking} />

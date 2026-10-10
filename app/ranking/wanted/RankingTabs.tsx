@@ -11,14 +11,35 @@ const gradeColors: { [key: string]: string } = {
   'E賞': 'bg-stone-100 text-stone-700',
 }
 
+// 1〜3位だけ金銀銅の丸バッジにし、4位以降は従来通りの地味な数字のまま。
+// 行全体や枠を装飾すると煩雑になるため、変化させる面積を数字バッジだけに絞る。
+const rankBadgeColors = ['bg-amber-400', 'bg-stone-400', 'bg-orange-700']
+function RankBadge({ i }: { i: number }) {
+  if (i < 3) {
+    return (
+      <span
+        className={`w-6 h-6 rounded-full text-white text-xs font-black flex items-center justify-center flex-shrink-0 ${rankBadgeColors[i]}`}
+        style={{ fontVariantNumeric: 'tabular-nums' }}
+      >
+        {i + 1}
+      </span>
+    )
+  }
+  return (
+    <span className="text-sm font-black text-stone-300 w-6 text-center flex-shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
+      {i + 1}
+    </span>
+  )
+}
+
 export type PopularPrizeRankingItem = {
   id: number
   name: string
   grade: string
   kuji_id: number
   image_url: string | null
-  auction_price_peak: number | null
-  auction_price_updated_at: string | null
+  currentPrice: number | null
+  priceUpdatedAt: string | null
   checkCount: number
   kujiTitle: string
 }
@@ -96,9 +117,7 @@ export default function RankingTabs({
                 className="flex items-center gap-3 p-3 bg-white border border-stone-200 rounded-xl press hover:border-shu hover:shadow-md transition-colors anim-fade-up"
                 style={{ animationDelay: `${i * 25}ms` }}
               >
-                <span className="text-sm font-black text-stone-300 w-6 text-center flex-shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {i + 1}
-                </span>
+                <RankBadge i={i} />
                 <div className="w-11 h-11 bg-shu-bg rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
                   {(r.banner_url || r.image_url) ? (
                     <Image src={(r.banner_url || r.image_url) as string} alt={r.title} width={44} height={44} className="w-full h-full object-cover" unoptimized />
@@ -136,9 +155,7 @@ export default function RankingTabs({
                 className="flex items-center gap-3 p-3 bg-white border border-stone-200 rounded-xl press hover:border-shu hover:shadow-md transition-colors anim-fade-up"
                 style={{ animationDelay: `${i * 25}ms` }}
               >
-                <span className="text-sm font-black text-stone-300 w-6 text-center flex-shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {i + 1}
-                </span>
+                <RankBadge i={i} />
                 <div className="w-11 h-11 bg-shu-bg rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
                   {r.image_url ? (
                     <Image src={r.image_url} alt={r.name} width={44} height={44} className="w-full h-full object-cover" unoptimized />
@@ -148,18 +165,18 @@ export default function RankingTabs({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 mb-0.5">
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${gradeColors[r.grade] || 'bg-stone-100 text-stone-700'}`}>{r.grade}</span>
-                    <p className="text-[11px] text-stone-400 truncate">{r.kujiTitle}</p>
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap flex-shrink-0 ${gradeColors[r.grade] || 'bg-stone-100 text-stone-700'}`}>{r.grade}</span>
+                    <p className="text-[11px] text-stone-400 truncate min-w-0">{r.kujiTitle}</p>
                   </div>
                   <p className="text-sm font-bold text-stone-800 truncate">{r.name}</p>
                   <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden mt-1.5 mb-1" style={{ maxWidth: 160 }}>
                     <div className="h-full bg-shu rounded-full" style={{ width: `${pct}%` }} />
                   </div>
-                  {r.auction_price_peak != null && (
+                  {r.currentPrice != null && (
                     <p className="text-[11px] text-stone-500">
-                      ヤフオク最高値 <span className="font-bold text-shu">¥{r.auction_price_peak.toLocaleString()}</span>
-                      {r.auction_price_updated_at && (
-                        <span className="text-stone-400">（{new Date(r.auction_price_updated_at).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}時点）</span>
+                      相場 <span className="font-bold text-shu">¥{r.currentPrice.toLocaleString()}〜</span>
+                      {r.priceUpdatedAt && (
+                        <span className="text-stone-400">（{new Date(r.priceUpdatedAt).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}時点）</span>
                       )}
                     </p>
                   )}
@@ -184,9 +201,7 @@ export default function RankingTabs({
                 className="flex items-center gap-3 p-3 bg-white border border-stone-200 rounded-xl press hover:border-shu hover:shadow-md transition-colors anim-fade-up"
                 style={{ animationDelay: `${i * 25}ms` }}
               >
-                <span className="text-sm font-black text-stone-300 w-6 text-center flex-shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {i + 1}
-                </span>
+                <RankBadge i={i} />
                 <div className="w-11 h-11 bg-shu-bg rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
                   {(r.banner_url || r.image_url) ? (
                     <Image src={(r.banner_url || r.image_url) as string} alt={r.title} width={44} height={44} className="w-full h-full object-cover" unoptimized />
