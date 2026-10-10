@@ -13,11 +13,58 @@ summary: 一番くじの景品がメルカリ・駿河屋でいつ値下がり�
 
 「発売日に店頭でくじを引かずに、フリマで買おう」と考えている場合は、発売直後は避けた方が割安で手に入れやすいです。
 
-## 1〜2週間後から徐々に値下がり始める
+## データで見る：発売から何日で値下がりするか
 
-くじの在庫が店頭に残り続ける期間（通常1〜2ヶ月）は、多くの人がくじを引き続けます。景品が市場に出回るにつれて供給が増え、相場は徐々に下がっていきます。
+「どれくらい待てば落ち着くのか」を具体的な数字で示すため、くじのねが毎日記録しているYahoo!ショッピング価格データのうち、発売後8日分以上の記録がある景品19件を対象に、発売日の価格を100%として指数化した中央値の推移を集計しました。
 
-発売から2〜4週間後が、価格が落ち着き始めるタイミングです。急いでいない場合は、この時期まで待つのが賢い選択です。
+<svg viewBox="0 0 600 290" style="width:100%;height:auto" role="img" aria-label="一番くじ景品の価格推移（発売日を100%とした中央値、19件の景品データより算出）">
+<line x1="56" y1="252.0" x2="580" y2="252.0" stroke="#e7e5e4" stroke-width="1"/>
+<text x="48" y="256.0" text-anchor="end" font-size="11" fill="#78716c">0%</text>
+<line x1="56" y1="197.7" x2="580" y2="197.7" stroke="#e7e5e4" stroke-width="1"/>
+<text x="48" y="201.7" text-anchor="end" font-size="11" fill="#78716c">25%</text>
+<line x1="56" y1="143.4" x2="580" y2="143.4" stroke="#e7e5e4" stroke-width="1"/>
+<text x="48" y="147.4" text-anchor="end" font-size="11" fill="#78716c">50%</text>
+<line x1="56" y1="89.1" x2="580" y2="89.1" stroke="#e7e5e4" stroke-width="1"/>
+<text x="48" y="93.1" text-anchor="end" font-size="11" fill="#78716c">75%</text>
+<line x1="56" y1="34.9" x2="580" y2="34.9" stroke="#e7e5e4" stroke-width="1"/>
+<text x="48" y="38.9" text-anchor="end" font-size="11" fill="#78716c">100%</text>
+<text x="56.0" y="270" text-anchor="middle" font-size="11" fill="#78716c">0</text>
+<text x="130.9" y="270" text-anchor="middle" font-size="11" fill="#78716c">1</text>
+<text x="205.7" y="270" text-anchor="middle" font-size="11" fill="#78716c">2</text>
+<text x="280.6" y="270" text-anchor="middle" font-size="11" fill="#78716c">3</text>
+<text x="355.4" y="270" text-anchor="middle" font-size="11" fill="#78716c">4</text>
+<text x="430.3" y="270" text-anchor="middle" font-size="11" fill="#78716c">5</text>
+<text x="505.1" y="270" text-anchor="middle" font-size="11" fill="#78716c">6</text>
+<text x="580.0" y="270" text-anchor="middle" font-size="11" fill="#78716c">7</text>
+<text x="318.0" y="288" text-anchor="middle" font-size="12" fill="#292524">発売からの経過日数</text>
+<path d="M56.0,34.9 L130.9,47.2 L205.7,67.6 L280.6,76.3 L355.4,82.8 L430.3,82.6 L505.1,95.9 L580.0,97.0 L580.0,252 L56.0,252 Z" fill="#E14B36" opacity="0.1"/>
+<path d="M56.0,34.9 L130.9,47.2 L205.7,67.6 L280.6,76.3 L355.4,82.8 L430.3,82.6 L505.1,95.9 L580.0,97.0" fill="none" stroke="#E14B36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="56.0" cy="34.9" r="5" fill="#E14B36" stroke="#fff" stroke-width="2"><title>発売日の価格を100%とした場合: 100%</title></circle>
+<circle cx="130.9" cy="47.2" r="5" fill="#E14B36" stroke="#fff" stroke-width="2"><title>発売1日後: 94%</title></circle>
+<circle cx="205.7" cy="67.6" r="5" fill="#E14B36" stroke="#fff" stroke-width="2"><title>発売2日後: 85%</title></circle>
+<circle cx="280.6" cy="76.3" r="5" fill="#E14B36" stroke="#fff" stroke-width="2"><title>発売3日後: 81%</title></circle>
+<circle cx="355.4" cy="82.8" r="5" fill="#E14B36" stroke="#fff" stroke-width="2"><title>発売4日後: 78%</title></circle>
+<circle cx="430.3" cy="82.6" r="5" fill="#E14B36" stroke="#fff" stroke-width="2"><title>発売5日後: 78%</title></circle>
+<circle cx="505.1" cy="95.9" r="5" fill="#E14B36" stroke="#fff" stroke-width="2"><title>発売6日後: 72%</title></circle>
+<circle cx="580.0" cy="97.0" r="5" fill="#E14B36" stroke="#fff" stroke-width="2"><title>発売7日後: 71%</title></circle>
+<text x="56.0" y="22.9" text-anchor="start" font-size="13" font-weight="700" fill="#292524">100%</text>
+<text x="580.0" y="117.0" text-anchor="end" font-size="13" font-weight="700" fill="#292524">71%</text>
+</svg>
+
+| 発売からの日数 | 価格（発売日を100%とした場合） |
+|---|---|
+| 0日（発売日） | 100% |
+| 1日後 | 94% |
+| 2日後 | 85% |
+| 3日後 | 81% |
+| 4日後 | 78% |
+| 5日後 | 78% |
+| 6日後 | 72% |
+| 7日後 | 71% |
+
+**発売1週間でおよそ3割値下がりする**、というのが現時点のデータから見える傾向です。「2〜4週間待てば落ち着く」というイメージを持たれがちですが、実際には**最初の1週間で値下がりの大部分が進む**ケースが多いことがわかります。急いでいない場合は、発売1週間後を目安にチェックしてみるとよさそうです。
+
+※ 発売前（予約段階）の価格は、実際の流通が始まる前のデータのため参考程度に留め、発売日時点の価格を基準（100%）としています。また現時点では発売後1週間程度までのデータが中心のため、2週間以降の傾向はデータが蓄積され次第、随時更新していきます。
 
 ## 実際の相場推移を見てみる
 
@@ -65,7 +112,7 @@ summary: 一番くじの景品がメルカリ・駿河屋でいつ値下がり�
 | タイミング | 相場の動き | おすすめアクション |
 |-----------|-----------|-----------------|
 | 発売直後  | 高い       | くじを引く・売るなら今 |
-| 2〜4週後  | 落ち着く   | フリマで買うなら今 |
+| 発売1週間後 | 約7割程度まで値下がり | フリマで買うなら今 |
 | 売り切れ後 | 再上昇も  | 売るなら少し待つ |
 | 新作発売前 | 下落傾向  | 旧作は早めに売る |
 
