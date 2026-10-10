@@ -246,7 +246,7 @@ kujinone/
 │
 ├── scripts/                            # 記事生成スクリプト
 │   ├── generate-monthly-news.ts
-│   └── generate-ranking-post.ts
+│   └── generate_ranking_post.py        # 人気ランキング記事(posts/ranking-2026-09.md)を週次で再生成
 │
 ├── public/
 │   ├── logo.png

@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "monthly-news": "tsx --env-file=.env.local scripts/generate-monthly-news.ts",
-    "ranking-post": "tsx --env-file=.env.local scripts/generate-ranking-post.ts"
+    "monthly-news": "tsx --env-file=.env.local scripts/generate-monthly-news.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.4",
