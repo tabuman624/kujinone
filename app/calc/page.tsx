@@ -342,6 +342,36 @@ function CalcContent() {
   const [manualTarget, setManualTarget] = useState("")
   const [manualPrice, setManualPrice] = useState("800")
   const [totalCountInput, setTotalCountInput] = useState("")
+  const [totalPresets, setTotalPresets] = useState<number[]>([30, 50, 80, 100])
+  const [pricePresets, setPricePresets] = useState<number[]>([700, 800, 850, 1000])
+
+  // 手動入力モードのプリセットボタンを、直近に発売されたくじの実データ
+  // (price・total_count)の頻出値から動的に算出する。固定値だと実態とズレるため。
+  useEffect(() => {
+    if (kujiId) return
+    const fetchPresets = async () => {
+      const { data } = await supabase
+        .from("kuji")
+        .select("price, total_count")
+        .order("release_at", { ascending: false })
+        .limit(100)
+      if (!data) return
+      const topFrequentValues = (values: number[], n: number): number[] => {
+        const counts = new Map<number, number>()
+        for (const v of values) counts.set(v, (counts.get(v) ?? 0) + 1)
+        return [...counts.entries()]
+          .sort((a, b) => b[1] - a[1] || a[0] - b[0])
+          .slice(0, n)
+          .map(([v]) => v)
+          .sort((a, b) => a - b)
+      }
+      const prices = data.map((k: { price: number | null }) => k.price).filter((v: number | null): v is number => typeof v === "number" && v > 0)
+      const totals = data.map((k: { total_count: number | null }) => k.total_count).filter((v: number | null): v is number => typeof v === "number" && v > 0)
+      if (prices.length > 0) setPricePresets(topFrequentValues(prices, 4))
+      if (totals.length > 0) setTotalPresets(topFrequentValues(totals, 4))
+    }
+    fetchPresets()
+  }, [kujiId])
 
   useEffect(() => {
     if (!kujiId) return
@@ -539,8 +569,6 @@ function CalcContent() {
   }
 
   // ----- Manual mode -----
-  const totalPresets = [30, 50, 80, 100]
-  const pricePresets = [700, 800, 850, 1000]
   return (
     <main style={{ background: "#fafafa" }}>
       <div className="px-6 pt-6 pb-5 bg-stone-800">
@@ -582,10 +610,16 @@ function CalcContent() {
           </FormCard>
 
           <FormCard label="1回の金額" hint="くじ一回あたり">
-            <div className="flex gap-1.5 flex-wrap">
-              {pricePresets.map(p => (
-                <button key={p} onClick={() => setManualPrice(String(p))} className={`text-xs px-3 py-1.5 rounded-full font-semibold press transition-colors ${manualPrice === String(p) ? "bg-shu text-white" : "bg-stone-100 text-stone-700"}`} style={{ fontVariantNumeric: "tabular-nums" }}>{p}円</button>
-              ))}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-1">
+                <Stepper value={manualPrice} onChange={setManualPrice} min={1} max={9999} />
+                <span className="text-sm font-normal text-stone-400">円</span>
+              </div>
+              <div className="flex gap-1.5 flex-wrap">
+                {pricePresets.map(p => (
+                  <button key={p} onClick={() => setManualPrice(String(p))} className={`text-xs px-3 py-1.5 rounded-full font-semibold press transition-colors ${manualPrice === String(p) ? "bg-shu text-white" : "bg-stone-100 text-stone-700"}`} style={{ fontVariantNumeric: "tabular-nums" }}>{p}円</button>
+                ))}
+              </div>
             </div>
           </FormCard>
         </div>
