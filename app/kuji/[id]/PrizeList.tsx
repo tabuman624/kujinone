@@ -1,5 +1,6 @@
 'use client'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -62,7 +63,17 @@ export default function PrizeList({ prizes, isReleased }: { prizes: Prize[]; isR
               <div className="w-12 h-12 rounded-lg bg-stone-50 flex-shrink-0" />
             )}
             <div className="flex-1 min-w-0">
-              <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${gradeColors[prize.grade] || 'bg-stone-100 text-stone-700'}`}>{prize.grade}</span>
+              {prize.grade === 'ラストワン賞' ? (
+                <Link
+                  href="/blog/ichiban-kuji-last-one"
+                  onClick={e => e.stopPropagation()}
+                  className={`text-xs font-bold px-1.5 py-0.5 rounded hover:underline ${gradeColors[prize.grade] || 'bg-stone-100 text-stone-700'}`}
+                >
+                  {prize.grade}
+                </Link>
+              ) : (
+                <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${gradeColors[prize.grade] || 'bg-stone-100 text-stone-700'}`}>{prize.grade}</span>
+              )}
               <p className="text-sm text-stone-800 font-medium mt-0.5 truncate">{prize.name}</p>
             </div>
             <div className="flex flex-col items-end flex-shrink-0">
