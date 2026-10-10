@@ -11,8 +11,16 @@ import XIcon from '../../components/XIcon'
 
 // 「相場と比較して判断しよう」「駿河屋の買取がラク」と本文で明言しているのに
 // 外部リンクが1本も無かった記事だけに、対応するCTAを差し込む。
-const COMPARE_CTA_SLUGS = new Set(['ichiban-kuji-last-one', 'kuji-vs-mercari', 'ichiban-kuji-toha'])
-const SELL_CTA_SLUGS = new Set(['ichiban-kuji-sell-where', 'ichiban-kuji-sell-tips', 'ichiban-kuji-kaitori-price'])
+const COMPARE_CTA_SLUGS = new Set([
+  'ichiban-kuji-last-one', 'kuji-vs-mercari', 'ichiban-kuji-toha',
+  'ichiban-kuji-resale', 'ichiban-kuji-price-drop', 'ichiban-kuji-value',
+  'ichiban-kuji-smart', 'kitaichi-toha', 'ichiban-kuji-how-many',
+  'ichiban-kuji-sougaku', 'ichiban-kuji-prize-cost',
+])
+const SELL_CTA_SLUGS = new Set([
+  'ichiban-kuji-sell-where', 'ichiban-kuji-sell-tips', 'ichiban-kuji-kaitori-price',
+  'ichiban-kuji-recover-cost', 'ichiban-kuji-all-buy',
+])
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
