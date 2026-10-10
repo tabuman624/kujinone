@@ -1,6 +1,7 @@
 'use client'
 import Image from 'next/image'
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 
 const gradeColors: { [key: string]: string } = {
   'A賞': 'bg-amber-100 text-amber-800',
@@ -76,7 +77,12 @@ export default function PrizeList({ prizes, isReleased }: { prizes: Prize[]; isR
         ))}
       </div>
 
-      {active && (
+      {active && createPortal(
+        // document.body直下にポータルでレンダーする。.anim-pageなどtransformを
+        // アニメーションさせる祖先の内側にあると、CSS仕様上その祖先が
+        // position: fixedの配置基準(containing block)になってしまい、
+        // 画面ではなくページ全体を基準に中央寄せされてしまうため
+        // （アニメーション終了後の計算値が実質無変化でも、祖先という条件自体で発生する）。
         <div
           className="fixed inset-0 z-50 bg-black/80 overflow-y-auto"
           onClick={() => setActive(null)}
@@ -96,7 +102,8 @@ export default function PrizeList({ prizes, isReleased }: { prizes: Prize[]; isR
             <p className="text-white text-sm font-bold mt-4 text-center">{active.name}</p>
             <p className="text-white/50 text-xs mt-2">タップして閉じる</p>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )
