@@ -1,5 +1,5 @@
 ---
-title: 一番くじ MOTHER2…｜賞品一覧と期待値【6/6発売】
+title: 一番くじ MOTHER2 ギーグの逆襲 第二弾｜6/6発売
 date: 2026-05-18
 release_date: 2026-06-06
 kuji_id: 241

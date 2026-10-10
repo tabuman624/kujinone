@@ -1,5 +1,5 @@
 ---
-title: 一番くじ 勝利の女神：N…｜賞品一覧と期待値【8/8発売】
+title: 一番くじ 勝利の女神：NIKKE CHAPTER8｜8/8発売
 date: 2026-06-09
 release_date: 2026-08-08
 kuji_id: 1224

@@ -1,5 +1,5 @@
 ---
-title: 一番くじ 爬虫類＆両生… 全賞品ラインナップ｜8/29発売
+title: 一番くじ 爬虫類＆両生類～Tiny Friends～vol.3
 date: 2026-07-06
 release_date: 2026-08-29
 kuji_id: 1233

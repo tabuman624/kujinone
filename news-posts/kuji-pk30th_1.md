@@ -1,5 +1,5 @@
 ---
-title: 一番くじ Pokémon…｜賞品一覧と期待値【5/30発売】
+title: 一番くじ Pokémon 30th ANNIVERSARY vol.1｜5/30発売
 date: 2026-05-22
 release_date: 2026-05-30
 kuji_id: 21

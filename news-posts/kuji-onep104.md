@@ -1,5 +1,5 @@
 ---
-title: 一番くじ ワンピース… 全賞品ラインナップ｜8/8発売
+title: 一番くじ ワンピース -エルバフ編- GIANT BASH!! Vol.2
 date: 2026-06-09
 release_date: 2026-08-08
 kuji_id: 1223

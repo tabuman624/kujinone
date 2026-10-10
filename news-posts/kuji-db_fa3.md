@@ -1,5 +1,5 @@
 ---
-title: 一番くじ ドラゴンボー… 全賞品ラインナップ｜11/28発売
+title: 一番くじ ドラゴンボール Fantastic Adventure 3
 date: 2026-09-29
 release_date: 2026-11-28
 kuji_id: 8198

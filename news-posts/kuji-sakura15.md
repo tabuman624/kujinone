@@ -1,5 +1,5 @@
 ---
-title: 一番くじ アニメ… 全賞品ラインナップ｜11/6発売
+title: 一番くじ アニメ カードキャプターさくら クリアカード編～Blessed collection～
 date: 2026-09-14
 release_date: 2026-11-06
 kuji_id: 8187

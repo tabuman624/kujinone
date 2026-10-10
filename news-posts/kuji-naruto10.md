@@ -1,5 +1,5 @@
 ---
-title: 一番くじ NARUTO-ナル…｜賞品一覧と期待値【6/26発売】
+title: 一番くじ NARUTO-ナルト- 疾風伝 風影奪還編｜6/26発売
 date: 2026-05-19
 release_date: 2026-06-26
 kuji_id: 249

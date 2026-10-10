@@ -1,5 +1,5 @@
 ---
-title: 一番くじ hololive…｜賞品一覧と期待値【11/13発売】
+title: 一番くじ hololive FLOW GLOW｜11/13発売
 date: 2026-09-14
 release_date: 2026-11-13
 kuji_id: 8819

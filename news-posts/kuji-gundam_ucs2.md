@@ -1,5 +1,5 @@
 ---
-title: 一番くじ 機動戦士ガン…｜賞品一覧と期待値【10/3発売】
+title: 一番くじ 機動戦士ガンダム UNIVERSAL CENTURY SAGA2
 date: 2026-08-25
 release_date: 2026-10-03
 kuji_id: 7105

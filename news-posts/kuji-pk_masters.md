@@ -1,5 +1,5 @@
 ---
-title: 一番くじ ポケモンマス… 全賞品ラインナップ｜8/29発売
+title: 一番くじ ポケモンマスターズ EX 7th Anniversary
 date: 2026-07-06
 release_date: 2026-08-29
 kuji_id: 3706

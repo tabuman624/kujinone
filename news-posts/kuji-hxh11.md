@@ -1,5 +1,5 @@
 ---
-title: 一番くじ HUNTER×HUNTE…｜賞品一覧と期待値【8/29発売】
+title: 一番くじ HUNTER×HUNTER GREED ISLAND ②｜8/29発売
 date: 2026-07-06
 release_date: 2026-08-29
 kuji_id: 1234

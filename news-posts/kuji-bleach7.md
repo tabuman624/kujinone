@@ -1,5 +1,5 @@
 ---
-title: 一番くじ BLEACH…｜賞品一覧と期待値【5/22発売】
+title: 一番くじ BLEACH Stirring Souls vol.4｜5/22発売
 date: 2026-05-05
 release_date: 2026-05-22
 kuji_id: 15

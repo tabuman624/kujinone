@@ -1,5 +1,5 @@
 ---
-title: 一番くじ 〈トイ・スト…｜賞品一覧と期待値【10/9発売】
+title: 一番くじ 〈トイ・ストーリー〉～Playtime pals forever（遊び仲間は永遠に）～（再販売）
 date: 2026-10-05
 release_date: 2026-10-09
 kuji_id: 10948

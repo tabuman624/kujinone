@@ -1,5 +1,5 @@
 ---
-title: 一番くじ〈スティッチ…｜賞品一覧と期待値【6/19発売】
+title: 一番くじ〈スティッチ〉Every day with you!｜6/19発売
 date: 2026-05-15
 release_date: 2026-06-19
 kuji_id: 245

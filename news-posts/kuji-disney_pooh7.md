@@ -1,5 +1,5 @@
 ---
-title: 一番くじ 〈くまのプ…｜賞品一覧と期待値【10/10発売】
+title: 一番くじ 〈くまのプーさん〉100th Anniversary
 date: 2026-08-25
 release_date: 2026-10-10
 kuji_id: 7107

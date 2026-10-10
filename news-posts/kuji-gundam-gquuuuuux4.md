@@ -1,5 +1,5 @@
 ---
-title: 一番くじ 機動戦士Gunda… 全賞品ラインナップ｜5/22発売
+title: 一番くじ 機動戦士Gundam GQuuuuuuX（ジークアクス） vol.4
 date: 2026-05-10
 release_date: 2026-05-22
 kuji_id: 16

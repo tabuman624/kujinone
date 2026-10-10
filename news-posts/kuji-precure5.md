@@ -1,5 +1,5 @@
 ---
-title: 一番くじ プリキュア… 全賞品ラインナップ｜9/26発売
+title: 一番くじ プリキュア ～Endless Grace～｜9/26発売
 date: 2026-07-28
 release_date: 2026-09-26
 kuji_id: 3968

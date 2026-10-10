@@ -1,5 +1,5 @@
 ---
-title: 一番くじ たまごっち～…｜賞品一覧と期待値【7/25発売】
+title: 一番くじ たまごっち～ぐるぐる発見！Tamagotchi Paradise！～
 date: 2026-05-26
 release_date: 2026-07-25
 kuji_id: 264

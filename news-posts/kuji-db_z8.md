@@ -1,5 +1,5 @@
 ---
-title: 一番くじ ドラゴンボー… 全賞品ラインナップ｜10/17発売
+title: 一番くじ ドラゴンボール SPIRIT OF THE SAIYAN
 date: 2026-08-25
 release_date: 2026-10-17
 kuji_id: 7109

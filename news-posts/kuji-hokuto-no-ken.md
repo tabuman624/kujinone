@@ -1,5 +1,5 @@
 ---
-title: 一番くじ 北斗の拳… 全賞品ラインナップ｜6/20発売
+title: 一番くじ 北斗の拳 -FIST OF THE NORTH STAR-｜6/20発売
 date: 2026-05-10
 release_date: 2026-06-20
 kuji_id: 247

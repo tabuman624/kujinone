@@ -1,5 +1,5 @@
 ---
-title: 一番くじ おジャ魔女ど… 全賞品ラインナップ｜5/23発売
+title: 一番くじ おジャ魔女どれみ～WELCOME MAHO堂～｜5/23発売
 date: 2026-05-08
 release_date: 2026-05-23
 kuji_id: 17

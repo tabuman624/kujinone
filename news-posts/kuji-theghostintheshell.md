@@ -1,5 +1,5 @@
 ---
-title: 一番くじ 攻殻機動隊…｜賞品一覧と期待値【9/26発売】
+title: 一番くじ 攻殻機動隊 THE GHOST IN THE SHELL｜9/26発売
 date: 2026-07-28
 release_date: 2026-09-26
 kuji_id: 3970

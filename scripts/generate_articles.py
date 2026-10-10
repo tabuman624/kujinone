@@ -31,38 +31,22 @@ ROOT_TITLE_SUFFIX_WEIGHTED_LEN = 11  # " | くじのね"
 def weighted_length(s):
     return sum(2 if ord(c) > 255 else 1 for c in s)
 
-def truncate_title_name(title, fixed_part_weighted_len):
-    """商品名を、テンプレート固定部分とサイト名サフィックスを差し引いた残り予算に
-    全角/半角を区別して収める。単純な文字数カットは全角主体の商品名で予算を
-    超過し、半角英単語の途中で「…」が付くと見た目が崩れるため、単語境界
-    （半角スペース）があればそこで切ってから付ける。"""
-    budget = TITLE_TOTAL_MAX_WEIGHTED_LEN - ROOT_TITLE_SUFFIX_WEIGHTED_LEN - fixed_part_weighted_len
-    if weighted_length(title) <= budget:
-        return title
-
-    ellipsis_weight = weighted_length("…")
-    cut_budget = budget - ellipsis_weight
-    acc = 0
-    cut_at = len(title)
-    for i, ch in enumerate(title):
-        w = 2 if ord(ch) > 255 else 1
-        if acc + w > cut_budget:
-            cut_at = i
-            break
-        acc += w
-
-    truncated = title[:cut_at]
-    last_space = truncated.rfind(' ')
-    if last_space > len(truncated) * 0.5:
-        truncated = truncated[:last_space]
-    return truncated.rstrip() + "…"
-
 def pick_title(product_id, title, release_md):
+    """商品名（＝検索クエリそのもの）は絶対に文字単位で削らない。buildKujiTitle
+    （app/kuji/[id]/page.tsx）と同じ考え方で、予算を超える場合は後ろに付く
+    suffix側を段階的に短く・無しにしていく。日本語の商品名は半角スペースを
+    持たないことが多く、文字単位カットは単語の途中で「…」が付いて検索結果での
+    見た目が崩れるため（過去にこの方式で発生した不具合）。"""
     idx = sum(ord(c) for c in product_id) % len(TITLE_TEMPLATES)
-    template = TITLE_TEMPLATES[idx]
-    fixed_part_weighted_len = weighted_length(template.format(title='', release_md=release_md))
-    safe_title = truncate_title_name(title, fixed_part_weighted_len)
-    return template.format(title=safe_title, release_md=release_md)
+    full = TITLE_TEMPLATES[idx].format(title=title, release_md=release_md)
+    if weighted_length(full) + ROOT_TITLE_SUFFIX_WEIGHTED_LEN <= TITLE_TOTAL_MAX_WEIGHTED_LEN:
+        return full
+
+    short = f"{title}｜{release_md}発売"
+    if weighted_length(short) + ROOT_TITLE_SUFFIX_WEIGHTED_LEN <= TITLE_TOTAL_MAX_WEIGHTED_LEN:
+        return short
+
+    return title
 
 
 def get_target_kuji():

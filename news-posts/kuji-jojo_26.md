@@ -1,5 +1,5 @@
 ---
-title: 一番くじ ジョジョの奇… 全賞品ラインナップ｜11/21発売
+title: 一番くじ ジョジョの奇妙な冒険 The Gathering of RIVALS
 date: 2026-09-22
 release_date: 2026-11-21
 kuji_id: 8195

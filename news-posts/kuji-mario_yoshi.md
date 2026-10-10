@@ -1,5 +1,5 @@
 ---
-title: 一番くじ スーパーマリ… 全賞品ラインナップ｜5/23発売
+title: 一番くじ スーパーマリオ with YOSHI｜5/23発売
 date: 2026-05-16
 release_date: 2026-05-23
 kuji_id: 18
