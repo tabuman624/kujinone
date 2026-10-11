@@ -8,7 +8,8 @@ const supabase = createClient(
 
 const PRICE_MIN = 500
 const PRICE_MAX = 200_000
-const OLD_KUJI_BATCH_SIZE = 15  // 古いくじのローテーション件数（タイムアウト対策）
+const MID_KUJI_BATCH_SIZE = 20  // 発売8〜30日のくじの毎日ローテーション件数（タイムアウト対策。対象プール約150件を1〜2週間で一巡する想定）
+const OLD_KUJI_BATCH_SIZE = 15  // 発売31〜90日のくじの土曜ローテーション件数（タイムアウト対策）
 const CONCURRENCY = 5           // 並列リクエスト数
 
 // ─── ユーティリティ ──────────────────────────────────────────────────────────
@@ -198,11 +199,13 @@ export async function GET(req: Request) {
 
   // 日付境界を計算
   const day7 = new Date(today); day7.setDate(today.getDate() - 7)
+  const day30 = new Date(today); day30.setDate(today.getDate() - 30)
   const day90 = new Date(today); day90.setDate(today.getDate() - 90)
   const day7Str = day7.toISOString().slice(0, 10)
+  const day30Str = day30.toISOString().slice(0, 10)
   const day90Str = day90.toISOString().slice(0, 10)
 
-  const stats = { newKuji: 0, oldKuji: 0, peakUpdated: 0, historyErrors: 0 }
+  const stats = { newKuji: 0, midKuji: 0, oldKuji: 0, peakUpdated: 0, historyErrors: 0 }
   let firstHistoryError: string | null = null
 
   // ── ① 発売7日以内のくじ（毎日計測） ────────────────────────────────────────
@@ -232,14 +235,44 @@ export async function GET(req: Request) {
     }
   }
 
-  // ── ② 発売8〜90日のくじ（土曜のみ・ローテーション） ─────────────────────────
+  // ── ② 発売8〜30日のくじ（毎日・ローテーション） ─────────────────────────────
+  // 直近の相場推移グラフ(/blog/ichiban-kuji-price-drop)の材料として、発売1週間を
+  // 過ぎた後も当面は値動きを追えるようにする枠。対象プールは約150件なので、
+  // 毎日MID_KUJI_BATCH_SIZE件ずつ回せば1〜2週間で一巡する。
+  const { data: midKujiList } = await supabase
+    .from('kuji')
+    .select('id, title')
+    .eq('is_active', true)
+    .gte('release_at', day30Str)
+    .lt('release_at', day7Str)
+
+  if (midKujiList?.length) {
+    const kujiTitleMap = Object.fromEntries(midKujiList.map(k => [k.id, k.title as string]))
+    const { data: midPrizes } = await supabase
+      .from('prizes')
+      .select('id, name, grade, kuji_id, auction_price_peak')
+      .in('kuji_id', midKujiList.map(k => k.id))
+      .order('auction_price_updated_at', { ascending: true, nullsFirst: true })
+      .limit(MID_KUJI_BATCH_SIZE)
+
+    if (midPrizes?.length) {
+      const result = await processBatch(midPrizes, kujiTitleMap, todayStr, nowIso)
+      stats.midKuji = result.scanned
+      stats.peakUpdated += result.peakUpdated
+      stats.historyErrors += result.historyErrors
+      firstHistoryError ??= result.firstHistoryError
+    }
+  }
+
+  // ── ③ 発売31〜90日のくじ（土曜のみ・ローテーション） ────────────────────────
+  // サイト全体の相場表示（最高値ランキング等）を古くしすぎないための枠。
   if (isSaturday) {
     const { data: oldKujiList } = await supabase
       .from('kuji')
       .select('id, title')
       .eq('is_active', true)
       .gte('release_at', day90Str)
-      .lt('release_at', day7Str)
+      .lt('release_at', day30Str)
 
     if (oldKujiList?.length) {
       const kujiTitleMap = Object.fromEntries(oldKujiList.map(k => [k.id, k.title as string]))
@@ -270,6 +303,7 @@ export async function GET(req: Request) {
     date: todayStr,
     isSaturday,
     newKujiPrizes: stats.newKuji,
+    midKujiPrizes: stats.midKuji,
     oldKujiPrizes: stats.oldKuji,
     peakUpdated: stats.peakUpdated,
     historyErrors: stats.historyErrors,
