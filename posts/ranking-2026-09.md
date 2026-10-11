@@ -49,10 +49,10 @@ category: "相場"
 発売前にもかかわらず閲覧数が伸びているくじです。開店ダッシュが必要になりそうなくじの目安にもなります。
 
 - **[一番くじ GLAY](https://kujinone.com/kuji/7111)**（10/17発売予定・閲覧数46回）
-- **[一番くじ カグラバチ](https://kujinone.com/kuji/7113)**（10/24発売予定・閲覧数32回）
+- **[一番くじ カグラバチ](https://kujinone.com/kuji/7113)**（10/24発売予定・閲覧数38回）
+- **[一番くじ ドラゴンボール SPIRIT OF THE SAIYAN](https://kujinone.com/kuji/7109)**（10/17発売予定・閲覧数23回）
 - **[一番くじ 〈モンスターズ・インク〉](https://kujinone.com/kuji/7110)**（10/17発売予定・閲覧数23回）
-- **[一番くじ ドラゴンボール SPIRIT OF THE SAIYAN](https://kujinone.com/kuji/7109)**（10/17発売予定・閲覧数22回）
-- **[一番くじ メイドインアビス](https://kujinone.com/kuji/7120)**（10/31発売予定・閲覧数17回）
+- **[一番くじ メイドインアビス](https://kujinone.com/kuji/7120)**（10/31発売予定・閲覧数18回）
 
 ## このランキングの作り方
 
