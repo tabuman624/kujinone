@@ -25,6 +25,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description,
     alternates: { canonical: `/store/${slug}` },
     openGraph: { title, description, url: `https://kujinone.com/store/${slug}` },
+    // 3か月表示0、/scheduleの部分集合でしかない（ADSENSE_SPEC「薄いページのnoindex化」判断）。
+    // followは維持し、/kuji/[id]へのリンクのクロール価値は残す。
+    robots: { index: false, follow: true },
   }
 }
 

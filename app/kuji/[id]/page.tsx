@@ -12,7 +12,9 @@ import KujiViewTracker from './KujiViewTracker'
 import AffiliateLink from '../../components/AffiliateLink'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
 
-export const revalidate = 3600
+// 元データは1日1回更新のため6時間でも十分。ISR Writes上限との両立のため緩和
+// （ADSENSE_SPEC「Vercel ISR Writesとの両立」）。sitemapのlastmodはDB直読みで独立。
+export const revalidate = 21600
 export const dynamicParams = true
 
 // ビルド時に全件を静的生成する。Supabase取得に失敗した場合は空配列を返し、
