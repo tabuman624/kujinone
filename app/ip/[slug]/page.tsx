@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getIpGroups, IP_NAMES } from '../../lib/ipGroups'
+import IpStats from './IpStats'
 
 export const revalidate = 21600
 
@@ -94,6 +95,8 @@ export default async function IpDetailPage({
           <p className="text-xs text-shu mt-3">次回は{fmtRelease(nextUpcoming.release_at)}発売予定</p>
         )}
       </div>
+
+      <IpStats kujiList={kujiList} />
 
       <div className="px-5 py-6 space-y-3">
         {kujiList.map((kuji, i) => {

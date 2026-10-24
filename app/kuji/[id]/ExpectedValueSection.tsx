@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 // 注: ../../lib は app/lib を指す（ルート直下の lib/ とは別の実体）
 import { expectedDraws } from '../../lib/ev'
+import { freshValue } from '../../lib/priceFreshness'
 import Disclaimer from './Disclaimer'
 import CollapsibleSection from './CollapsibleSection'
 import PriceSparkline from './PriceSparkline'
@@ -18,26 +19,8 @@ type Prize = {
 
 const ASSUMED_COUNTS = [1, 2, 3]
 const TOP_GRADES = ['A賞', 'B賞', 'C賞']
-const STALE_DAYS = 60
 // ラストワン賞の的中確率テーブル用の残り本数の刻み（総本数に対する割合）
 const LAST_ONE_LADDER_FRACTIONS = [1, 0.5, 0.25, 0.125, 0.0625]
-
-function daysSince(dateStr: string): number {
-  return (Date.now() - new Date(dateStr).getTime()) / 86_400_000
-}
-
-// 市場価値と取得日をセットで返す。取得から60日以上経過、またはタイムスタンプが
-// 無い値（レガシーデータ）は鮮度不明として除外する。古い一点だけの相場を
-// 断定的な事実として提示しないため。
-function freshValue(p: Prize): { value: number; updatedAt: string } | null {
-  if (p.market_price != null && p.market_price_updated_at && daysSince(p.market_price_updated_at) <= STALE_DAYS) {
-    return { value: p.market_price, updatedAt: p.market_price_updated_at }
-  }
-  if (p.auction_price_min != null && p.auction_price_updated_at && daysSince(p.auction_price_updated_at) <= STALE_DAYS) {
-    return { value: p.auction_price_min, updatedAt: p.auction_price_updated_at }
-  }
-  return null
-}
 
 export default async function ExpectedValueSection({
   kujiId,

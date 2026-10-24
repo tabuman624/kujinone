@@ -11,6 +11,7 @@ import ExpectedValueSection from './ExpectedValueSection'
 import KujiViewTracker from './KujiViewTracker'
 import AffiliateLink from '../../components/AffiliateLink'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
+import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
 
 // 元データは1日1回更新のため6時間でも十分。ISR Writes上限との両立のため緩和
 // （ADSENSE_SPEC「Vercel ISR Writesとの両立」）。sitemapのlastmodはDB直読みで独立。
@@ -128,6 +129,10 @@ export default async function KujiDetail({
 
   const availableStores: string[] = Array.isArray(kuji.available_stores) ? kuji.available_stores : []
 
+  // 既知IP（2件以上のくじを持つ作品、/ip/[slug]参照）のみシリーズページへの導線を出す。
+  const ipSlug = kuji.product_id ? ipSlugFor(kuji.product_id) : null
+  const ipName = ipSlug ? IP_NAMES[ipSlug] : null
+
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
@@ -187,6 +192,22 @@ export default async function KujiDetail({
               </div>
               <span className="text-shu text-sm flex-shrink-0">↗</span>
             </a>
+          </div>
+        )}
+
+        {ipName && (
+          <div className="mb-6 anim-fade-up" style={{ animationDelay: '160ms' }}>
+            <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">シリーズ / SERIES</h2>
+            <Link
+              href={`/ip/${ipSlug}`}
+              className="flex items-center justify-between gap-3 p-4 bg-stone-50 border border-stone-200 rounded-xl press hover:border-shu transition-colors"
+            >
+              <div>
+                <p className="text-sm font-bold text-stone-800">{ipName}の一番くじシリーズを見る</p>
+                <p className="text-xs text-stone-400 mt-0.5">過去弾の価格レンジ・相場実績を確認</p>
+              </div>
+              <span className="text-shu text-sm flex-shrink-0">→</span>
+            </Link>
           </div>
         )}
 
