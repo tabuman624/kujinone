@@ -1,9 +1,31 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import { freshValue } from '../../lib/priceFreshness'
 import type { IpKuji } from '../../lib/ipGroups'
 
 const RANK_LIMIT = 3
+
+// /ranking/wanted の RankingTabs.tsx と同じ金銀銅バッジ。1〜3位だけ丸バッジにし、
+// 4位以降は無いが揃えておく（RANK_LIMIT=3なので実質常にこちら）。
+const rankBadgeColors = ['bg-amber-400', 'bg-stone-400', 'bg-orange-700']
+function RankBadge({ i }: { i: number }) {
+  if (i < 3) {
+    return (
+      <span
+        className={`w-6 h-6 rounded-full text-white text-xs font-black flex items-center justify-center flex-shrink-0 ${rankBadgeColors[i]}`}
+        style={{ fontVariantNumeric: 'tabular-nums' }}
+      >
+        {i + 1}
+      </span>
+    )
+  }
+  return (
+    <span className="text-sm font-black text-stone-300 w-6 text-center flex-shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
+      {i + 1}
+    </span>
+  )
+}
 
 // シリーズ丸ごとの集計（弾単位）は弾数が少ないシリーズだと穴が目立つが、
 // 賞単位（1弾あたり数〜十数件）ならどのシリーズでもランキングに足るデータがある。
@@ -15,7 +37,7 @@ export default async function IpPrizeRankings({ kujiList }: { kujiList: IpKuji[]
 
   const { data: prizes } = await supabase
     .from('prizes')
-    .select('id, kuji_id, grade, name, market_price, market_price_updated_at, auction_price_min, auction_price_updated_at')
+    .select('id, kuji_id, grade, name, image_url, market_price, market_price_updated_at, auction_price_min, auction_price_updated_at')
     .in('kuji_id', kujiIds)
 
   if (!prizes || prizes.length === 0) return null
@@ -60,7 +82,14 @@ export default async function IpPrizeRankings({ kujiList }: { kujiList: IpKuji[]
                 href={`/kuji/${p.kuji_id}`}
                 className="flex items-center gap-3 p-3 border border-stone-200 rounded-xl press hover:border-shu transition-colors"
               >
-                <span className="text-sm font-black text-stone-300 w-5 flex-shrink-0">{i + 1}</span>
+                <RankBadge i={i} />
+                <div className="w-11 h-11 bg-shu-bg rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
+                  {p.image_url ? (
+                    <Image src={p.image_url} alt={p.name} width={44} height={44} className="w-full h-full object-cover" unoptimized />
+                  ) : (
+                    <span className="text-shu text-xs font-black">{p.grade}</span>
+                  )}
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-stone-800 truncate">【{p.grade}】{p.name}</p>
                   <p className="text-xs text-stone-400 truncate">{kujiMap.get(p.kuji_id)?.title}</p>
@@ -81,7 +110,14 @@ export default async function IpPrizeRankings({ kujiList }: { kujiList: IpKuji[]
                 href={`/kuji/${p.kuji_id}`}
                 className="flex items-center gap-3 p-3 border border-stone-200 rounded-xl press hover:border-shu transition-colors"
               >
-                <span className="text-sm font-black text-stone-300 w-5 flex-shrink-0">{i + 1}</span>
+                <RankBadge i={i} />
+                <div className="w-11 h-11 bg-shu-bg rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
+                  {p.image_url ? (
+                    <Image src={p.image_url} alt={p.name} width={44} height={44} className="w-full h-full object-cover" unoptimized />
+                  ) : (
+                    <span className="text-shu text-xs font-black">{p.grade}</span>
+                  )}
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-stone-800 truncate">【{p.grade}】{p.name}</p>
                   <p className="text-xs text-stone-400 truncate">{kujiMap.get(p.kuji_id)?.title}</p>

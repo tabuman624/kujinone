@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getIpGroups, IP_NAMES } from '../lib/ipGroups'
+import IpCadenceRanking from './IpCadenceRanking'
 
 export const revalidate = 21600
 
@@ -35,6 +36,8 @@ export default async function IpIndexPage() {
         <h1 className="text-xl font-black">作品から探す</h1>
         <p className="text-xs text-stone-400 mt-2">シリーズごとに一番くじの発売日・価格をまとめてチェック</p>
       </div>
+
+      <IpCadenceRanking />
 
       <div className="px-5 py-6 space-y-2">
         {ips.map(ip => (
