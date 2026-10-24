@@ -1,7 +1,9 @@
+import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 // 注: ../../lib は app/lib を指す（ルート直下の lib/ とは別の実体）
 import { expectedDraws } from '../../lib/ev'
 import Disclaimer from './Disclaimer'
+import CollapsibleSection from './CollapsibleSection'
 
 type Prize = {
   grade: string
@@ -116,96 +118,108 @@ export default async function ExpectedValueSection({
         </div>
       </div>
 
-      {topPrizes.length > 0 && (
-        <div className="mb-4">
-          <p className="text-xs font-bold text-stone-500 mb-2">本数別の平均回数</p>
-          <div className="space-y-4">
-            {topPrizes.map(prize => (
-              <div key={`${prize.grade}-${prize.name}`}>
-                <p className="text-xs font-bold text-stone-700 mb-2">【{prize.grade}】{prize.name}</p>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-xs border-collapse" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                    <thead>
-                      <tr className="text-stone-400 border-b border-stone-200">
-                        <th className="text-left font-bold py-1.5 pr-2">本数の仮定</th>
-                        <th className="text-right font-bold py-1.5 pr-2">平均</th>
-                        <th className="text-right font-bold py-1.5">目安金額</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ASSUMED_COUNTS.map(k => {
-                        const avg = expectedDraws(totalCount, k)
-                        const cost = Math.round(avg * price)
-                        return (
-                          <tr key={k} className="border-b border-stone-100 last:border-0">
-                            <td className="py-1.5 pr-2 text-stone-600 whitespace-nowrap">{prize.grade}が{k}本の場合</td>
-                            <td className="py-1.5 pr-2 text-right font-bold text-stone-800 whitespace-nowrap">平均 {avg.toFixed(1)}回目</td>
-                            <td className="py-1.5 text-right text-stone-500 whitespace-nowrap">約{cost.toLocaleString()}円</td>
+      <Link
+        href={`/calc?kuji_id=${kujiId}`}
+        className="flex items-center justify-center gap-2 w-full py-3.5 bg-shu text-white text-sm font-black rounded-xl hover:bg-shu-dark press mb-4"
+        style={{ boxShadow: '0 6px 16px rgba(225, 75, 54, 0.35)' }}
+      >
+        期待値を計算する →
+      </Link>
+
+      {(topPrizes.length > 0 || topPrizesWithValue.length > 0 || lastOneLadder.length > 0 || topDesignCount > 0 || lastOne || monthRank) && (
+        <CollapsibleSection label="本数別の平均回数・相場・当選確率を見る">
+          {topPrizes.length > 0 && (
+            <div className="mb-4">
+              <p className="text-xs font-bold text-stone-500 mb-2">本数別の平均回数</p>
+              <div className="space-y-4">
+                {topPrizes.map(prize => (
+                  <div key={`${prize.grade}-${prize.name}`}>
+                    <p className="text-xs font-bold text-stone-700 mb-2">【{prize.grade}】{prize.name}</p>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs border-collapse" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                        <thead>
+                          <tr className="text-stone-400 border-b border-stone-200">
+                            <th className="text-left font-bold py-1.5 pr-2">本数の仮定</th>
+                            <th className="text-right font-bold py-1.5 pr-2">平均</th>
+                            <th className="text-right font-bold py-1.5">目安金額</th>
                           </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
+                        </thead>
+                        <tbody>
+                          {ASSUMED_COUNTS.map(k => {
+                            const avg = expectedDraws(totalCount, k)
+                            const cost = Math.round(avg * price)
+                            return (
+                              <tr key={k} className="border-b border-stone-100 last:border-0">
+                                <td className="py-1.5 pr-2 text-stone-600 whitespace-nowrap">{prize.grade}が{k}本の場合</td>
+                                <td className="py-1.5 pr-2 text-right font-bold text-stone-800 whitespace-nowrap">平均 {avg.toFixed(1)}回目</td>
+                                <td className="py-1.5 text-right text-stone-500 whitespace-nowrap">約{cost.toLocaleString()}円</td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {topPrizesWithValue.length > 0 && (
+            <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 mb-4">
+              <p className="text-xs font-bold text-stone-500 mb-2">上位賞の中古相場</p>
+              <div className="space-y-1.5 mb-2">
+                {topPrizesWithValue.map(p => (
+                  <div key={p.grade} className="flex items-center justify-between gap-2">
+                    <span className="text-xs text-stone-600 truncate">【{p.grade}】{p.name}</span>
+                    <span className="text-xs font-bold text-stone-800 whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>¥{p.fresh.value.toLocaleString()}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-baseline justify-between pt-2 border-t border-stone-200">
+                <span className="text-xs font-bold text-stone-500">上位賞合計</span>
+                <span className="text-sm font-black text-shu" style={{ fontVariantNumeric: 'tabular-nums' }}>¥{topValueSum.toLocaleString()}</span>
+              </div>
+              {latestUpdatedAt && (
+                <p className="text-[10px] text-stone-400 mt-2">取得日：{latestUpdatedAt.slice(0, 10)}時点</p>
+              )}
+            </div>
+          )}
+
+          {lastOneLadder.length > 0 && (
+            <div className="mb-4">
+              <p className="text-xs font-bold text-stone-500 mb-2">ラストワン賞が当たる確率（残り本数ごと）</p>
+              <div className="bg-stone-50 border border-stone-200 rounded-xl p-3">
+                <div className="space-y-1.5">
+                  {lastOneLadder.map(n => {
+                    const pct = 100 / n
+                    return (
+                      <div key={n} className="flex items-center justify-between px-1 py-1">
+                        <span className="text-[11px] text-stone-600">残り{n}本</span>
+                        <span className="text-xs font-bold text-stone-800" style={{ fontVariantNumeric: 'tabular-nums' }}>{pct >= 10 ? pct.toFixed(0) : pct.toFixed(1)}%</span>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {topPrizesWithValue.length > 0 && (
-        <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 mb-4">
-          <p className="text-xs font-bold text-stone-500 mb-2">上位賞の中古相場</p>
-          <div className="space-y-1.5 mb-2">
-            {topPrizesWithValue.map(p => (
-              <div key={p.grade} className="flex items-center justify-between gap-2">
-                <span className="text-xs text-stone-600 truncate">【{p.grade}】{p.name}</span>
-                <span className="text-xs font-bold text-stone-800 whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>¥{p.fresh.value.toLocaleString()}</span>
-              </div>
-            ))}
-          </div>
-          <div className="flex items-baseline justify-between pt-2 border-t border-stone-200">
-            <span className="text-xs font-bold text-stone-500">上位賞合計</span>
-            <span className="text-sm font-black text-shu" style={{ fontVariantNumeric: 'tabular-nums' }}>¥{topValueSum.toLocaleString()}</span>
-          </div>
-          {latestUpdatedAt && (
-            <p className="text-[10px] text-stone-400 mt-2">取得日：{latestUpdatedAt.slice(0, 10)}時点</p>
-          )}
-        </div>
-      )}
-
-      {lastOneLadder.length > 0 && (
-        <div className="mb-4">
-          <p className="text-xs font-bold text-stone-500 mb-2">ラストワン賞が当たる確率（残り本数ごと）</p>
-          <div className="bg-stone-50 border border-stone-200 rounded-xl p-3">
-            <div className="space-y-1.5">
-              {lastOneLadder.map(n => {
-                const pct = 100 / n
-                return (
-                  <div key={n} className="flex items-center justify-between px-1 py-1">
-                    <span className="text-[11px] text-stone-600">残り{n}本</span>
-                    <span className="text-xs font-bold text-stone-800" style={{ fontVariantNumeric: 'tabular-nums' }}>{pct >= 10 ? pct.toFixed(0) : pct.toFixed(1)}%</span>
-                  </div>
-                )
-              })}
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {(topDesignCount > 0 || lastOne || monthRank) && (
-        <div className="mb-4">
-          <p className="text-xs font-bold text-stone-500 mb-2">賞の構成</p>
-          <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 space-y-2 text-xs text-stone-600 leading-relaxed">
-            {topDesignCount > 0 && totalDesignCount > 0 && (
-              <p>上位賞（{TOP_GRADES.join('・')}）は全{totalDesignCount}種のうち{topDesignCount}種（{Math.round((topDesignCount / totalDesignCount) * 100)}%）を占めます。</p>
-            )}
-            {lastOne && <p>ラストワン賞が設定されています。最後の1本を引いた人がもらえる特別賞です。</p>}
-            {monthRank && (
-              <p>同じ月発売の{monthRank.total}弾の中で、1回あたりの価格は{monthRank.rank}番目に高い商品です。</p>
-            )}
-          </div>
-        </div>
+          {(topDesignCount > 0 || lastOne || monthRank) && (
+            <div className="mb-4">
+              <p className="text-xs font-bold text-stone-500 mb-2">賞の構成</p>
+              <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 space-y-2 text-xs text-stone-600 leading-relaxed">
+                {topDesignCount > 0 && totalDesignCount > 0 && (
+                  <p>上位賞（{TOP_GRADES.join('・')}）は全{totalDesignCount}種のうち{topDesignCount}種（{Math.round((topDesignCount / totalDesignCount) * 100)}%）を占めます。</p>
+                )}
+                {lastOne && <p>ラストワン賞が設定されています。最後の1本を引いた人がもらえる特別賞です。</p>}
+                {monthRank && (
+                  <p>同じ月発売の{monthRank.total}弾の中で、1回あたりの価格は{monthRank.rank}番目に高い商品です。</p>
+                )}
+              </div>
+            </div>
+          )}
+        </CollapsibleSection>
       )}
 
       <Disclaimer hasMarketData={topPrizesWithValue.length > 0} totalCountSource={totalCountSource} />

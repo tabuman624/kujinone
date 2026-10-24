@@ -209,14 +209,6 @@ export default async function KujiDetail({
           <PrizePopularity kujiId={Number(id)} prizes={prizes.map(p => ({ id: p.id, name: p.name, grade: p.grade }))} />
         )}
 
-        <Link
-          href={`/calc?kuji_id=${id}`}
-          className="flex items-center justify-center gap-2 w-full py-3.5 bg-shu text-white text-sm font-black rounded-xl hover:bg-shu-dark press anim-fade-up mb-6"
-          style={{ animationDelay: `${200 + (prizes?.length || 0) * 60}ms`, boxShadow: '0 6px 16px rgba(225, 75, 54, 0.35)' }}
-        >
-          期待値を計算する →
-        </Link>
-
         {isReleased && (
           <div className="mb-6 anim-fade-up" style={{ animationDelay: `${260 + (prizes?.length || 0) * 60}ms` }}>
             <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">相場を確認・購入する / MARKET</h2>
