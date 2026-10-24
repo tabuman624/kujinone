@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getStoreGroups, STORE_NAMES } from '../../lib/storeGroups'
 
-export const revalidate = 3600
+export const revalidate = 21600
 
 export async function generateStaticParams() {
   return Object.keys(STORE_NAMES).map(slug => ({ slug }))

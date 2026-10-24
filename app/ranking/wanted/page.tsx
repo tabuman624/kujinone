@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { supabase } from '../../lib/supabase'
 import RankingTabs, { type PopularPrizeRankingItem, type WeeklyRankingItem, type UpcomingRankingItem } from './RankingTabs'
 
-export const revalidate = 3600
+export const revalidate = 21600
 
 export const metadata: Metadata = {
   title: '人気ランキング｜みんなが狙っている賞・週間急上昇くじ',

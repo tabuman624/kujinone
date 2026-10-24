@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 
-export const revalidate = 3600
+export const revalidate = 21600
 
 export const metadata: Metadata = {
   title: '今日・今週発売の一番くじ',

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getIpGroups, IP_NAMES } from '../../lib/ipGroups'
 
-export const revalidate = 3600
+export const revalidate = 21600
 
 export async function generateStaticParams() {
   return Object.keys(IP_NAMES).map(slug => ({ slug }))

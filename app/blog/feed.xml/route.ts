@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
-export const revalidate = 3600
+export const revalidate = 21600
 
 const BASE = 'https://kujinone.com'
 
