@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { supabase } from '../lib/supabase'
 
 export const metadata: Metadata = {
   title: '期待値の計算方法',
@@ -7,7 +8,30 @@ export const metadata: Metadata = {
   alternates: { canonical: '/method' },
 }
 
-export default function MethodPage() {
+// データの更新頻度は1日1回のcronなので、頻繁な再検証は不要。
+export const revalidate = 86400
+
+export default async function MethodPage() {
+  const [
+    { count: kujiCount },
+    { count: priceHistoryCount },
+    { data: maxKuji },
+    { data: maxMarket },
+    { data: maxAuction },
+  ] = await Promise.all([
+    supabase.from('kuji').select('*', { count: 'exact', head: true }),
+    supabase.from('price_history').select('*', { count: 'exact', head: true }),
+    supabase.from('kuji').select('updated_at').order('updated_at', { ascending: false }).limit(1),
+    supabase.from('prizes').select('market_price_updated_at').not('market_price_updated_at', 'is', null).order('market_price_updated_at', { ascending: false }).limit(1),
+    supabase.from('prizes').select('auction_price_updated_at').not('auction_price_updated_at', 'is', null).order('auction_price_updated_at', { ascending: false }).limit(1),
+  ])
+
+  // 「最終更新」は必ずデータ自身のタイムスタンプを使う。レンダー時刻を出すと
+  // revalidateを伸ばした途端に「毎日更新」という虚偽表示になるため（ADSENSE_SPEC B-3参照）。
+  const productLastUpdated = maxKuji?.[0]?.updated_at ?? null
+  const priceTimestamps = [maxMarket?.[0]?.market_price_updated_at, maxAuction?.[0]?.auction_price_updated_at].filter((t): t is string => !!t)
+  const priceLastUpdated = priceTimestamps.length > 0 ? priceTimestamps.sort().at(-1)! : null
+
   return (
     <main>
       <div className="bg-stone-800 px-6 py-8 text-white">
@@ -70,6 +94,33 @@ export default function MethodPage() {
           <p className="mt-4 text-xs text-stone-400">
             サイトの運営方針については<Link href="/about" className="text-shu hover:underline mx-1">このサイトについて</Link>もご覧ください。
           </p>
+        </section>
+
+        <section>
+          <h2 className="text-base font-black text-stone-800 mb-3">6. データ更新状況</h2>
+          <p className="mb-3">当サイトのデータは自動スクレイピングにより日次で更新しています。現在の蓄積状況は以下の通りです。</p>
+          <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 space-y-2 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-stone-500">掲載くじ件数</span>
+              <span className="font-bold text-stone-800" style={{ fontVariantNumeric: 'tabular-nums' }}>{(kujiCount ?? 0).toLocaleString()}件</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-stone-500">相場データ蓄積数</span>
+              <span className="font-bold text-stone-800" style={{ fontVariantNumeric: 'tabular-nums' }}>{(priceHistoryCount ?? 0).toLocaleString()}件</span>
+            </div>
+            {productLastUpdated && (
+              <div className="flex items-center justify-between pt-2 border-t border-stone-200">
+                <span className="text-stone-500">商品データ最終更新</span>
+                <span className="font-bold text-stone-800" style={{ fontVariantNumeric: 'tabular-nums' }}>{productLastUpdated.slice(0, 10)}</span>
+              </div>
+            )}
+            {priceLastUpdated && (
+              <div className="flex items-center justify-between">
+                <span className="text-stone-500">相場データ最終更新</span>
+                <span className="font-bold text-stone-800" style={{ fontVariantNumeric: 'tabular-nums' }}>{priceLastUpdated.slice(0, 10)}</span>
+              </div>
+            )}
+          </div>
         </section>
       </div>
     </main>

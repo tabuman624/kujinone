@@ -59,6 +59,12 @@ function fmt(d: string) {
   return `${dt.getMonth() + 1}月${dt.getDate()}日`
 }
 
+// gray-matterはYAMLのdate-likeな値をDateオブジェクトにパースするため、
+// String()では非ISO形式（"Fri May 01 2026 ..."）になり構造化データとして無効になる。
+function toISODate(d: unknown): string {
+  return new Date(d as string | number | Date).toISOString().slice(0, 10)
+}
+
 function extractFAQ(content: string): { q: string; a: string }[] {
   const lines = content.split('\n')
   const items: { q: string; a: string }[] = []
@@ -117,6 +123,7 @@ export default async function BlogDetailPage({
   const { data, content } = matter(raw)
   const html = await renderArticleMarkdown(content)
   const date = fmt(String(data.date))
+  const updatedDate = data.updated ? fmt(String(data.updated)) : null
   const readMins = Math.max(1, Math.round(content.length / 600))
 
   const jsonLd = {
@@ -124,8 +131,8 @@ export default async function BlogDetailPage({
     '@type': 'Article',
     headline: String(data.title),
     description: String(data.summary || ''),
-    datePublished: String(data.date),
-    dateModified: String(data.date),
+    datePublished: toISODate(data.date),
+    dateModified: toISODate(data.updated || data.date),
     author: { '@type': 'Organization', name: 'くじのね', url: 'https://kujinone.com' },
     publisher: { '@type': 'Organization', name: 'くじのね', url: 'https://kujinone.com', logo: { '@type': 'ImageObject', url: 'https://kujinone.com/logo.png' } },
     url: `https://kujinone.com/blog/${slug}`,
@@ -180,6 +187,12 @@ export default async function BlogDetailPage({
           <span className="text-[10px] font-bold tracking-[0.18em] text-shu">COLUMN</span>
           <span className="text-stone-300">·</span>
           <span className="text-[11px] text-stone-500 font-semibold" style={{ fontVariantNumeric: 'tabular-nums' }}>{date}</span>
+          {updatedDate && (
+            <>
+              <span className="text-stone-300">·</span>
+              <span className="text-[11px] text-stone-500 font-semibold" style={{ fontVariantNumeric: 'tabular-nums' }}>更新：{updatedDate}</span>
+            </>
+          )}
           <span className="text-stone-300">·</span>
           <span className="text-[11px] text-stone-500 font-semibold">約{readMins}分</span>
         </div>

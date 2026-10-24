@@ -202,6 +202,7 @@ export default async function KujiDetail({
           price={kuji.price}
           totalCount={kuji.total_count}
           totalCountSource={kuji.total_count_source}
+          kujiUpdatedAt={kuji.updated_at}
           prizes={prizes ?? []}
         />
 

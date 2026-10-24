@@ -45,6 +45,7 @@ export default async function ExpectedValueSection({
   price,
   totalCount,
   totalCountSource,
+  kujiUpdatedAt,
   prizes,
 }: {
   kujiId: number
@@ -53,12 +54,22 @@ export default async function ExpectedValueSection({
   price: number
   totalCount: number | null
   totalCountSource: 'measured' | 'default' | null
+  kujiUpdatedAt: string | null
   prizes: Prize[]
 }) {
   if (!totalCount || totalCount <= 0) return null
 
   const lotTotal = price * totalCount
   const topPrizes = prizes.filter(p => TOP_GRADES.includes(p.grade))
+
+  // このページのデータ最終更新 = 商品データ・相場データ（全賞対象）のうち最新のタイムスタンプ。
+  // レンダー時刻ではなく実データの更新日を使う（ADSENSE_SPEC B-3 / revalidate緩和後も虚偽表示にしないため）。
+  const pageDataTimestamps = [
+    kujiUpdatedAt,
+    ...prizes.map(p => p.market_price_updated_at),
+    ...prizes.map(p => p.auction_price_updated_at),
+  ].filter((t): t is string => !!t)
+  const pageLastUpdated = pageDataTimestamps.length > 0 ? pageDataTimestamps.sort().at(-1)! : null
 
   // 中古相場は「発売済み」かつ「取得から60日以内」のものだけを事実として扱う。
   // 未発売の商品に流通前の価格を当てても意味がないため（過去の方針 cfb0fbe と同じ考え方）。
@@ -222,7 +233,7 @@ export default async function ExpectedValueSection({
         </CollapsibleSection>
       )}
 
-      <Disclaimer hasMarketData={topPrizesWithValue.length > 0} totalCountSource={totalCountSource} />
+      <Disclaimer hasMarketData={topPrizesWithValue.length > 0} totalCountSource={totalCountSource} pageLastUpdated={pageLastUpdated} />
     </div>
   )
 }

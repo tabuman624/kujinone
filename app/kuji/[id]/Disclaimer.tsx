@@ -1,8 +1,19 @@
 import Link from 'next/link'
 
-export default function Disclaimer({ hasMarketData, totalCountSource }: { hasMarketData: boolean; totalCountSource: 'measured' | 'default' | null }) {
+export default function Disclaimer({
+  hasMarketData,
+  totalCountSource,
+  pageLastUpdated,
+}: {
+  hasMarketData: boolean
+  totalCountSource: 'measured' | 'default' | null
+  pageLastUpdated: string | null
+}) {
   return (
     <div className="mt-2 mb-6 text-xs text-stone-400 leading-relaxed space-y-1 anim-fade-up">
+      {pageLastUpdated && (
+        <p className="text-stone-500">このページのデータ最終更新：{pageLastUpdated.slice(0, 10)}</p>
+      )}
       <p className="font-bold text-stone-500">【この計算について】</p>
       <p>・ここでの「残り本数」は、実店舗の在庫数を取得できないため、店頭の半券表などで確認できる本数を仮定して計算した参考値です。</p>
       {totalCountSource === 'default' && (
