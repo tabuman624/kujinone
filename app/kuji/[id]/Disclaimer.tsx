@@ -9,7 +9,7 @@ export default function Disclaimer({ hasMarketData, totalCountSource }: { hasMar
         <p>・総本数が公開されていない商品は、一般的なロット構成である80本を仮定して計算しています。</p>
       )}
       {hasMarketData && (
-        <p>・想定市場価値は、Yahoo!ショッピング・ヤフオクの出品価格をもとにした参考値です。</p>
+        <p>・中古相場は、Yahoo!ショッピング・ヤフオクの出品価格をもとにした参考値です。取得から60日以上経過したデータは除外しています。</p>
       )}
       <p>
         ・計算方法の詳細は

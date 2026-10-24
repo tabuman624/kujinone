@@ -152,9 +152,9 @@ export default async function NewsDetailPage({
         <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">一番くじの基礎知識 / COLUMN</h2>
         <div className="space-y-0">
           {[
-            { href: '/blog/ichiban-kuji-toha', title: '一番くじとは？ハズレなし・1回700円からの仕組み' },
+            { href: '/blog/ichiban-kuji-toha', title: '一番くじとは？仕組み・値段・当たる確率を数字で解説' },
             { href: '/blog/ichiban-kuji-probability', title: '一番くじの確率の計算方法｜A賞〜D賞・ラストワン賞の当たる確率を解説' },
-            { href: '/blog/ichiban-kuji-last-one', title: 'ラストワン賞とは？当たる確率と狙い方を解説' },
+            { href: '/blog/ichiban-kuji-last-one', title: '一番くじラストワン賞の狙い方｜残り何本から狙うべきか' },
             { href: '/blog/kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説' },
           ].map((post, i) => (
             <Link

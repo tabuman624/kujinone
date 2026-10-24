@@ -23,6 +23,11 @@ export default function PrivacyPage() {
           <p>当サイトはメルカリ（A8.net）・駿河屋・Yahoo!ショッピング・楽天市場等のアフィリエイトプログラムに参加しています。リンク経由で購入された場合、当サイトに報酬が発生することがあります。</p>
         </section>
         <section>
+          <h2 className="text-base font-black text-stone-800 mb-2">広告の配信について</h2>
+          <p>当サイトは第三者配信の広告サービス「Google AdSense」を利用しています。Google等の第三者配信事業者は、Cookieを使用して、ユーザーが当サイトや他のサイトに過去にアクセスした際の情報に基づいて広告を配信することがあります。</p>
+          <p className="mt-2">Googleが広告配信にCookieを使用することにより、当サイトや他のサイトへのアクセス情報に基づいて、Googleおよびそのパートナーが適切な広告を表示しています。ユーザーは<a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-shu hover:underline">広告設定</a>でパーソナライズ広告を無効にできます。またそれ以外の第三者配信事業者によるCookieの使用を無効にするには、<a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-shu hover:underline">aboutads.info</a>のオプトアウトページをご覧ください。</p>
+        </section>
+        <section>
           <h2 className="text-base font-black text-stone-800 mb-2">Cookieについて</h2>
           <p>当サイトはCookieを使用することがあります。ブラウザの設定によりCookieを無効にすることができますが、一部機能が制限される場合があります。</p>
         </section>
@@ -30,7 +35,7 @@ export default function PrivacyPage() {
           <h2 className="text-base font-black text-stone-800 mb-2">お問い合わせ</h2>
           <p>プライバシーに関するご質問は、サイト運営者までお問い合わせください。</p>
         </section>
-        <p className="text-xs text-stone-400 pt-4">制定日：2026年5月1日</p>
+        <p className="text-xs text-stone-400 pt-4">制定日：2026年5月1日　最終改定：2026年10月24日</p>
       </div>
     </main>
   )

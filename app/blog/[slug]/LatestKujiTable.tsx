@@ -2,7 +2,11 @@ import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 
 const WINDOW_DAYS = 30
-const THRESHOLD_DIVISOR = 8 // 総本数の1/8を「狙い目」の目安ラインとする（経験則、断定ではない）
+// 「残り10本」は本文の判断表（残り本数別の目安費用）と揃えた一般的な目安ライン。
+// total_countは現状ほぼ全件が80のプレースホルダーのため、そこから割り算した
+// 商品別の数値を出すと実測値であるかのように見えてしまう。価格は実データなので、
+// そちらを使って商品ごとに本当に変わる値（目安費用）を出す。
+const TARGET_REMAINING = 10
 
 export default async function LatestKujiTable() {
   const today = new Date().toISOString().slice(0, 10)
@@ -34,11 +38,11 @@ export default async function LatestKujiTable() {
     <div className="px-5 pb-6">
       <h2 className="text-base font-black text-stone-800 mb-3">実際の商品で計算する</h2>
       <p className="text-sm text-stone-600 mb-3 leading-relaxed">
-        現在発売中の商品で、ラストワン賞の狙い目ラインを確認してみましょう。
+        現在発売中の商品で、ラストワン賞を残り{TARGET_REMAINING}本のタイミングで狙った場合の目安費用を確認してみましょう。
       </p>
       <div className="space-y-2">
         {targets.map(kuji => {
-          const threshold = Math.max(1, Math.round(kuji.total_count / THRESHOLD_DIVISOR))
+          const estimatedCost = Math.round((TARGET_REMAINING / 2) * kuji.price)
           return (
             <Link
               key={kuji.id}
@@ -47,7 +51,7 @@ export default async function LatestKujiTable() {
             >
               <div className="min-w-0">
                 <p className="text-sm font-bold text-stone-800 truncate">{kuji.title}</p>
-                <p className="text-xs text-stone-500 mt-0.5">残り{threshold}本以下から狙い目（目安）</p>
+                <p className="text-xs text-stone-500 mt-0.5">残り{TARGET_REMAINING}本なら目安費用 約{estimatedCost.toLocaleString()}円</p>
               </div>
               <span className="text-shu text-sm flex-shrink-0">→</span>
             </Link>

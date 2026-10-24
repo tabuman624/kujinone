@@ -1,6 +1,6 @@
 import { supabase } from '../../lib/supabase'
-import { calculateEv, expectedDraws, type Prize as EvPrize } from '../../lib/ev'
 // 注: ../../lib は app/lib を指す（ルート直下の lib/ とは別の実体）
+import { expectedDraws } from '../../lib/ev'
 import Disclaimer from './Disclaimer'
 
 type Prize = {
@@ -8,30 +8,38 @@ type Prize = {
   name: string
   total: number
   market_price?: number | null
+  market_price_updated_at?: string | null
   auction_price_min?: number | null
-  auction_price_max?: number | null
+  auction_price_updated_at?: string | null
 }
 
 const ASSUMED_COUNTS = [1, 2, 3]
 const TOP_GRADES = ['A賞', 'B賞', 'C賞']
-const LADDER_FRACTIONS = [1, 0.75, 0.5, 0.25, 0.125]
+const STALE_DAYS = 60
+// ラストワン賞の的中確率テーブル用の残り本数の刻み（総本数に対する割合）
+const LAST_ONE_LADDER_FRACTIONS = [1, 0.5, 0.25, 0.125, 0.0625]
 
-function prizeValue(p: Prize): number | null {
-  return p.market_price ?? p.auction_price_min ?? p.auction_price_max ?? null
+function daysSince(dateStr: string): number {
+  return (Date.now() - new Date(dateStr).getTime()) / 86_400_000
 }
 
-// 損得の大きさに応じた4パターンのコメント（価格に対する比率で分類）
-function verdictComment(netPerDraw: number, price: number): string {
-  const ratio = price > 0 ? netPerDraw / price : 0
-  if (ratio > 0.3) return '上位賞の相場が強く、現時点では引く側に分がある計算です。'
-  if (ratio > 0) return 'わずかにプラスですが、相場の変動で簡単に逆転する差です。'
-  if (ratio > -0.3) return '現状はわずかにマイナスで、見送りも選択肢に入る水準です。'
-  return '相場に対して価格が高く、現状は見送りが無難な計算です。'
+// 市場価値と取得日をセットで返す。取得から60日以上経過、またはタイムスタンプが
+// 無い値（レガシーデータ）は鮮度不明として除外する。古い一点だけの相場を
+// 断定的な事実として提示しないため。
+function freshValue(p: Prize): { value: number; updatedAt: string } | null {
+  if (p.market_price != null && p.market_price_updated_at && daysSince(p.market_price_updated_at) <= STALE_DAYS) {
+    return { value: p.market_price, updatedAt: p.market_price_updated_at }
+  }
+  if (p.auction_price_min != null && p.auction_price_updated_at && daysSince(p.auction_price_updated_at) <= STALE_DAYS) {
+    return { value: p.auction_price_min, updatedAt: p.auction_price_updated_at }
+  }
+  return null
 }
 
 export default async function ExpectedValueSection({
   kujiId,
   releaseAt,
+  isReleased,
   price,
   totalCount,
   totalCountSource,
@@ -39,6 +47,7 @@ export default async function ExpectedValueSection({
 }: {
   kujiId: number
   releaseAt: string | null
+  isReleased: boolean
   price: number
   totalCount: number | null
   totalCountSource: 'measured' | 'default' | null
@@ -49,66 +58,29 @@ export default async function ExpectedValueSection({
   const lotTotal = price * totalCount
   const topPrizes = prizes.filter(p => TOP_GRADES.includes(p.grade))
 
-  // 相場データのある上位賞（価値が価格を超えるもののみ「上位賞」として扱う）
-  const topValuedPrizes = topPrizes
-    .map(p => ({ grade: p.grade, value: prizeValue(p) }))
-    .filter((p): p is { grade: string; value: number } => p.value != null && p.value > price)
-
-  const lowerValues = prizes
-    .filter(p => !TOP_GRADES.includes(p.grade))
-    .map(prizeValue)
-    .filter((v): v is number => v != null)
-  const lowerAvgValue = lowerValues.length > 0
-    ? lowerValues.reduce((s, v) => s + v, 0) / lowerValues.length
-    : null
-
-  const hasMarketData = topValuedPrizes.length > 0 || lowerValues.length > 0
-
-  // --- EvSummary: ロット全体を前提にした期待値サマリー ---
-  let evSummary: { netPerDraw: number; expectedValuePerDraw: number } | null = null
-  if (hasMarketData) {
-    const scenarioPrizes: EvPrize[] = [
-      ...topValuedPrizes.map(p => ({ rank: p.grade, name: p.grade, remaining: 1, value: p.value })),
-      { rank: 'lower', name: '下位賞', remaining: totalCount - topValuedPrizes.length, value: lowerAvgValue },
-    ]
-    const result = calculateEv({ pricePerDraw: price, totalRemaining: totalCount, prizes: scenarioPrizes })
-    if (result.netPerDraw != null && result.expectedValuePerDraw != null) {
-      evSummary = { netPerDraw: result.netPerDraw, expectedValuePerDraw: result.expectedValuePerDraw }
-    }
-  }
-
-  // --- RemainingTable: 残り本数ごとの判断表（あくまで仮定のシナリオ） ---
-  const ladderSet = new Set<number>()
-  for (const f of LADDER_FRACTIONS) {
-    const n = Math.round(totalCount * f)
-    if (n > topValuedPrizes.length) ladderSet.add(n)
-  }
-  const ladder = Array.from(ladderSet).sort((a, b) => b - a)
-
-  const scenarioColumns = topValuedPrizes.length > 0
-    ? [
-        { label: `${topValuedPrizes[0].grade}が残っている場合`, included: [topValuedPrizes[0]] },
-        ...(topValuedPrizes.length > 1
-          ? [{ label: `${topValuedPrizes[0].grade}・${topValuedPrizes[1].grade}賞が残っている場合`, included: [topValuedPrizes[0], topValuedPrizes[1]] }]
-          : []),
-        { label: '下位賞のみ', included: [] as { grade: string; value: number }[] },
-      ]
+  // 中古相場は「発売済み」かつ「取得から60日以内」のものだけを事実として扱う。
+  // 未発売の商品に流通前の価格を当てても意味がないため（過去の方針 cfb0fbe と同じ考え方）。
+  const topPrizesWithValue = isReleased
+    ? topPrizes
+        .map(p => ({ grade: p.grade, name: p.name, fresh: freshValue(p) }))
+        .filter((p): p is { grade: string; name: string; fresh: { value: number; updatedAt: string } } => p.fresh != null)
     : []
 
-  function cellNet(n: number, included: { grade: string; value: number }[]): number | null {
-    const scenarioPrizes: EvPrize[] = [
-      ...included.map(p => ({ rank: p.grade, name: p.grade, remaining: 1, value: p.value })),
-      { rank: 'lower', name: '下位賞', remaining: n - included.length, value: lowerAvgValue },
-    ]
-    return calculateEv({ pricePerDraw: price, totalRemaining: n, prizes: scenarioPrizes }).netPerDraw
-  }
+  const topValueSum = topPrizesWithValue.reduce((s, p) => s + p.fresh.value, 0)
+  const latestUpdatedAt = topPrizesWithValue.length > 0
+    ? topPrizesWithValue.map(p => p.fresh.updatedAt).sort().at(-1) ?? null
+    : null
 
-  const showRemainingTable = ladder.length >= 2 && scenarioColumns.length > 0 && lowerAvgValue != null
+  // ラストワン賞は「残り本数のうち1本」という構造が確定しているため、相場データが
+  // 無くても的中確率(=1/残り本数)を断定的に計算できる。金額換算の代わりにこちらを使う。
+  const lastOne = prizes.find(p => p.grade === 'ラストワン賞')
+  const lastOneLadder = lastOne
+    ? Array.from(new Set(LAST_ONE_LADDER_FRACTIONS.map(f => Math.max(1, Math.round(totalCount * f))))).sort((a, b) => b - a)
+    : []
 
-  // --- PrizeAnalysis: 賞構成の分析 ---
+  // --- 賞構成の分析（金額に依存しない。種数比率と価格ランキングのみ） ---
   const topDesignCount = topPrizes.reduce((s, p) => s + (p.total || 0), 0)
   const totalDesignCount = prizes.reduce((s, p) => s + (p.total || 0), 0)
-  const lastOne = prizes.find(p => p.grade === 'ラストワン賞')
 
   let monthRank: { rank: number; total: number } | null = null
   if (releaseAt) {
@@ -144,30 +116,10 @@ export default async function ExpectedValueSection({
         </div>
       </div>
 
-      {evSummary && (
-        <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 mb-4">
-          <div className="flex items-baseline justify-between mb-1">
-            <p className="text-xs font-bold text-stone-500">1回あたりの損得（相場ベース）</p>
-            <p
-              className="text-lg font-black"
-              style={{ color: evSummary.netPerDraw > 0 ? '#E14B36' : '#78716c', fontVariantNumeric: 'tabular-nums' }}
-            >
-              {evSummary.netPerDraw > 0 ? '＋' : ''}{Math.round(evSummary.netPerDraw).toLocaleString()}円
-            </p>
-          </div>
-          <p className="text-xs text-stone-500 leading-relaxed">{verdictComment(evSummary.netPerDraw, price)}</p>
-        </div>
-      )}
-
       {topPrizes.length > 0 && (
-        <details className="mb-3 group">
-          <summary className="text-xs font-bold text-stone-500 py-1 cursor-pointer select-none flex items-center gap-1">
-            本数別の平均回数を見る
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-stone-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </summary>
-          <div className="space-y-4 mt-3">
+        <div className="mb-4">
+          <p className="text-xs font-bold text-stone-500 mb-2">本数別の平均回数</p>
+          <div className="space-y-4">
             {topPrizes.map(prize => (
               <div key={`${prize.grade}-${prize.name}`}>
                 <p className="text-xs font-bold text-stone-700 mb-2">【{prize.grade}】{prize.name}</p>
@@ -198,39 +150,45 @@ export default async function ExpectedValueSection({
               </div>
             ))}
           </div>
-        </details>
+        </div>
       )}
 
-      {showRemainingTable && (
-        <div className="mb-4">
-          <p className="text-xs font-bold text-stone-500 mb-2">残り何本から狙い目か（仮定シナリオ）</p>
-          <div className="space-y-2">
-            {ladder.map(n => (
-              <div key={n} className="bg-stone-50 border border-stone-200 rounded-xl p-3">
-                <p className="text-xs font-bold text-stone-700 mb-2">残り{n}本と仮定した場合</p>
-                <div className="space-y-1.5">
-                  {scenarioColumns.map(col => {
-                    const net = cellNet(n, col.included)
-                    if (net == null) return null
-                    const isPlus = net > 0
-                    return (
-                      <div
-                        key={col.label}
-                        className={`flex items-center justify-between px-2 py-1.5 rounded-lg ${isPlus ? 'bg-shu-bg' : ''}`}
-                      >
-                        <span className="text-[11px] text-stone-600">{col.label}</span>
-                        <span
-                          className="text-xs font-bold whitespace-nowrap"
-                          style={{ color: isPlus ? '#E14B36' : '#78716c', fontVariantNumeric: 'tabular-nums' }}
-                        >
-                          {isPlus ? '＋' : ''}{Math.round(net).toLocaleString()}円
-                        </span>
-                      </div>
-                    )
-                  })}
-                </div>
+      {topPrizesWithValue.length > 0 && (
+        <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 mb-4">
+          <p className="text-xs font-bold text-stone-500 mb-2">上位賞の中古相場</p>
+          <div className="space-y-1.5 mb-2">
+            {topPrizesWithValue.map(p => (
+              <div key={p.grade} className="flex items-center justify-between gap-2">
+                <span className="text-xs text-stone-600 truncate">【{p.grade}】{p.name}</span>
+                <span className="text-xs font-bold text-stone-800 whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>¥{p.fresh.value.toLocaleString()}</span>
               </div>
             ))}
+          </div>
+          <div className="flex items-baseline justify-between pt-2 border-t border-stone-200">
+            <span className="text-xs font-bold text-stone-500">上位賞合計</span>
+            <span className="text-sm font-black text-shu" style={{ fontVariantNumeric: 'tabular-nums' }}>¥{topValueSum.toLocaleString()}</span>
+          </div>
+          {latestUpdatedAt && (
+            <p className="text-[10px] text-stone-400 mt-2">取得日：{latestUpdatedAt.slice(0, 10)}時点</p>
+          )}
+        </div>
+      )}
+
+      {lastOneLadder.length > 0 && (
+        <div className="mb-4">
+          <p className="text-xs font-bold text-stone-500 mb-2">ラストワン賞が当たる確率（残り本数ごと）</p>
+          <div className="bg-stone-50 border border-stone-200 rounded-xl p-3">
+            <div className="space-y-1.5">
+              {lastOneLadder.map(n => {
+                const pct = 100 / n
+                return (
+                  <div key={n} className="flex items-center justify-between px-1 py-1">
+                    <span className="text-[11px] text-stone-600">残り{n}本</span>
+                    <span className="text-xs font-bold text-stone-800" style={{ fontVariantNumeric: 'tabular-nums' }}>{pct >= 10 ? pct.toFixed(0) : pct.toFixed(1)}%</span>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </div>
       )}
@@ -250,7 +208,7 @@ export default async function ExpectedValueSection({
         </div>
       )}
 
-      <Disclaimer hasMarketData={hasMarketData} totalCountSource={totalCountSource} />
+      <Disclaimer hasMarketData={topPrizesWithValue.length > 0} totalCountSource={totalCountSource} />
     </div>
   )
 }

@@ -11,6 +11,10 @@ import XIcon from '../../components/XIcon'
 import LatestKujiTable from './LatestKujiTable'
 import PriceDistribution from './PriceDistribution'
 
+// 記事本文は静的だが、LatestKujiTable/PriceDistributionが「直近N日」の実データを
+// 動的に集計している。revalidateが無いとビルド時点の値で凍結されてしまうため指定する。
+export const revalidate = 86400
+
 // 「相場と比較して判断しよう」「駿河屋の買取がラク」と本文で明言しているのに
 // 外部リンクが1本も無かった記事だけに、対応するCTAを差し込む。
 const COMPARE_CTA_SLUGS = new Set([
