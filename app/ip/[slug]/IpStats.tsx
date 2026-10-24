@@ -16,7 +16,6 @@ export default async function IpStats({ kujiList }: { kujiList: IpKuji[] }) {
   const prices = kujiList.map(k => k.price)
   const minPrice = Math.min(...prices)
   const maxPrice = Math.max(...prices)
-  const avgPrice = Math.round(prices.reduce((s, p) => s + p, 0) / prices.length)
 
   // 発売順で最初と最新弾の価格を比較する。厳密な時系列グラフではなく、
   // 事実として言える範囲のシンプルな比較に留める（断定的な推測は避ける）。
@@ -51,7 +50,7 @@ export default async function IpStats({ kujiList }: { kujiList: IpKuji[] }) {
     <div className="px-5 pt-2 pb-4">
       <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 text-sm text-stone-600 leading-relaxed space-y-2">
         <p>
-          このシリーズは{kujiList.length}弾展開され、1回あたりの価格は<strong className="text-stone-800">¥{minPrice.toLocaleString()}〜¥{maxPrice.toLocaleString()}</strong>（平均¥{avgPrice.toLocaleString()}）の範囲です。
+          このシリーズは{kujiList.length}弾展開され、1回あたりの価格は<strong className="text-stone-800">¥{minPrice.toLocaleString()}〜¥{maxPrice.toLocaleString()}</strong>の範囲です。
         </p>
         {priceTrend && (
           <p>

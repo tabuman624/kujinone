@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getIpGroups, IP_NAMES } from '../../lib/ipGroups'
 import IpStats from './IpStats'
+import IpPrizeRankings from './IpPrizeRankings'
 
 export const revalidate = 21600
 
@@ -131,6 +132,8 @@ export default async function IpDetailPage({
           )
         })}
       </div>
+
+      <IpPrizeRankings kujiList={kujiList} />
     </main>
   )
 }
