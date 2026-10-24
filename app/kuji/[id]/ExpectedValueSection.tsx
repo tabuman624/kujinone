@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase'
 import { expectedDraws } from '../../lib/ev'
 import Disclaimer from './Disclaimer'
 import CollapsibleSection from './CollapsibleSection'
+import PriceSparkline from './PriceSparkline'
 
 type Prize = {
   grade: string
@@ -196,6 +197,8 @@ export default async function ExpectedValueSection({
               )}
             </div>
           )}
+
+          <PriceSparkline kujiId={kujiId} isReleased={isReleased} />
 
           {lastOneLadder.length > 0 && (
             <div className="mb-4">
