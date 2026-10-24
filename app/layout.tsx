@@ -6,6 +6,7 @@ import BottomNav from "./components/BottomNav";
 import SideNav from "./components/SideNav";
 import A8Script from "./components/A8Script";
 import XIcon from "./components/XIcon";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -98,6 +99,13 @@ export default function RootLayout({
           <div className="max-w-4xl mx-auto bg-white min-h-screen pb-24 md:pb-10 md:border-x md:border-stone-200 md:shadow-sm">
             {children}
             <div className="flex flex-col items-center gap-2 py-4 px-6">
+              <nav className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-stone-400">
+                <Link href="/method" className="hover:text-shu transition-colors">期待値の計算方法</Link>
+                <Link href="/about" className="hover:text-shu transition-colors">このサイトについて</Link>
+                <Link href="/contact" className="hover:text-shu transition-colors">お問い合わせ</Link>
+                <Link href="/terms" className="hover:text-shu transition-colors">利用規約</Link>
+                <Link href="/privacy" className="hover:text-shu transition-colors">プライバシー</Link>
+              </nav>
               <a
                 href="https://x.com/kujinone"
                 target="_blank"

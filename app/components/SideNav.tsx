@@ -43,6 +43,7 @@ const footerLinks = [
   { href: '/ip', label: '作品から探す' },
   { href: '/store', label: '取扱店から探す' },
   { href: '/about', label: 'このサイトについて' },
+  { href: '/method', label: '期待値の計算方法' },
   { href: '/howto', label: '使い方' },
   { href: '/terms', label: '利用規約' },
   { href: '/privacy', label: 'プライバシー' },

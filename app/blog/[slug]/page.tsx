@@ -8,6 +8,8 @@ import { notFound } from 'next/navigation'
 import ReadingProgress from './ReadingProgress'
 import { CompareCTA, SellCTA } from '../../components/BlogAffiliateCTA'
 import XIcon from '../../components/XIcon'
+import LatestKujiTable from './LatestKujiTable'
+import PriceDistribution from './PriceDistribution'
 
 // 「相場と比較して判断しよう」「駿河屋の買取がラク」と本文で明言しているのに
 // 外部リンクが1本も無かった記事だけに、対応するCTAを差し込む。
@@ -186,6 +188,9 @@ export default async function BlogDetailPage({
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </div>
+
+      {slug === 'ichiban-kuji-last-one' && <LatestKujiTable />}
+      {slug === 'ichiban-kuji-toha' && <PriceDistribution />}
 
       <XFollowCTA />
 

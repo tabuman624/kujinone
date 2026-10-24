@@ -196,6 +196,8 @@ export default async function KujiDetail({
         )}
 
         <ExpectedValueSection
+          kujiId={Number(id)}
+          releaseAt={kuji.release_at}
           price={kuji.price}
           totalCount={kuji.total_count}
           totalCountSource={kuji.total_count_source}

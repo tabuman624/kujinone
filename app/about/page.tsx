@@ -30,30 +30,41 @@ export default function AboutPage() {
           <ul className="space-y-2">
             <li className="flex items-start gap-2">
               <span className="text-shu font-bold mt-0.5">•</span>
-              <span>一番くじの<strong className="text-stone-800">期待値計算</strong>（目当ての賞が当たるまでの平均費用）</span>
+              <span>
+                一番くじの<strong className="text-stone-800">期待値計算</strong>（目当ての賞が当たるまでの平均費用）
+                <Link href="/calc" className="text-shu hover:underline ml-1 text-xs">→ 計算する</Link>
+              </span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-shu font-bold mt-0.5">•</span>
-              <span>直近の<strong className="text-stone-800">発売スケジュール</strong>確認</span>
+              <span>
+                直近の<strong className="text-stone-800">発売スケジュール</strong>確認
+                <Link href="/schedule" className="text-shu hover:underline ml-1 text-xs">→ 見る</Link>
+              </span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-shu font-bold mt-0.5">•</span>
-              <span><strong className="text-stone-800">メルカリ・駿河屋の相場</strong>との比較</span>
+              <span>
+                各商品の<strong className="text-stone-800">賞構成・市場相場</strong>の確認
+                <Link href="/schedule" className="text-shu hover:underline ml-1 text-xs">→ 商品を探す</Link>
+              </span>
             </li>
           </ul>
-          <p className="mt-4 text-stone-500">計算してみて「割に合わない」と思ったら引かなくていい。「これなら引く価値ある」と思ったら自信を持って引ける。そのための判断材料を提供しています。</p>
+          <p className="mt-4 text-stone-500">計算してみて「割に合わない」と思ったら引かなくていい。「これなら引く価値ある」と思ったら自信を持って引ける。そのための判断材料を提供しています。計算方法の詳細は<Link href="/method" className="text-shu hover:underline mx-1">期待値の計算方法</Link>をご覧ください。</p>
         </section>
 
         <section>
           <h2 className="text-base font-black text-stone-800 mb-3">運営について</h2>
           <div className="space-y-2">
             <p><span className="font-bold text-stone-800">運営者：</span>くじのね管理人</p>
+            <p><span className="font-bold text-stone-800">運営開始：</span>2026年5月</p>
+            <p><span className="font-bold text-stone-800">データの取得方針：</span><Link href="/method" className="text-shu hover:underline ml-1">期待値の計算方法</Link>に詳細を記載しています</p>
             <p>
               <span className="font-bold text-stone-800">お問い合わせ：</span>
               <Link href="/contact" className="text-shu hover:underline ml-1">こちらのフォーム</Link>からどうぞ
             </p>
           </div>
-          <p className="mt-4 text-xs text-stone-400">当サイトはアフィリエイト広告（楽天・Amazon・駿河屋等）を利用しています。掲載情報は参考値であり、実際の景品構成・価格とは異なる場合があります。</p>
+          <p className="mt-4 text-xs text-stone-400">当サイトはアフィリエイト広告（楽天・Amazon・駿河屋等）を利用しているほか、Google AdSenseによる広告を掲載しています。掲載情報は参考値であり、実際の景品構成・価格とは異なる場合があります。</p>
         </section>
       </div>
     </main>
