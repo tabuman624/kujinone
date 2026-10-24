@@ -12,6 +12,7 @@ import KujiViewTracker from './KujiViewTracker'
 import AffiliateLink from '../../components/AffiliateLink'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
 import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
+import { freshValue } from '../../lib/priceFreshness'
 
 // 元データは1日1回更新のため6時間でも十分。ISR Writes上限との両立のため緩和
 // （ADSENSE_SPEC「Vercel ISR Writesとの両立」）。sitemapのlastmodはDB直読みで独立。
@@ -116,8 +117,11 @@ export default async function KujiDetail({
   const isReleased = kuji.release_at <= today
   const searchKeyword = buildTitleKeyword(kuji.title)
 
+  // freshValue()で60日以内・両相場の食い違いガードを通す（priceFreshness.ts参照）。
+  // 以前はmarket_price ?? auction_price_minを無条件で使っていたため、誤スクレイピング
+  // の値がそのままここに表示される経路になっていた（2026-10-25 Oupas監査で発覚）。
   const pricePoints = (prizes ?? [])
-    .map(p => p.market_price ?? p.auction_price_min)
+    .map(p => freshValue(p)?.value)
     .filter((v): v is number => v != null)
   const priceRangeText = pricePoints.length > 0
     ? `現在の相場は約¥${Math.min(...pricePoints).toLocaleString()}〜¥${Math.max(...pricePoints).toLocaleString()}です。`

@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
+import { freshValue } from '../../lib/priceFreshness'
 
 const gradeColors: { [key: string]: string } = {
   'A賞': 'bg-amber-100 text-amber-800',
@@ -19,7 +20,9 @@ type Prize = {
   total: number
   image_url: string | null
   market_price?: number | null
+  market_price_updated_at?: string | null
   auction_price_min?: number | null
+  auction_price_updated_at?: string | null
 }
 
 // /calc のチェックと同じキー(ki_{prizeId})・同じ24時間クールダウンを共有する。
@@ -43,7 +46,9 @@ export default function PrizeList({ prizes, isReleased }: { prizes: Prize[]; isR
   return (
     <>
       <div className="border border-stone-200 rounded-xl overflow-hidden">
-        {prizes.map((prize, i) => (
+        {prizes.map((prize, i) => {
+          const fresh = freshValue(prize)
+          return (
           <div
             key={prize.id}
             className={`flex items-center gap-3 px-4 py-3 anim-fade-up ${i !== prizes.length - 1 ? 'border-b border-stone-100' : ''}`}
@@ -78,14 +83,15 @@ export default function PrizeList({ prizes, isReleased }: { prizes: Prize[]; isR
             </div>
             <div className="flex flex-col items-end flex-shrink-0">
               <span className="text-xs text-stone-400">{prize.total}種</span>
-              {isReleased && (prize.market_price ?? prize.auction_price_min) != null && (
+              {isReleased && fresh != null && (
                 <span className="text-xs font-bold text-shu mt-0.5" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                  ¥{(prize.market_price ?? prize.auction_price_min)!.toLocaleString()}〜
+                  ¥{fresh.value.toLocaleString()}〜
                 </span>
               )}
             </div>
           </div>
-        ))}
+          )
+        })}
       </div>
 
       {active && createPortal(
