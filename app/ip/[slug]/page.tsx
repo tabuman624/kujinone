@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getIpGroups, IP_NAMES } from '../../lib/ipGroups'
 import IpStats from './IpStats'
-import IpGradeDifficulty from './IpGradeDifficulty'
 import IpPrizeRankings from './IpPrizeRankings'
 
 export const revalidate = 21600
@@ -99,7 +98,6 @@ export default async function IpDetailPage({
       </div>
 
       <IpStats kujiList={kujiList} />
-      <IpGradeDifficulty kujiList={kujiList} />
 
       <div className="px-5 py-6 space-y-3">
         {kujiList.map((kuji, i) => {
