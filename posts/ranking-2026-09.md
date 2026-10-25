@@ -1,6 +1,6 @@
 ---
 title: "一番くじ 人気ランキングTOP10【2026年10月】"
-date: "2026-10-18"
+date: "2026-10-25"
 summary: "一番くじの景品をヤフオク落札相場・閲覧数・チェック数で多角的にランキング。歴代最高値TOP10に加え、週間急上昇・今人気の賞・発売前注目もまとめて確認できます。"
 category: "相場"
 ---
@@ -28,31 +28,31 @@ category: "相場"
 
 くじのねの期待値計算ツールで実際にチェックされた回数をもとにしたランキングです。直近30日に発売したくじに限定しているため、「今まさに注目されている賞」が分かります。
 
-- **B賞　レゼ MASTERLISE**（[一番くじ 劇場版『チェンソーマン レゼ篇』第2弾](https://kujinone.com/kuji/3962)）
+- **B賞　六平千鉱 MASTERLISE**（[一番くじ カグラバチ](https://kujinone.com/kuji/7113)）
+- **C賞　漣伯理 MASTERLISE**（[一番くじ カグラバチ](https://kujinone.com/kuji/7113)）
 - **D賞　バッファローマン MASTERLISE**（[一番くじ キン肉マン 超人血盟軍](https://kujinone.com/kuji/7112)）
-- **E賞　ゾッド SOFVICS**（[一番くじ ベルセルク 宿命の双極](https://kujinone.com/kuji/3966)）
-- **C賞　ドラゴンころし MASTERLISE**（[一番くじ ベルセルク 宿命の双極](https://kujinone.com/kuji/3966)）
-- **B賞　ガッツ MASTERLISE**（[一番くじ ベルセルク 宿命の双極](https://kujinone.com/kuji/3966)）
+- **A賞　ブロッケンJr. MASTERLISE**（[一番くじ キン肉マン 超人血盟軍](https://kujinone.com/kuji/7112)）
+- **A賞　連載3周年記念ブックボード**（[一番くじ カグラバチ](https://kujinone.com/kuji/7113)）
 
 ## 週間急上昇（閲覧数の伸び）
 
 直近1週間で閲覧数が特に伸びているくじです。
 
-- **[一番くじ キン肉マン 超人血盟軍](https://kujinone.com/kuji/7112)**（閲覧数 +145）
-- **[一番くじ 〈くまのプーさん〉100th Anniversary](https://kujinone.com/kuji/7107)**（閲覧数 +93）
-- **[一番くじ 〈モンスターズ・インク〉](https://kujinone.com/kuji/7110)**（閲覧数 +74）
-- **[一番くじ ウマ娘 プリティーダービー 14弾](https://kujinone.com/kuji/7108)**（閲覧数 +41）
-- **[一番くじ ドラゴンボール SPIRIT OF THE SAIYAN](https://kujinone.com/kuji/7109)**（閲覧数 +32）
+- **[一番くじ キン肉マン 超人血盟軍](https://kujinone.com/kuji/7112)**（閲覧数 +303）
+- **[一番くじ カグラバチ](https://kujinone.com/kuji/7113)**（閲覧数 +153）
+- **[一番くじ 〈モンスターズ・インク〉](https://kujinone.com/kuji/7110)**（閲覧数 +128）
+- **[一番くじ 進撃の巨人 ～心臓を捧げよ～](https://kujinone.com/kuji/7116)**（閲覧数 +71）
+- **[一番くじ ドラゴンボール SPIRIT OF THE SAIYAN](https://kujinone.com/kuji/7109)**（閲覧数 +47）
 
 ## 発売前注目（まだ発売していないくじ）
 
 発売前にもかかわらず閲覧数が伸びているくじです。開店ダッシュが必要になりそうなくじの目安にもなります。
 
-- **[一番くじ カグラバチ](https://kujinone.com/kuji/7113)**（10/24発売予定・閲覧数112回）
-- **[一番くじ メイドインアビス](https://kujinone.com/kuji/7120)**（10/31発売予定・閲覧数28回）
-- **[一番くじ 進撃の巨人 ～心臓を捧げよ～](https://kujinone.com/kuji/7116)**（10/24発売予定・閲覧数28回）
-- **[一番くじ NARUTO-ナルト- 疾風伝 飛段・角都編](https://kujinone.com/kuji/7117)**（10/26発売予定・閲覧数22回）
-- **[一番くじ hololive FLOW GLOW](https://kujinone.com/kuji/8819)**（11/13発売予定・閲覧数16回）
+- **[一番くじ メイドインアビス](https://kujinone.com/kuji/7120)**（10/31発売予定・閲覧数54回）
+- **[一番くじ NARUTO-ナルト- 疾風伝 飛段・角都編](https://kujinone.com/kuji/7117)**（10/26発売予定・閲覧数33回）
+- **[一番くじ hololive FLOW GLOW](https://kujinone.com/kuji/8819)**（11/13発売予定・閲覧数26回）
+- **[一番くじ HUNTER×HUNTER CHMERA ANT ②（再販売）](https://kujinone.com/kuji/8191)**（11/14発売予定・閲覧数21回）
+- **[一番くじ Fate/Grand Order 〜カルデアピックアップメモリー〜](https://kujinone.com/kuji/7121)**（10/31発売予定・閲覧数18回）
 
 ## このランキングの作り方
 
