@@ -6,8 +6,9 @@ import path from 'path'
 import { notFound } from 'next/navigation'
 import { supabase } from '../../lib/supabase'
 import PrizeList from './PrizeList'
-import PrizePopularity from './PrizePopularity'
-import ExpectedValueSection from './ExpectedValueSection'
+import PrizePopularity, { loadPopularityFlags } from './PrizePopularity'
+import ExpectedValueSection, { loadMonthRank } from './ExpectedValueSection'
+import { loadSparklineSeries } from './PriceSparkline'
 import KujiViewTracker from './KujiViewTracker'
 import AffiliateLink from '../../components/AffiliateLink'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
@@ -90,6 +91,16 @@ export default async function KujiDetail({
 
   if (!kuji) notFound()
 
+  // 子コンポーネントが使うデータもここでまとめて取得し、子は同期描画にする。
+  // 子が個別にawaitすると、HTML内の出力順がSupabaseの応答順で毎回入れ替わり、
+  // 内容が同じでもISR再生成のたびに「変更あり」と判定されWritesが発生するため。
+  const isReleased = kuji.release_at <= today
+  const [monthRank, sparklineSeries, popularityFlags] = await Promise.all([
+    loadMonthRank(Number(id), kuji.release_at),
+    loadSparklineSeries(prizes ?? [], isReleased),
+    loadPopularityFlags(Number(id), (prizes ?? []).map(p => p.id)),
+  ])
+
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -114,7 +125,6 @@ export default async function KujiDetail({
     })),
   } : null
 
-  const isReleased = kuji.release_at <= today
   const searchKeyword = buildTitleKeyword(kuji.title)
 
   // freshValue()で60日以内・両相場の食い違いガードを通す（priceFreshness.ts参照）。
@@ -218,23 +228,38 @@ export default async function KujiDetail({
         {prizes && prizes.length > 0 && (
           <div className="mb-6">
             <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3 anim-fade-up" style={{ animationDelay: '180ms' }}>賞一覧 / PRIZES</h2>
-            <PrizeList prizes={prizes} isReleased={isReleased} />
+            {/* クライアントコンポーネントへのpropsはRSCペイロードとしてHTMLに入るため、表示に使う列だけ渡す（ISR Writesの単位数削減） */}
+            <PrizeList
+              prizes={prizes.map(p => ({
+                id: p.id,
+                grade: p.grade,
+                name: p.name,
+                total: p.total,
+                image_url: p.image_url,
+                market_price: p.market_price,
+                market_price_updated_at: p.market_price_updated_at,
+                auction_price_min: p.auction_price_min,
+                auction_price_updated_at: p.auction_price_updated_at,
+              }))}
+              isReleased={isReleased}
+            />
           </div>
         )}
 
         <ExpectedValueSection
           kujiId={Number(id)}
-          releaseAt={kuji.release_at}
           isReleased={isReleased}
           price={kuji.price}
           totalCount={kuji.total_count}
           totalCountSource={kuji.total_count_source}
           kujiUpdatedAt={kuji.updated_at}
           prizes={prizes ?? []}
+          monthRank={monthRank}
+          sparklineSeries={sparklineSeries}
         />
 
         {prizes && prizes.length > 0 && (
-          <PrizePopularity kujiId={Number(id)} prizes={prizes.map(p => ({ id: p.id, name: p.name, grade: p.grade }))} />
+          <PrizePopularity kujiId={Number(id)} prizes={prizes.map(p => ({ id: p.id, name: p.name, grade: p.grade }))} flags={popularityFlags} />
         )}
 
         {isReleased && (

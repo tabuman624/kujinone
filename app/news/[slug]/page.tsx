@@ -5,8 +5,8 @@ import path from 'path'
 import matter from 'gray-matter'
 import { renderArticleMarkdown } from '../../lib/markdown'
 import { notFound } from 'next/navigation'
-import PriceTrend from './PriceTrend'
-import SameIpComparison from './SameIpComparison'
+import PriceTrend, { loadPriceTrends } from './PriceTrend'
+import SameIpComparison, { loadSameIpComparison } from './SameIpComparison'
 
 export const revalidate = 86400
 
@@ -60,6 +60,12 @@ export default async function NewsDetailPage({
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { data, content } = matter(raw)
   const html = await renderArticleMarkdown(content)
+
+  // 子コンポーネントのデータはここでまとめて取得する（PriceTrend.tsxのコメント参照）。
+  const kujiId = data.kuji_id ? Number(data.kuji_id) : null
+  const [priceTrends, sameIp] = kujiId
+    ? await Promise.all([loadPriceTrends(kujiId), loadSameIpComparison(kujiId)])
+    : [[], null]
 
   const title = String(data.title || '')
   const releaseDate = toDateStr(data.release_date || data.date)
@@ -130,8 +136,8 @@ export default async function NewsDetailPage({
         />
       </div>
 
-      {data.kuji_id && <PriceTrend kujiId={Number(data.kuji_id)} />}
-      {data.kuji_id && <SameIpComparison kujiId={Number(data.kuji_id)} />}
+      <PriceTrend trends={priceTrends} />
+      <SameIpComparison data={sameIp} />
 
       {/* CTAs */}
       <div className="px-5 pb-2 space-y-3 border-t border-stone-100 pt-6">

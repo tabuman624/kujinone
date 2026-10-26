@@ -30,26 +30,28 @@ function Sparkline({ points }: { points: PricePoint[] }) {
   )
 }
 
-export default async function PriceSparkline({ kujiId, isReleased }: { kujiId: number; isReleased: boolean }) {
+export type SparklineSeries = { grade: string; name: string; points: PricePoint[] }
+
+// データ取得はページ側でまとめて行い、このコンポーネント自体は同期描画にする。
+// 非同期コンポーネントが複数あると、ビルドのたびにHTML内の出力順がSupabaseの応答順で
+// 入れ替わり、内容が同じでもISR再生成のたびに「変更あり」としてWritesが発生するため。
+export async function loadSparklineSeries(
+  prizes: { id: number; grade: string; name: string }[],
+  isReleased: boolean,
+): Promise<SparklineSeries[]> {
   // 中古相場は発売済みのみ事実として扱う（過去の方針cfb0fbeと同じ考え方）。
-  if (!isReleased) return null
+  if (!isReleased) return []
 
-  const { data: prizes } = await supabase
-    .from('prizes')
-    .select('id, grade, name')
-    .eq('kuji_id', kujiId)
-    .in('grade', TOP_GRADES)
+  const topPrizes = prizes.filter(p => TOP_GRADES.includes(p.grade))
+  if (topPrizes.length === 0) return []
 
-  if (!prizes || prizes.length === 0) return null
-
-  const prizeIds = prizes.map(p => p.id)
   const { data: history } = await supabase
     .from('price_history')
     .select('prize_id, price, recorded_at')
-    .in('prize_id', prizeIds)
+    .in('prize_id', topPrizes.map(p => p.id))
     .order('recorded_at', { ascending: true })
 
-  if (!history || history.length === 0) return null
+  if (!history || history.length === 0) return []
 
   const byPrize = new Map<number, PricePoint[]>()
   for (const h of history) {
@@ -58,14 +60,16 @@ export default async function PriceSparkline({ kujiId, isReleased }: { kujiId: n
     byPrize.set(h.prize_id, arr)
   }
 
-  const series = prizes
+  return topPrizes
     .map(p => {
       const points = byPrize.get(p.id) ?? []
       if (points.length < MIN_POINTS) return null
       return { grade: p.grade, name: p.name, points }
     })
-    .filter((s): s is NonNullable<typeof s> => s !== null)
+    .filter((s): s is SparklineSeries => s !== null)
+}
 
+export default function PriceSparkline({ series }: { series: SparklineSeries[] }) {
   if (series.length === 0) return null
 
   return (

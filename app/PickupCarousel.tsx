@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { fetchViewCounts } from './lib/liveCounts'
 
 type PickupKuji = {
   id: number
@@ -9,13 +10,22 @@ type PickupKuji = {
   price: number
   banner_url: string | null
   image_url: string | null
-  view_count: number
 }
 
 export default function PickupCarousel({ items }: { items: PickupKuji[] }) {
   const trackRef = useRef<HTMLDivElement>(null)
   const slideRefs = useRef<(HTMLAnchorElement | null)[]>([])
   const [active, setActive] = useState(0)
+  // 閲覧数はHTMLに埋め込まずブラウザで取得する（ISR Writes対策、app/lib/liveCounts.ts参照）
+  const [viewCounts, setViewCounts] = useState<Record<number, number> | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    fetchViewCounts(items.map(k => k.id)).then(map => {
+      if (!cancelled && map) setViewCounts(map)
+    })
+    return () => { cancelled = true }
+  }, [items])
 
   useEffect(() => {
     const track = trackRef.current
@@ -80,7 +90,7 @@ export default function PickupCarousel({ items }: { items: PickupKuji[] }) {
               <p className="text-sm font-bold text-stone-800 leading-snug line-clamp-2 group-hover:text-shu transition-colors">
                 {kuji.title}
               </p>
-              <p className="text-xs text-stone-400 mt-1">{kuji.price}円/回 ・ 閲覧数：{kuji.view_count}回</p>
+              <p className="text-xs text-stone-400 mt-1">{kuji.price}円/回 ・ 閲覧数：{viewCounts ? (viewCounts[kuji.id] ?? 0) : '—'}回</p>
             </div>
           </Link>
         ))}

@@ -2,7 +2,16 @@ import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
 
-export default async function SameIpComparison({ kujiId }: { kujiId: number }) {
+// データ取得はページ側でまとめて行い、このコンポーネント自体は同期描画にする。
+// 非同期コンポーネントが複数あると、HTML内の出力順がSupabaseの応答順で毎回入れ替わり、
+// 内容が同じでもISR再生成のたびに「変更あり」としてVercel ISR Writesが発生するため
+// （app/kuji/[id]/PriceSparkline.tsx と同じ対応）。
+export type SameIpData = {
+  ipName: string
+  others: Array<{ id: number; title: string; price: number; release_at: string | null; total_count: number | null }>
+}
+
+export async function loadSameIpComparison(kujiId: number): Promise<SameIpData | null> {
   const { data: self } = await supabase.from('kuji').select('product_id').eq('id', kujiId).single()
   const productId = self?.product_id as string | undefined
   if (!productId) return null
@@ -16,11 +25,20 @@ export default async function SameIpComparison({ kujiId }: { kujiId: number }) {
     .from('kuji')
     .select('id, title, price, release_at, total_count, product_id')
     .eq('is_active', true)
+    .order('id', { ascending: true })
 
   const others = (all ?? [])
     .filter(k => k.id !== kujiId && ipSlugFor(k.product_id as string) === slug)
     .sort((a, b) => (b.release_at ?? '').localeCompare(a.release_at ?? ''))
     .slice(0, 5)
+    .map(k => ({ id: k.id, title: k.title, price: k.price, release_at: k.release_at, total_count: k.total_count }))
+
+  return { ipName, others }
+}
+
+export default function SameIpComparison({ data }: { data: SameIpData | null }) {
+  if (!data) return null
+  const { ipName, others } = data
 
   if (others.length === 0) return null
 

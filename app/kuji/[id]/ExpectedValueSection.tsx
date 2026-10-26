@@ -5,7 +5,7 @@ import { expectedDraws } from '../../lib/ev'
 import { freshValue } from '../../lib/priceFreshness'
 import Disclaimer from './Disclaimer'
 import CollapsibleSection from './CollapsibleSection'
-import PriceSparkline from './PriceSparkline'
+import PriceSparkline, { type SparklineSeries } from './PriceSparkline'
 
 type Prize = {
   grade: string
@@ -22,24 +22,45 @@ const TOP_GRADES = ['A賞', 'B賞', 'C賞']
 // ラストワン賞の的中確率テーブル用の残り本数の刻み（総本数に対する割合）
 const LAST_ONE_LADDER_FRACTIONS = [1, 0.5, 0.25, 0.125, 0.0625]
 
-export default async function ExpectedValueSection({
+export type MonthRank = { rank: number; total: number }
+
+// 同月発売の中での価格順位。データ取得はページ側でまとめて行う（PriceSparklineのコメント参照）。
+// 同価格の並びが応答順で揺れないよう、id順で取得してから安定ソートする。
+export async function loadMonthRank(kujiId: number, releaseAt: string | null): Promise<MonthRank | null> {
+  if (!releaseAt) return null
+  const month = releaseAt.slice(0, 7)
+  const { data: sameMonth } = await supabase
+    .from('kuji')
+    .select('id, price')
+    .gte('release_at', `${month}-01`)
+    .lt('release_at', `${month}-32`)
+    .order('id', { ascending: true })
+  if (!sameMonth || sameMonth.length <= 1) return null
+  const sorted = [...sameMonth].sort((a, b) => b.price - a.price)
+  const idx = sorted.findIndex(k => k.id === kujiId)
+  return idx !== -1 ? { rank: idx + 1, total: sorted.length } : null
+}
+
+export default function ExpectedValueSection({
   kujiId,
-  releaseAt,
   isReleased,
   price,
   totalCount,
   totalCountSource,
   kujiUpdatedAt,
   prizes,
+  monthRank,
+  sparklineSeries,
 }: {
   kujiId: number
-  releaseAt: string | null
   isReleased: boolean
   price: number
   totalCount: number | null
   totalCountSource: 'measured' | 'default' | null
   kujiUpdatedAt: string | null
   prizes: Prize[]
+  monthRank: MonthRank | null
+  sparklineSeries: SparklineSeries[]
 }) {
   if (!totalCount || totalCount <= 0) return null
 
@@ -78,21 +99,6 @@ export default async function ExpectedValueSection({
   // --- 賞構成の分析（金額に依存しない。種数比率と価格ランキングのみ） ---
   const topDesignCount = topPrizes.reduce((s, p) => s + (p.total || 0), 0)
   const totalDesignCount = prizes.reduce((s, p) => s + (p.total || 0), 0)
-
-  let monthRank: { rank: number; total: number } | null = null
-  if (releaseAt) {
-    const month = releaseAt.slice(0, 7)
-    const { data: sameMonth } = await supabase
-      .from('kuji')
-      .select('id, price')
-      .gte('release_at', `${month}-01`)
-      .lt('release_at', `${month}-32`)
-    if (sameMonth && sameMonth.length > 1) {
-      const sorted = [...sameMonth].sort((a, b) => b.price - a.price)
-      const idx = sorted.findIndex(k => k.id === kujiId)
-      if (idx !== -1) monthRank = { rank: idx + 1, total: sorted.length }
-    }
-  }
 
   return (
     <div className="mb-6 anim-fade-up">
@@ -181,7 +187,7 @@ export default async function ExpectedValueSection({
             </div>
           )}
 
-          <PriceSparkline kujiId={kujiId} isReleased={isReleased} />
+          <PriceSparkline series={sparklineSeries} />
 
           {lastOneLadder.length > 0 && (
             <div className="mb-4">

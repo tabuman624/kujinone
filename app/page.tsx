@@ -54,7 +54,7 @@ export default async function Home() {
     .order('release_at', { ascending: false })
 
   // PICKUP: 発売中のくじの中から閲覧数が多い順に3件（店頭にない商品を含めないよう母集団はonSaleListに限定）
-  let pickupList: NonNullable<typeof onSaleList> = []
+  let pickupList: Array<{ id: number; title: string; price: number; banner_url: string | null; image_url: string | null }> = []
   if (onSaleList && onSaleList.length > 0) {
     const { data: views } = await supabase
       .from('kuji_views')
@@ -64,7 +64,9 @@ export default async function Home() {
     pickupList = [...onSaleList]
       .sort((a, b) => (viewMap[b.id] ?? 0) - (viewMap[a.id] ?? 0))
       .slice(0, 3)
-      .map(k => ({ ...k, view_count: viewMap[k.id] ?? 0 }))
+      // クライアントへ渡すpropsはRSCペイロードとしてHTMLに入るため、表示に使う列だけに絞る。
+      // 閲覧数そのものは渡さない（PickupCarousel側でブラウザから取得。ISR Writes対策）。
+      .map(k => ({ id: k.id, title: k.title, price: k.price, banner_url: k.banner_url, image_url: k.image_url }))
   }
 
   // 近日発売（当日発売はON SALE側に含めるため、ここは翌日以降のみ）

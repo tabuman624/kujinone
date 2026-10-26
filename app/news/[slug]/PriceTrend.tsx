@@ -4,14 +4,28 @@ const TOP_GRADES = ['A賞', 'B賞', 'C賞']
 // 2点だけでは「推移」とは言えないため、最低3点蓄積された賞のみ表示する。
 const MIN_POINTS = 3
 
-export default async function PriceTrend({ kujiId }: { kujiId: number }) {
+// データ取得はページ側でまとめて行い、このコンポーネント自体は同期描画にする。
+// 非同期コンポーネントが複数あると、HTML内の出力順がSupabaseの応答順で毎回入れ替わり、
+// 内容が同じでもISR再生成のたびに「変更あり」としてVercel ISR Writesが発生するため
+// （app/kuji/[id]/PriceSparkline.tsx と同じ対応）。
+export type PriceTrendItem = {
+  grade: string
+  name: string
+  first: { price: number; recorded_at: string }
+  latest: { price: number; recorded_at: string }
+  changePct: number
+  count: number
+}
+
+export async function loadPriceTrends(kujiId: number): Promise<PriceTrendItem[]> {
   const { data: prizes } = await supabase
     .from('prizes')
     .select('id, grade, name')
     .eq('kuji_id', kujiId)
     .in('grade', TOP_GRADES)
+    .order('sort_order', { ascending: true })
 
-  if (!prizes || prizes.length === 0) return null
+  if (!prizes || prizes.length === 0) return []
 
   const prizeIds = prizes.map(p => p.id)
   const { data: history } = await supabase
@@ -19,8 +33,9 @@ export default async function PriceTrend({ kujiId }: { kujiId: number }) {
     .select('prize_id, price, recorded_at')
     .in('prize_id', prizeIds)
     .order('recorded_at', { ascending: true })
+    .order('id', { ascending: true })
 
-  if (!history || history.length === 0) return null
+  if (!history || history.length === 0) return []
 
   const byPrize = new Map<number, { price: number; recorded_at: string }[]>()
   for (const h of history) {
@@ -29,7 +44,7 @@ export default async function PriceTrend({ kujiId }: { kujiId: number }) {
     byPrize.set(h.prize_id, arr)
   }
 
-  const trends = prizes
+  return prizes
     .map(p => {
       const points = byPrize.get(p.id) ?? []
       if (points.length < MIN_POINTS) return null
@@ -38,8 +53,10 @@ export default async function PriceTrend({ kujiId }: { kujiId: number }) {
       const changePct = first.price > 0 ? Math.round(((latest.price - first.price) / first.price) * 100) : 0
       return { grade: p.grade, name: p.name, first, latest, changePct, count: points.length }
     })
-    .filter((t): t is NonNullable<typeof t> => t !== null)
+    .filter((t): t is PriceTrendItem => t !== null)
+}
 
+export default function PriceTrend({ trends }: { trends: PriceTrendItem[] }) {
   if (trends.length === 0) return null
 
   return (

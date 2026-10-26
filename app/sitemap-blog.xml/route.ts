@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import { buildUrlsetXml, xmlResponse } from '../lib/sitemapXml'
+import { buildUrlsetXml, latestOf, xmlResponse } from '../lib/sitemapXml'
 
 export const revalidate = 3600
 
@@ -17,14 +17,14 @@ export async function GET() {
     const { data } = matter(raw)
     return {
       url: `${BASE}/blog/${slug}`,
-      lastModified: data.date ? new Date(String(data.date)) : new Date(),
+      lastModified: data.date ? new Date(String(data.date)) : undefined,
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     }
   })
 
   const entries = [
-    { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${BASE}/blog`, lastModified: latestOf(blogPages.map(p => p.lastModified)), changeFrequency: 'weekly' as const, priority: 0.8 },
     ...blogPages,
   ]
 

@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabase'
+import PrizePopularityLive from './PrizePopularityLive'
 
 type Prize = { id: number; name: string; grade: string }
 
@@ -7,62 +8,43 @@ type Prize = { id: number; name: string; grade: string }
 // ある程度まとまった回数になってから初めて意味のある数字として表示する。
 const VIEW_COUNT_DISPLAY_THRESHOLD = 50
 
-export default async function PrizePopularity({ kujiId, prizes }: { kujiId: number; prizes: Prize[] }) {
-  if (!prizes.length) return null
+// サーバー側では「欄を出すかどうか」だけを決め、数値そのものはブラウザで取得する
+// （PrizePopularityLive / app/lib/liveCounts.ts）。数値をHTMLに埋め込むと閲覧のたびに
+// ページ内容が変わり、ISR再生成のたびにVercel ISR Writesが発生するため。
+// 表示可否の判定はどちらも単調増加カウンターの閾値なので、一度trueになれば変わらない。
+export type PopularityFlags = { showViewCount: boolean; hasInterest: boolean }
 
+// データ取得はページ側でまとめて行い、コンポーネントは同期描画にする（PriceSparklineのコメント参照）。
+export async function loadPopularityFlags(kujiId: number, prizeIds: number[]): Promise<PopularityFlags> {
+  if (!prizeIds.length) return { showViewCount: false, hasInterest: false }
   const [{ data: interests }, { data: viewData }] = await Promise.all([
     supabase
       .from('prize_interest')
       .select('prize_id, check_count')
-      .in('prize_id', prizes.map(p => p.id)),
+      .in('prize_id', prizeIds),
     supabase
       .from('kuji_views')
       .select('view_count')
       .eq('kuji_id', kujiId)
-      .single(),
+      .maybeSingle(),
   ])
+  return {
+    showViewCount: (viewData?.view_count ?? 0) >= VIEW_COUNT_DISPLAY_THRESHOLD,
+    hasInterest: interests?.some(i => (i.check_count as number) > 0) ?? false,
+  }
+}
 
-  const viewCount = viewData?.view_count ?? 0
-  const hasInterest = interests?.some(i => (i.check_count as number) > 0)
-  const showViewCount = viewCount >= VIEW_COUNT_DISPLAY_THRESHOLD
-
+export default function PrizePopularity({ kujiId, prizes, flags }: { kujiId: number; prizes: Prize[]; flags: PopularityFlags }) {
+  if (!prizes.length) return null
+  const { showViewCount, hasInterest } = flags
   if (!hasInterest && !showViewCount) return null
 
-  const interestMap = Object.fromEntries(
-    (interests ?? []).map(i => [i.prize_id, i.check_count as number])
-  )
-  const maxCount = Math.max(0, ...(Object.values(interestMap) as number[]))
-
   return (
-    <div className="mb-6 anim-fade-up">
-      <div className="flex items-baseline justify-between mb-3">
-        <h2 className="text-xs font-black text-stone-400 tracking-wider">注目度 / POPULARITY</h2>
-        {showViewCount && (
-          <span className="text-xs text-stone-400">閲覧数：{viewCount.toLocaleString()}回</span>
-        )}
-      </div>
-      {hasInterest && (
-        <div className="bg-stone-50 rounded-xl p-4 space-y-3">
-          {prizes.map(prize => {
-            const count = interestMap[prize.id] ?? 0
-            const pct = maxCount > 0 ? Math.round((count / maxCount) * 100) : 0
-            return (
-              <div key={prize.id}>
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-[10px] font-black text-stone-400 w-6 flex-shrink-0">{prize.grade}</span>
-                  <span className="text-[11px] font-semibold text-stone-700 flex-1 truncate">{prize.name}</span>
-                </div>
-                <div className="h-1.5 bg-stone-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-shu rounded-full transition-all duration-500"
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-    </div>
+    <PrizePopularityLive
+      kujiId={kujiId}
+      prizes={prizes}
+      showViewCount={showViewCount}
+      hasInterest={hasInterest}
+    />
   )
 }

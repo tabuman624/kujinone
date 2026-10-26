@@ -5,6 +5,19 @@ export type SitemapUrlEntry = {
   priority?: number
 }
 
+// 一覧ページなどのlastmodを、配下の実データのうち最新の日時から決める。
+// レンダー時刻（new Date()）を使うとISR再生成のたびに内容が変わりVercel ISR Writesが
+// 毎回発生するうえ、「毎時更新」という実態と異なるシグナルをGoogleに送ることになるため。
+export function latestOf(dates: Array<Date | string | null | undefined>): Date | undefined {
+  let max: number | undefined
+  for (const d of dates) {
+    if (!d) continue
+    const t = (typeof d === 'string' ? new Date(d) : d).getTime()
+    if (!isNaN(t) && (max === undefined || t > max)) max = t
+  }
+  return max === undefined ? undefined : new Date(max)
+}
+
 function toIso(d: Date | string | undefined): string | null {
   if (!d) return null
   const date = typeof d === 'string' ? new Date(d) : d

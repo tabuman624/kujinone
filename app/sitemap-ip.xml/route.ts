@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase'
 import { IP_NAMES, ipSlugFor } from '../lib/ipGroups'
-import { buildUrlsetXml, xmlResponse } from '../lib/sitemapXml'
+import { buildUrlsetXml, latestOf, xmlResponse } from '../lib/sitemapXml'
 
 export const revalidate = 3600
 
@@ -32,7 +32,7 @@ export async function GET() {
   }))
 
   const entries = [
-    { url: `${BASE}/ip`, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.6 },
+    { url: `${BASE}/ip`, lastModified: latestOf(Object.values(latestBySlug)), changeFrequency: 'daily' as const, priority: 0.6 },
     ...ipPages,
   ]
 
