@@ -4,7 +4,13 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getStoreGroups, STORE_NAMES } from '../../lib/storeGroups'
 
-export const revalidate = 21600
+// revalidateを1日にしている理由は app/api/cron/revalidate-changed/route.ts を参照。
+// データ変化があったページはそのcronが個別に更新する。
+export const revalidate = 86400
+
+// パラメータはコード／リポジトリ内ファイル由来で、generateStaticParamsが全件を返す。
+// 存在しないURL（botのアクセス等）の404がISRにキャッシュされWritesを生むのを防ぐため、未知のパラメータは即404にする。
+export const dynamicParams = false
 
 export async function generateStaticParams() {
   return Object.keys(STORE_NAMES).map(slug => ({ slug }))

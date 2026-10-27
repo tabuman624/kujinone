@@ -15,9 +15,10 @@ import { buildTitleKeyword } from '../../lib/searchKeyword'
 import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
 import { freshValue } from '../../lib/priceFreshness'
 
-// 元データは1日1回更新のため6時間でも十分。ISR Writes上限との両立のため緩和
-// （ADSENSE_SPEC「Vercel ISR Writesとの両立」）。sitemapのlastmodはDB直読みで独立。
-export const revalidate = 21600
+// revalidateを1日にしている理由は app/api/cron/revalidate-changed/route.ts を参照。
+// データ変化があったページはそのcronが個別に更新する。
+// sitemapのlastmodはDB直読みで独立。
+export const revalidate = 86400
 export const dynamicParams = true
 
 // ビルド時に全件を静的生成する。Supabase取得に失敗した場合は空配列を返し、

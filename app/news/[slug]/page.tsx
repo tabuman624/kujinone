@@ -9,6 +9,9 @@ import PriceTrend, { loadPriceTrends } from './PriceTrend'
 import SameIpComparison, { loadSameIpComparison } from './SameIpComparison'
 
 export const revalidate = 86400
+// パラメータはコード／リポジトリ内ファイル由来で、generateStaticParamsが全件を返す。
+// 存在しないURL（botのアクセス等）の404がISRにキャッシュされWritesを生むのを防ぐため、未知のパラメータは即404にする。
+export const dynamicParams = false
 
 const NEWS_DIR = path.join(process.cwd(), 'news-posts')
 
