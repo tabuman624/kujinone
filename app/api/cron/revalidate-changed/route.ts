@@ -3,15 +3,16 @@ import { revalidatePath } from 'next/cache'
 import { supabase } from '../../../lib/supabase'
 import { IP_NAMES, ipSlugFor } from '../../../lib/ipGroups'
 
-// データが変わったくじページだけを再生成対象にする（毎日 12:00 JST 頃、vercel.json）。
+// データが変わったくじページだけを再生成対象にする（毎日 09:00〜09:59 JST、vercel.json）。
 //
 // 背景: Vercelでは、デプロイ後に各ページが初めて再生成されると、内容が同じでもISR Writeが
 // 発生する。そのため /kuji/[id] などは revalidate を長く（1日）して時間経過による再生成を
 // 減らしている。ただし毎日のデプロイは新作記事があった日にしか起きないため、その他の日も
 // 価格更新・発売日の切り替えが反映されるよう、変化があったページだけをここで更新する。
 //
-// 実行時刻の根拠: 価格cron（03:00 JST）とGitHub Actionsのスクレイピング（10:00 JST）の
-// 後、かつ発売日判定（UTC日付で切り替わる＝09:00 JST）の後。
+// 実行時刻の根拠: 価格cron（03:00 JST）の後、かつ発売日判定（UTC日付で切り替わる＝09:00 JST）
+// の後。GitHub Actionsのスクレイピング（10:00 JST〜）による変更は、新作記事があればデプロイで、
+// 無ければ翌朝の実行で反映される（LOOKBACK_HOURSで取りこぼさない）。
 const LOOKBACK_HOURS = 26 // 1日1回・実行時刻が最大59分ずれるため余裕を持たせる
 
 export async function GET(req: Request) {
