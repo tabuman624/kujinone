@@ -4,7 +4,7 @@ date: 2026-10-06
 release_date: 2026-12-05
 kuji_id: 10567
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10779/919e4289-5aa5-4eb8-b315-c2d1373c15c1.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10779/ca8bc025-ca78-4b74-b550-e77e36cb459f.webp
 summary: 2026年12月5日発売「一番くじ 『劇場版 薬屋のひとりごと 亡妃の秘宝』」の賞品一覧と期待値。1回800円、全80本。くじのねで期待値を計算できます。
 ---
 
