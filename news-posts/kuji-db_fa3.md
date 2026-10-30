@@ -4,7 +4,7 @@ date: 2026-09-29
 release_date: 2026-11-28
 kuji_id: 8198
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10791/997762ae-ba90-4c45-8e4e-48ab856e4f09.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10791/797dfa27-e966-4b02-a180-7925c07e9cf8.webp
 summary: 2026年11月28日発売「一番くじ ドラゴンボール Fantastic Adventure 3」の賞品一覧と期待値。1回800円、全80本。くじのねで期待値を計算できます。
 ---
 

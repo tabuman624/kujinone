@@ -4,7 +4,7 @@ date: 2026-10-27
 release_date: 2026-12-26
 kuji_id: 10578
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10781/e51116f3-1105-4889-ba53-b775b4cb3875.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10781/6be9c2c2-70a1-4972-ab7b-548480095432.webp
 summary: 2026年12月26日発売「一番くじ ブルーアーカイブ vol.4」の賞品一覧と期待値。1回850円、全80本。くじのねで期待値を計算できます。
 ---
 
