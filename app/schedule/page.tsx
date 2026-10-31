@@ -2,7 +2,9 @@ import type { Metadata } from 'next'
 import { supabase } from '../lib/supabase'
 import ScheduleList from './ScheduleList'
 
-export const revalidate = 3600
+// Vercelは再生成のたびに（内容が同じでも）ISR Writeを計上するため、再生成は1日1回に抑える。
+// 日付の切り替わり後の更新は /api/cron/revalidate-changed（毎朝9時台）が行う。
+export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: '一番くじ 最新発売スケジュール2026',

@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { supabase } from '../../../lib/supabase'
 import { IP_NAMES, ipSlugFor } from '../../../lib/ipGroups'
 
-// データが変わったくじページだけを再生成対象にする（毎日 09:00〜09:59 JST、vercel.json）。
+// データが変わったくじページと、日付依存の一覧ページを再生成対象にする（毎日 09:00〜09:59 JST、vercel.json）。
 //
 // 背景: Vercelでは、デプロイ後に各ページが初めて再生成されると、内容が同じでもISR Writeが
 // 発生する。そのため /kuji/[id] などは revalidate を長く（1日）して時間経過による再生成を
@@ -14,6 +14,26 @@ import { IP_NAMES, ipSlugFor } from '../../../lib/ipGroups'
 // の後。GitHub Actionsのスクレイピング（10:00 JST〜）による変更は、新作記事があればデプロイで、
 // 無ければ翌朝の実行で反映される（LOOKBACK_HOURSで取りこぼさない）。
 const LOOKBACK_HOURS = 26 // 1日1回・実行時刻が最大59分ずれるため余裕を持たせる
+
+// 日付（UTC）やくじ一覧全体に依存するページ。revalidateを1日にしているため、
+// 日付が切り替わった後のこの実行で毎日必ず更新する。
+const DAILY_PATHS = [
+  '/',
+  '/schedule',
+  '/today',
+  '/ranking/wanted',
+  '/ip',
+  '/store',
+  '/sitemap.xml',
+  '/sitemap-kuji.xml',
+  '/sitemap-news.xml',
+  '/sitemap-blog.xml',
+  '/sitemap-ip.xml',
+  '/sitemap-store.xml',
+  '/sitemap-static.xml',
+  '/blog/feed.xml',
+  '/news/feed.xml',
+]
 
 export async function GET(req: Request) {
   const cronSecret = process.env.CRON_SECRET
@@ -70,8 +90,9 @@ export async function GET(req: Request) {
 
   for (const id of kujiIds) revalidatePath(`/kuji/${id}`)
   for (const slug of ipSlugs) revalidatePath(`/ip/${slug}`)
+  for (const p of DAILY_PATHS) revalidatePath(p)
 
-  const result = { since, kuji: [...kujiIds].sort((a, b) => a - b), ip: [...ipSlugs].sort() }
+  const result = { since, kuji: [...kujiIds].sort((a, b) => a - b), ip: [...ipSlugs].sort(), daily: DAILY_PATHS }
   console.log('revalidate-changed:', JSON.stringify(result))
   return NextResponse.json(result)
 }

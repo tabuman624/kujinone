@@ -3,7 +3,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 
-export const revalidate = 21600
+// Vercelは再生成のたびに（内容が同じでも）ISR Writeを計上するため、再生成は1日1回に抑える。
+// 日付の切り替わり後の更新は /api/cron/revalidate-changed（毎朝9時台）が行う。
+export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: '今日・今週発売の一番くじ',
