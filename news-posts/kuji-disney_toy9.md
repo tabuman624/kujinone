@@ -4,7 +4,7 @@ date: 2026-10-20
 release_date: 2026-12-19
 kuji_id: 10574
 category: 新作速報
-image_url: https://assets.1kuji.com/uploads/product/top_banner/10797/2c9a36f2-8e0b-4606-95c2-159faad13b57.webp
+image_url: https://assets.1kuji.com/uploads/product/top_banner/10797/a9a329d9-d5a1-429f-ab1c-3a7a770c6424.webp
 summary: 2026年12月19日発売「一番くじ 〈トイ・ストーリー〉Toys' Glorious Memories」の賞品一覧と期待値。1回781円、全80本。くじのねで期待値を計算できます。
 ---
 
