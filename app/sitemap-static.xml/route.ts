@@ -24,7 +24,7 @@ export async function GET() {
     { url: BASE, lastModified: dataUpdatedAt, changeFrequency: 'daily' as const, priority: 1 },
     { url: `${BASE}/schedule`, lastModified: dataUpdatedAt, changeFrequency: 'daily' as const, priority: 0.9 },
     { url: `${BASE}/calc`, lastModified: dataUpdatedAt, changeFrequency: 'weekly' as const, priority: 0.9 },
-    { url: `${BASE}/today`, lastModified: dataUpdatedAt, changeFrequency: 'daily' as const, priority: 0.7 },
+    { url: `${BASE}/schedule/archive`, lastModified: dataUpdatedAt, changeFrequency: 'daily' as const, priority: 0.6 },
     { url: `${BASE}/ranking/wanted`, lastModified: dataUpdatedAt, changeFrequency: 'daily' as const, priority: 0.6 },
     { url: `${BASE}/about`, lastModified: STATIC_DATE, changeFrequency: 'yearly' as const, priority: 0.3 },
     { url: `${BASE}/method`, lastModified: dataUpdatedAt, changeFrequency: 'monthly' as const, priority: 0.4 },

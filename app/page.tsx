@@ -1,3 +1,4 @@
+import { todayJst } from './lib/jst'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -40,10 +41,9 @@ function fmtRelease(d: string) {
 }
 
 export default async function Home() {
-  const today = new Date().toISOString().slice(0, 10)
-  const sevenDaysAgoDate = new Date()
-  sevenDaysAgoDate.setDate(sevenDaysAgoDate.getDate() - 7)
-  const sevenDaysAgo = sevenDaysAgoDate.toISOString().slice(0, 10)
+  const today = todayJst()
+  // JSTの今日から7日前（日付だけの計算なのでUTCで足し引きしてよい）
+  const sevenDaysAgo = new Date(Date.parse(`${today}T00:00:00Z`) - 7 * 86_400_000).toISOString().slice(0, 10)
 
   // 発売中（直近1週間〜当日発売）。長く残すと売り切れ済みの商品が並び続けるため、
   // ホームでは「今まさに店頭にありそうな」直近1週間に絞る。
@@ -271,7 +271,7 @@ export default async function Home() {
       <div className="md:hidden px-5 pb-8 pt-2 border-t border-stone-100">
         <div className="flex flex-wrap gap-x-4 gap-y-2 mb-2">
           {[
-            { href: '/today', label: '今日・今週発売' },
+            { href: '/schedule/archive', label: '発売済みの一番くじ' },
             { href: '/ranking/wanted', label: '狙われている賞ランキング' },
             { href: '/ip', label: '作品から探す' },
             { href: '/store', label: '取扱店から探す' },

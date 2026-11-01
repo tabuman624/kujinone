@@ -38,7 +38,7 @@ const navItems = [
 ]
 
 const footerLinks = [
-  { href: '/today', label: '今日・今週発売' },
+  { href: '/schedule/archive', label: '発売済みの一番くじ' },
   { href: '/news', label: '新作速報' },
   { href: '/ip', label: '作品から探す' },
   { href: '/store', label: '取扱店から探す' },

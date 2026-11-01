@@ -20,7 +20,7 @@ const LOOKBACK_HOURS = 26 // 1日1回・実行時刻が最大59分ずれるた�
 const DAILY_PATHS = [
   '/',
   '/schedule',
-  '/today',
+  '/schedule/archive',
   '/ranking/wanted',
   '/ip',
   '/store',
