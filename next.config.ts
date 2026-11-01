@@ -31,6 +31,14 @@ const nextConfig: NextConfig = {
       { source: '/blog/ichiban-kuji-info', destination: '/schedule', permanent: true },
       { source: '/blog/ichiban-kuji-dragon-ball', destination: '/ip/db', permanent: true },
       { source: '/blog/ichiban-kuji-one-piece', destination: '/ip/onep', permanent: true },
+      // SEO監査v2 Step 6 Batch 2: 「1回いくら」と「期待値の使い方」を統合（2026-11）。
+      // 1回いくら（prize-cost の「複数の賞をまとめて狙う」節、price の ONLINE 送料の1文を sougaku に移植）
+      { source: '/blog/ichiban-kuji-price', destination: '/blog/ichiban-kuji-sougaku', permanent: true },
+      { source: '/blog/ichiban-kuji-prize-cost', destination: '/blog/ichiban-kuji-sougaku', permanent: true },
+      // 期待値の使い方（tips のチェックリスト、budget の予算上限・損切り、smart の「やめとけ」の理由を kitaichi-toha に1節で移植）
+      { source: '/blog/ichiban-kuji-tips', destination: '/blog/kitaichi-toha', permanent: true },
+      { source: '/blog/ichiban-kuji-smart', destination: '/blog/kitaichi-toha', permanent: true },
+      { source: '/blog/ichiban-kuji-budget', destination: '/blog/kitaichi-toha', permanent: true },
     ];
   },
 };

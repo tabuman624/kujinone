@@ -23,8 +23,7 @@ export const dynamicParams = false
 const COMPARE_CTA_SLUGS = new Set([
   'ichiban-kuji-last-one', 'kuji-vs-mercari', 'ichiban-kuji-toha',
   'ichiban-kuji-resale', 'ichiban-kuji-price-drop', 'ichiban-kuji-value',
-  'ichiban-kuji-smart', 'kitaichi-toha', 'ichiban-kuji-how-many',
-  'ichiban-kuji-sougaku', 'ichiban-kuji-prize-cost',
+  'kitaichi-toha', 'ichiban-kuji-how-many', 'ichiban-kuji-sougaku',
 ])
 const SELL_CTA_SLUGS = new Set([
   'ichiban-kuji-sell-where', 'ichiban-kuji-sell-tips', 'ichiban-kuji-kaitori-price',
