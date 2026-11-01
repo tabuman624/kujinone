@@ -5,7 +5,7 @@ release_date: 2026-05-22
 kuji_id: 15
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10654/225eda79-ac7d-4053-be30-ff789efa4710.webp
-summary: 2026年5月22日発売「一番くじ BLEACH Stirring Souls vol.4」の賞品一覧と期待値。1回850円、全80本。くじのねで期待値を計算できます。
+summary: 2026年5月22日発売「一番くじ BLEACH Stirring Souls vol.4」の賞品一覧と期待値。1回850円。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ BLEACH Stirring Souls vol.4](https://assets.1kuji.com/uploads/product/top_banner/10654/225eda79-ac7d-4053-be30-ff789efa4710.webp)
@@ -35,6 +35,6 @@ summary: 2026年5月22日発売「一番くじ BLEACH Stirring Souls vol.4」の
 
 ## 期待値の目安
 
-全80本・1回850円のくじです（2026年09月時点）。全部引いた場合の総額は**約68,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
+1回850円のくじです。総本数は公式には公表されていないため、くじのねでは80本と仮定して計算しています（その場合、全部引いた総額は約68,000円）。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/15)

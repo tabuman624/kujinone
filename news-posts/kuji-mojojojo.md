@@ -5,7 +5,7 @@ release_date: 2026-10-28
 kuji_id: 10282
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10795/ce2c44c6-07a9-4148-8c94-6358a2e455ca.webp
-summary: 2026年10月28日発売「一番くじちょこっと mojojojo」の賞品一覧と期待値。1回550円、全80本。くじのねで期待値を計算できます。
+summary: 2026年10月28日発売「一番くじちょこっと mojojojo」の賞品一覧と期待値。1回550円。くじのねで期待値を計算できます。
 ---
 
 ![一番くじちょこっと mojojojo](https://assets.1kuji.com/uploads/product/top_banner/10795/ce2c44c6-07a9-4148-8c94-6358a2e455ca.webp)
@@ -33,6 +33,6 @@ summary: 2026年10月28日発売「一番くじちょこっと mojojojo」の賞
 
 ## 期待値の目安
 
-全80本・1回550円のくじです（2026年09月時点）。全部引いた場合の総額は**約44,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
+1回550円のくじです。総本数は公式には公表されていないため、くじのねでは80本と仮定して計算しています（その場合、全部引いた総額は約44,000円）。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/10282)

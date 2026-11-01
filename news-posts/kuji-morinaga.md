@@ -5,7 +5,7 @@ release_date: 2026-07-11
 kuji_id: 258
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10687/f83cdd6d-bbff-406c-ac71-fda06a56c7cc.webp
-summary: 2026年7月11日発売「一番くじ 森永製菓」の賞品一覧と期待値。1回700円、全80本。くじのねで期待値を計算できます。
+summary: 2026年7月11日発売「一番くじ 森永製菓」の賞品一覧と期待値。1回700円。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ 森永製菓](https://assets.1kuji.com/uploads/product/top_banner/10687/f83cdd6d-bbff-406c-ac71-fda06a56c7cc.webp)
@@ -34,6 +34,6 @@ summary: 2026年7月11日発売「一番くじ 森永製菓」の賞品一覧と
 
 ## 期待値の目安
 
-全80本・1回700円のくじです（2026年09月時点）。全部引いた場合の総額は**約56,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
+1回700円のくじです。総本数は公式には公表されていないため、くじのねでは80本と仮定して計算しています（その場合、全部引いた総額は約56,000円）。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/258)

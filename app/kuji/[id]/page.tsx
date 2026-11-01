@@ -37,17 +37,17 @@ function weightedLength(str: string): number {
   return len
 }
 
-const TITLE_SUFFIX_FULL = '｜賞品一覧・相場・期待値'
-const TITLE_SUFFIX_SHORT = '｜期待値'
+// 検索で実際に使われているのは「ラインナップ」（249表示・CTR約20%）で、「賞品一覧」はほぼ検索されていない（SEO監査v2 2-7）。
+const TITLE_SUFFIXES = ['｜ラインナップ・相場・期待値', '｜ラインナップ・期待値', '｜期待値']
 const TITLE_MAX_WEIGHTED_LENGTH = 64 // 全角32文字相当
 
 // 商品名は公式の表記をそのまま優先し、削るのは後ろに付ける修飾語（suffix）から。
-// フルsuffixで収まらなければ短縮suffix、それでも収まらなければ商品名のみにする。
+// 長いsuffixから順に試し、収まるものを使う。どれも収まらなければ商品名のみにする。
 function buildKujiTitle(kujiTitle: string): string {
-  const full = `${kujiTitle}${TITLE_SUFFIX_FULL}`
-  if (weightedLength(full) <= TITLE_MAX_WEIGHTED_LENGTH) return full
-  const short = `${kujiTitle}${TITLE_SUFFIX_SHORT}`
-  if (weightedLength(short) <= TITLE_MAX_WEIGHTED_LENGTH) return short
+  for (const suffix of TITLE_SUFFIXES) {
+    const t = `${kujiTitle}${suffix}`
+    if (weightedLength(t) <= TITLE_MAX_WEIGHTED_LENGTH) return t
+  }
   return kujiTitle
 }
 

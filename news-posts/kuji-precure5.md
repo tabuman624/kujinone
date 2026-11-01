@@ -5,7 +5,7 @@ release_date: 2026-09-26
 kuji_id: 3968
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10729/182a1f9a-b82f-42fb-a6fe-65c42a8a76f5.webp
-summary: 2026年9月26日発売「一番くじ プリキュア ～Endless Grace～」の賞品一覧と期待値。1回770円、全80本。くじのねで期待値を計算できます。
+summary: 2026年9月26日発売「一番くじ プリキュア ～Endless Grace～」の賞品一覧と期待値。1回770円。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ プリキュア ～Endless Grace～](https://assets.1kuji.com/uploads/product/top_banner/10729/182a1f9a-b82f-42fb-a6fe-65c42a8a76f5.webp)
@@ -40,6 +40,6 @@ summary: 2026年9月26日発売「一番くじ プリキュア ～Endless Grace�
 
 ## 期待値の目安
 
-全80本・1回770円のくじです（2026年09月時点）。全部引いた場合の総額は**約61,600円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
+1回770円のくじです。総本数は公式には公表されていないため、くじのねでは80本と仮定して計算しています（その場合、全部引いた総額は約61,600円）。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/3968)

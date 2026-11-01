@@ -5,7 +5,7 @@ release_date: 2026-05-22
 kuji_id: 16
 category: 新作速報
 image_url: https://assets.1kuji.com/uploads/product/top_banner/10655/898ededc-3f39-43a8-89ac-44b30ac0f6d0.webp
-summary: 2026年5月22日発売「一番くじ 機動戦士Gundam GQuuuuuuX（ジークアクス） vol.4」の賞品一覧と期待値。1回900円、全80本。くじのねで期待値を計算できます。
+summary: 2026年5月22日発売「一番くじ 機動戦士Gundam GQuuuuuuX（ジークアクス） vol.4」の賞品一覧と期待値。1回900円。くじのねで期待値を計算できます。
 ---
 
 ![一番くじ 機動戦士Gundam GQuuuuuuX（ジークアクス） vol.4](https://assets.1kuji.com/uploads/product/top_banner/10655/898ededc-3f39-43a8-89ac-44b30ac0f6d0.webp)
@@ -35,6 +35,6 @@ summary: 2026年5月22日発売「一番くじ 機動戦士Gundam GQuuuuuuX（�
 
 ## 期待値の目安
 
-全80本・1回900円のくじです（2026年09月時点）。全部引いた場合の総額は**約72,000円**。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
+1回900円のくじです。総本数は公式には公表されていないため、くじのねでは80本と仮定して計算しています（その場合、全部引いた総額は約72,000円）。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。
 
 [→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/16)

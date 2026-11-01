@@ -18,8 +18,11 @@ LINKSYNERGY_URL = "https://click.linksynergy.com/fs-bin/click?id=txstqLlFvt4&off
 
 # ⑥ タイトルバリエーション（product_idのハッシュで安定的に選択）
 # 商品名（＝検索クエリ）を必ず先頭に置き、日付は短縮形にしてSERPでの表示落ちを防ぐ。
+# /news は「発売情報・ラインナップ」、/kuji は「相場・期待値」と役割を分ける（SEO監査v2 2-8）。
+# 検索で実際に使われているのは「ラインナップ」（「賞品一覧」はほぼ検索されていない）。
+# 既存記事のタイトルは title_override で維持されるため、この変更は新規記事にだけ効く。
 TITLE_TEMPLATES = [
-    "{title}｜賞品一覧と期待値【{release_md}発売】",
+    "{title} ラインナップ｜{release_md}発売・価格まとめ",
     "{title} 全賞品ラインナップ｜{release_md}発売",
 ]
 
@@ -123,8 +126,11 @@ def build_prizes_table(prizes):
     return "\n".join(lines)
 
 
-def build_ev_section(total, price, as_of):
-    """全本数（kuji.total_count）が判明している場合のみ、期待値の目安を表示する。
+def build_ev_section(total, price, as_of, measured=False):
+    """全本数（kuji.total_count）がある場合に、期待値の目安を表示する。
+
+    total_count は実測値（total_count_source='measured'）でない限り80本の仮定値なので、
+    仮定値のときは「全80本」と断定せず、仮定であることを明記する。
 
     prizes[].total は賞ごとの「バリエーション数（種）」であり、賞ごとの実際の
     本数ではない。以前はこれを本数として合計・按分して期待値テーブルを生成して
@@ -137,6 +143,11 @@ def build_ev_section(total, price, as_of):
 
     all_cost = total * price
     as_of_ja = datetime.strptime(as_of, "%Y-%m-%d").strftime("%Y年%m月") if as_of else ""
+
+    if not measured:
+        return f"""## 期待値の目安
+
+1回{price}円のくじです。総本数は公式には公表されていないため、くじのねでは{total}本と仮定して計算しています（その場合、全部引いた総額は約{all_cost:,}円）。目当ての賞ごとの平均費用は[期待値計算ツール](https://kujinone.com/calc)で残り本数を入力して確認できます。"""
 
     return f"""## 期待値の目安
 
@@ -154,9 +165,12 @@ def generate_markdown(kuji, prizes, title_override=None, date_override=None):
 
     release_ja   = format_date_ja(release_at)
     release_md   = format_date_short(release_at)
-    total_str    = f"全{total}本" if total > 0 else "本数未発表"
+    measured     = kuji.get('total_count_source') == 'measured'
+    # 仮定値（80本）を「全80本」と断定しない。「本数未発表」と書くと backfill_article_data.py の
+    # 対象になり毎日再生成されてしまうため、実測でないときは本数に触れない。
+    total_str    = f"、全{total}本" if (total > 0 and measured) else ""
     prizes_table = build_prizes_table(prizes)
-    ev_section   = build_ev_section(total, price, datetime.now().strftime("%Y-%m-%d"))
+    ev_section   = build_ev_section(total, price, datetime.now().strftime("%Y-%m-%d"), measured)
     cta_link     = f"[→ このくじの期待値を詳しく計算する](https://kujinone.com/kuji/{kuji_id})"
 
     # ④ バナー画像
@@ -176,7 +190,7 @@ release_date: {release_at}
 kuji_id: {kuji_id}
 category: 新作速報
 {image_line}
-summary: {release_ja}発売「{title}」の賞品一覧と期待値。1回{price}円、{total_str}。くじのねで期待値を計算できます。
+summary: {release_ja}発売「{title}」の全賞品ラインナップ。1回{price}円{total_str}。発売日・価格・期待値をまとめています。
 ---
 
 {image_block}## 基本情報
