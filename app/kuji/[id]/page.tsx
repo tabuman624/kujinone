@@ -326,9 +326,9 @@ export default async function KujiDetail({
               { href: '/blog/ichiban-kuji-toha', title: '一番くじとは？仕組み・1回の値段・ハズレの有無を解説' },
               { href: '/blog/ichiban-kuji-probability', title: '一番くじの確率の計算方法｜A賞〜D賞・ラストワン賞の当たる確率を解説' },
               { href: '/blog/ichiban-kuji-last-one', title: '一番くじラストワン賞の狙い方とは？残り本数と費用の目安' },
-              { href: '/blog/kuji-vs-mercari', title: '一番くじ vs メルカリ どちらがお得？賢い選び方を解説' },
-              { href: '/blog/ichiban-kuji-sell-where', title: '一番くじの賞品を売るには？駿河屋・メルカリ・ヤフオク徹底比較' },
-              { href: '/blog/ichiban-kuji-kaitori-price', title: '一番くじの買取相場はいくら？フィギュア・ラストワン賞の価値を解説' },
+              { href: '/blog/kuji-vs-mercari', title: '一番くじはメルカリで買った方が安い？相場の調べ方と期待値で比較' },
+              { href: '/blog/ichiban-kuji-sell-where', title: '一番くじの賞品を売るには？駿河屋・メルカリ・ヤフオク比較と高く売るコツ' },
+              { href: '/blog/ichiban-kuji-price-drop', title: '一番くじ景品の相場はいつ下がる？値下がりのタイミングと賢い活用術' },
             ].map((post, i) => (
               <Link
                 key={post.href}

@@ -22,12 +22,11 @@ export const dynamicParams = false
 // 外部リンクが1本も無かった記事だけに、対応するCTAを差し込む。
 const COMPARE_CTA_SLUGS = new Set([
   'ichiban-kuji-last-one', 'kuji-vs-mercari', 'ichiban-kuji-toha',
-  'ichiban-kuji-resale', 'ichiban-kuji-price-drop', 'ichiban-kuji-value',
+  'ichiban-kuji-price-drop',
   'kitaichi-toha', 'ichiban-kuji-how-many', 'ichiban-kuji-sougaku',
 ])
 const SELL_CTA_SLUGS = new Set([
-  'ichiban-kuji-sell-where', 'ichiban-kuji-sell-tips', 'ichiban-kuji-kaitori-price',
-  'ichiban-kuji-recover-cost', 'ichiban-kuji-all-buy',
+  'ichiban-kuji-sell-where', 'ichiban-kuji-all-buy',
 ])
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {

@@ -269,7 +269,7 @@ category: "相場"
 ## 関連記事
 
 - [一番くじの期待値とは？計算方法をわかりやすく解説](/blog/kitaichi-toha)
-- [一番くじ vs メルカリ どちらがお得？賢い選び方を解説](/blog/kuji-vs-mercari)
+- [一番くじはメルカリで買った方が安い？相場の調べ方と期待値で比較](/blog/kuji-vs-mercari)
 """
 
 

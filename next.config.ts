@@ -13,11 +13,11 @@ const nextConfig: NextConfig = {
         destination: '/schedule',
         permanent: true,
       },
-      // ichiban-kuji-conveni.mdとほぼ同内容でキーワードが競合していたため統合。
-      // 既存の被リンク・検索順位をconveni.mdに引き継ぐための301。
+      // ichiban-kuji-store は conveni と重複していたため以前 conveni に統合した。conveni も
+      // Batch 4 で /store に転送したので、リダイレクトが連鎖しないよう直接 /store へ向ける。
       {
         source: '/blog/ichiban-kuji-store',
-        destination: '/blog/ichiban-kuji-conveni',
+        destination: '/store',
         permanent: true,
       },
       // SEO監査v2 Step 6 Batch 1: 表示0の低価値記事を統合（2026-11）。必要な内容だけ移植したうえで統合先へ恒久リダイレクト。
@@ -39,6 +39,19 @@ const nextConfig: NextConfig = {
       { source: '/blog/ichiban-kuji-tips', destination: '/blog/kitaichi-toha', permanent: true },
       { source: '/blog/ichiban-kuji-smart', destination: '/blog/kitaichi-toha', permanent: true },
       { source: '/blog/ichiban-kuji-budget', destination: '/blog/kitaichi-toha', permanent: true },
+      // SEO監査v2 Step 6 Batch 3: 「売る」の柱と相場・タイミングを統合（2026-11）。
+      // 相場の調べ方（resale のメルカリ売り切れ検索・駿河屋・ヤフオク落札相場の手順を kuji-vs-mercari に移植）
+      { source: '/blog/ichiban-kuji-resale', destination: '/blog/kuji-vs-mercari', permanent: true },
+      // 売る（kaitori-price の上がる／下がる条件・駿河屋の調べ方、sell-tips のセット売り・写真と説明文、value の高値がつく特徴を sell-where に移植。倍率・割合の数字は持ち込まない）
+      { source: '/blog/ichiban-kuji-kaitori-price', destination: '/blog/ichiban-kuji-sell-where', permanent: true },
+      { source: '/blog/ichiban-kuji-sell-tips', destination: '/blog/ichiban-kuji-sell-where', permanent: true },
+      { source: '/blog/ichiban-kuji-value', destination: '/blog/ichiban-kuji-sell-where', permanent: true },
+      // 実質的な費用（recover-cost の「費用−売却手取り」の考え方を all-buy に移植）
+      { source: '/blog/ichiban-kuji-recover-cost', destination: '/blog/ichiban-kuji-all-buy', permanent: true },
+      // タイミング（timing の発売直後／後日の比較・狙い別タイミングを order に移植）
+      { source: '/blog/ichiban-kuji-timing', destination: '/blog/ichiban-kuji-order', permanent: true },
+      // SEO監査v2 Step 6 Batch 4: 販売店まとめ記事は /store（取扱店から探す）が実データで置き換えているため転送（移植なし）。
+      { source: '/blog/ichiban-kuji-conveni', destination: '/store', permanent: true },
     ];
   },
 };
