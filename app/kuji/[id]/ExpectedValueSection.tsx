@@ -19,7 +19,7 @@ type Prize = {
 
 const ASSUMED_COUNTS = [1, 2, 3]
 const TOP_GRADES = ['A賞', 'B賞', 'C賞']
-// ラストワン賞の的中確率テーブル用の残り本数の刻み（総本数に対する割合）
+// ラストワン賞の「確実に取る費用」テーブル用の残り本数の刻み（総本数に対する割合）
 const LAST_ONE_LADDER_FRACTIONS = [1, 0.5, 0.25, 0.125, 0.0625]
 
 export type MonthRank = { rank: number; total: number }
@@ -89,8 +89,9 @@ export default function ExpectedValueSection({
     ? topPrizesWithValue.map(p => p.fresh.updatedAt).sort().at(-1) ?? null
     : null
 
-  // ラストワン賞は「残り本数のうち1本」という構造が確定しているため、相場データが
-  // 無くても的中確率(=1/残り本数)を断定的に計算できる。金額換算の代わりにこちらを使う。
+  // ラストワン賞は抽選ではなく「最後の1本を引いた人」に渡る。残り2本以上の時点で1回引いて
+  // 当たる確率は0%なので、確率では表せない（以前の1/残り本数の表示は誤りだった）。
+  // 確定的に言えるのは「残りを全部自分で引けば確実に取れる＝残り本数×1回の価格」。
   const lastOne = prizes.find(p => p.grade === 'ラストワン賞')
   const lastOneLadder = lastOne
     ? Array.from(new Set(LAST_ONE_LADDER_FRACTIONS.map(f => Math.max(1, Math.round(totalCount * f))))).sort((a, b) => b - a)
@@ -128,7 +129,7 @@ export default function ExpectedValueSection({
       </Link>
 
       {(topPrizes.length > 0 || topPrizesWithValue.length > 0 || lastOneLadder.length > 0 || topDesignCount > 0 || lastOne || monthRank) && (
-        <CollapsibleSection label="本数別の平均回数・相場・当選確率を見る">
+        <CollapsibleSection label="本数別の平均回数・相場・ラストワン賞の費用を見る">
           {topPrizes.length > 0 && (
             <div className="mb-4">
               <p className="text-xs font-bold text-stone-500 mb-2">本数別の平均回数</p>
@@ -191,20 +192,20 @@ export default function ExpectedValueSection({
 
           {lastOneLadder.length > 0 && (
             <div className="mb-4">
-              <p className="text-xs font-bold text-stone-500 mb-2">ラストワン賞が当たる確率（残り本数ごと）</p>
+              <p className="text-xs font-bold text-stone-500 mb-2">ラストワン賞を確実に取る費用（残り本数ごと）</p>
               <div className="bg-stone-50 border border-stone-200 rounded-xl p-3">
                 <div className="space-y-1.5">
-                  {lastOneLadder.map(n => {
-                    const pct = 100 / n
-                    return (
-                      <div key={n} className="flex items-center justify-between px-1 py-1">
-                        <span className="text-[11px] text-stone-600">残り{n}本</span>
-                        <span className="text-xs font-bold text-stone-800" style={{ fontVariantNumeric: 'tabular-nums' }}>{pct >= 10 ? pct.toFixed(0) : pct.toFixed(1)}%</span>
-                      </div>
-                    )
-                  })}
+                  {lastOneLadder.map(n => (
+                    <div key={n} className="flex items-center justify-between px-1 py-1">
+                      <span className="text-[11px] text-stone-600">残り{n}本</span>
+                      <span className="text-xs font-bold text-stone-800" style={{ fontVariantNumeric: 'tabular-nums' }}>{(n * price).toLocaleString()}円</span>
+                    </div>
+                  ))}
                 </div>
               </div>
+              <p className="text-[11px] text-stone-400 mt-2 leading-relaxed">
+                ラストワン賞は抽選ではなく、最後の1本を引いた人がもらえる賞です。残りを自分ですべて引けば確実に手に入り、そのぶんの通常の賞品も受け取れます。途中で他の人が引けば、もっと少ない回数で済むこともあります。
+              </p>
             </div>
           )}
 

@@ -44,14 +44,14 @@ export default async function MethodPage() {
           <h2 className="text-base font-black text-stone-800 mb-3">1. 掲載している数値について</h2>
           <p>「本数別の平均回数」は、<strong className="text-stone-800">目当ての賞が出るまでに平均何回引く必要があるか</strong>を示す指標です。残り本数は実店舗の在庫を取得できないため、1本・2本・3本という仮定のシナリオで計算しています。</p>
           <p className="mt-2">発売済みの商品については、A賞〜C賞クラスの「上位賞の中古相場」を、Yahoo!ショッピング・ヤフオクの実際の価格から賞ごとに集計して表示しています。<strong className="text-stone-800">これは特定の賞の相場そのものであり、くじを引いた場合に平均いくら得をするかを計算したものではありません。</strong>下位賞を含めた「1回あたりの損得」のような単一の金額は、各賞の残り本数が公開されておらず正確に計算できないため、あえて表示していません。</p>
-          <p className="mt-2">ラストワン賞があるくじについては、残り本数ごとの的中確率も表示しています。こちらは相場データに依存せず、確定的に計算できる数値です。</p>
+          <p className="mt-2">ラストワン賞があるくじについては、残り本数ごとに「ラストワン賞を確実に取る費用」を表示しています。ラストワン賞は抽選ではなく<strong className="text-stone-800">最後の1本を引いた人がもらえる賞</strong>のため、残りが2本以上ある時点で1回引いて当たる確率は0%で、確率としては表せません。確定的に言えるのは「残りをすべて自分で引けば確実に手に入る」ことなので、その費用（相場データに依存しない値）を示しています。途中で他の人が引けば、実際にはもっと少ない回数で済むこともあります。</p>
         </section>
 
         <section>
           <h2 className="text-base font-black text-stone-800 mb-3">2. 計算式</h2>
           <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 font-mono text-xs leading-relaxed overflow-x-auto">
             <p>本数別の平均回数 = (残り総本数 + 1) ÷ (狙い賞の残り本数 + 1)</p>
-            <p className="mt-2">ラストワン賞の的中確率 = 1 ÷ 残り総本数</p>
+            <p className="mt-2">ラストワン賞を確実に取る費用 = 残り総本数 × 1回の価格</p>
           </div>
           <p className="mt-2 text-stone-500">平均回数の計算で単純な「総本数 ÷ 残り本数」ではなくこの式を使うのは、引くごとに母数が減っていく非復元抽出（一番くじは引いたくじが箱に戻らない）の期待値として正しい形だからです。</p>
         </section>
