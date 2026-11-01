@@ -52,6 +52,8 @@ const nextConfig: NextConfig = {
       { source: '/blog/ichiban-kuji-timing', destination: '/blog/ichiban-kuji-order', permanent: true },
       // SEO監査v2 Step 6 Batch 4: 販売店まとめ記事は /store（取扱店から探す）が実データで置き換えているため転送（移植なし）。
       { source: '/blog/ichiban-kuji-conveni', destination: '/store', permanent: true },
+      // 月入りURLのランキング記事は、常に最新の /ranking/wanted の古い写しになっていたため転送（週次の自動再生成も停止）。
+      { source: '/blog/ranking-2026-09', destination: '/ranking/wanted', permanent: true },
     ];
   },
 };
