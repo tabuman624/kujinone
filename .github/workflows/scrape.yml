@@ -1,4 +1,4 @@
-name: 一番くじ スクレイピング＋記事自動生成
+name: 一番くじ スクレイピング＋相場取得
 
 on:
   schedule:
@@ -9,13 +9,13 @@ on:
 jobs:
   scrape-and-generate:
     runs-on: ubuntu-latest
+    # 新作速報（news-posts/*.md）の自動生成とコミットは廃止した（2026-11、/news は /kuji へ転送）。
+    # リポジトリへ書き込まないので読み取り権限だけにする。
     permissions:
-      contents: write     # git push に必要
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
         with:
@@ -35,25 +35,8 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python scripts/check_and_fix_images.py
 
-      - name: ③ 新作記事を自動生成・画像URL同期
-        env:
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python scripts/generate_articles.py
-
-      - name: ④ 景品の参考価格を取得（Yahoo Shopping＋ヤフオク落札相場）
+      - name: ③ 景品の参考価格を取得（Yahoo Shopping＋ヤフオク落札相場）
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           YAHOO_APP_ID: ${{ secrets.YAHOO_APP_ID }}
         run: python scripts/fetch_prize_prices.py
-
-      - name: ⑤ 「本数未発表」のまま放置された既存記事に実データをバックフィル
-        env:
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python scripts/backfill_article_data.py
-
-      - name: ⑥ 記事をコミット＆プッシュ
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Actions"
-          git add news-posts/
-          git diff --staged --quiet && echo "変更なし" || (git commit -m "feat: 新作くじ記事を自動生成 [skip ci]" && git push)

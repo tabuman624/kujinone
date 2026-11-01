@@ -3,16 +3,16 @@ import { revalidatePath } from 'next/cache'
 import { supabase } from '../../../lib/supabase'
 import { IP_NAMES, ipSlugFor } from '../../../lib/ipGroups'
 
-// データが変わったくじページと、日付依存の一覧ページを再生成対象にする（毎日 09:00〜09:59 JST、vercel.json）。
+// データが変わったくじページと、日付依存の一覧ページを再生成対象にする（毎日 12:00〜12:59 JST、vercel.json）。
 //
 // 背景: Vercelでは、デプロイ後に各ページが初めて再生成されると、内容が同じでもISR Writeが
 // 発生する。そのため /kuji/[id] などは revalidate を長く（1日）して時間経過による再生成を
-// 減らしている。ただし毎日のデプロイは新作記事があった日にしか起きないため、その他の日も
-// 価格更新・発売日の切り替えが反映されるよう、変化があったページだけをここで更新する。
+// 減らしている。新作速報（/news）の廃止（2026-11）で毎日のボットデプロイも無くなったため、
+// 価格更新・発売日の切り替えなどは、変化があったページだけをここで更新して反映する。
 //
-// 実行時刻の根拠: 価格cron（03:00 JST）の後、かつ発売日判定（UTC日付で切り替わる＝09:00 JST）
-// の後。GitHub Actionsのスクレイピング（10:00 JST〜）による変更は、新作記事があればデプロイで、
-// 無ければ翌朝の実行で反映される（LOOKBACK_HOURSで取りこぼさない）。
+// 実行時刻の根拠: 価格cron（03:00 JST）・発売日判定（UTC日付で切り替わる＝09:00 JST）・
+// GitHub Actionsのスクレイピング（10:00 JST〜）のすべての後に置き、新作や価格の変化をその日のうちに
+// 反映する。スクレイピングが遅れて間に合わなかった分は翌日の実行で拾う（LOOKBACK_HOURS）。
 const LOOKBACK_HOURS = 26 // 1日1回・実行時刻が最大59分ずれるため余裕を持たせる
 
 // 日付（UTC）やくじ一覧全体に依存するページ。revalidateを1日にしているため、
@@ -26,13 +26,11 @@ const DAILY_PATHS = [
   '/store',
   '/sitemap.xml',
   '/sitemap-kuji.xml',
-  '/sitemap-news.xml',
   '/sitemap-blog.xml',
   '/sitemap-ip.xml',
   '/sitemap-store.xml',
   '/sitemap-static.xml',
   '/blog/feed.xml',
-  '/news/feed.xml',
 ]
 
 export async function GET(req: Request) {

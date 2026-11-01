@@ -1,12 +1,11 @@
 // Vercelは再生成のたびに（内容が同じでも）ISR Writeを計上するため、再生成は1日1回に抑える。
-// 日付の切り替わり後の更新は /api/cron/revalidate-changed（毎朝9時台）が行う。
+// 日付の切り替わり後の更新は /api/cron/revalidate-changed（毎日12時台）が行う。
 export const revalidate = 86400
 
 const BASE = 'https://kujinone.com'
 
 const SUB_SITEMAPS = [
   'sitemap-kuji.xml',
-  'sitemap-news.xml',
   'sitemap-blog.xml',
   'sitemap-ip.xml',
   'sitemap-store.xml',

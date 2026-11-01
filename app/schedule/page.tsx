@@ -10,7 +10,7 @@ import ScheduleControls from './ScheduleControls'
 import { storeFilterKeys } from './stores'
 
 // Vercelは再生成のたびに（内容が同じでも）ISR Writeを計上するため、再生成は1日1回に抑える。
-// 日付の切り替わり後の更新は /api/cron/revalidate-changed（毎朝9時台）が行う。
+// 日付の切り替わり後の更新は /api/cron/revalidate-changed（毎日12時台）が行う。
 // サーバーで描画する値はJSTの日付だけで決まる（＝1日1回しか変わらない）。
 // 「あと◯日」「今日」の印は閲覧者の時計で決まるのでブラウザ側（RelDays / ScheduleControls）で出す。
 export const revalidate = 86400

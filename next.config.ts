@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+// 旧 /news/kuji-{product_id}（新作速報）→ /kuji/{kuji_id} の対応表。news-posts/*.md の frontmatter kuji_id から
+// 2026-11 に一度だけ書き出した静的ファイル（news-posts/ を消してもリダイレクトが残るように）。
+import newsRedirects from "./app/lib/newsRedirects.json";
 
 const nextConfig: NextConfig = {
   images: {
@@ -54,6 +57,15 @@ const nextConfig: NextConfig = {
       { source: '/blog/ichiban-kuji-conveni', destination: '/store', permanent: true },
       // 月入りURLのランキング記事は、常に最新の /ranking/wanted の古い写しになっていたため転送（週次の自動再生成も停止）。
       { source: '/blog/ranking-2026-09', destination: '/ranking/wanted', permanent: true },
+      // 新作速報（/news）は /kuji の古い写しで、生成時のまま更新されず誤りも含んでいたため廃止（2026-11、AdSense 再申請対策★1）。
+      // 一覧とフィードは /schedule（発売スケジュール）へ、各記事は同じ商品のくじページへ転送する。
+      { source: '/news', destination: '/schedule', permanent: true },
+      { source: '/news/feed.xml', destination: '/schedule', permanent: true },
+      ...Object.entries(newsRedirects as Record<string, number>).map(([slug, kujiId]) => ({
+        source: `/news/${slug}`,
+        destination: `/kuji/${kujiId}`,
+        permanent: true,
+      })),
     ];
   },
 };

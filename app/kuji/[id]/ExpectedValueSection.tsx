@@ -17,10 +17,16 @@ type Prize = {
   auction_price_updated_at?: string | null
 }
 
+// 目当ての賞が何本入っているかは公表されないため、1〜3本の場合を示す。
 const ASSUMED_COUNTS = [1, 2, 3]
 const TOP_GRADES = ['A賞', 'B賞', 'C賞']
-// ラストワン賞の「確実に取る費用」テーブル用の残り本数の刻み（総本数に対する割合）
-const LAST_ONE_LADDER_FRACTIONS = [1, 0.5, 0.25, 0.125, 0.0625]
+// ラストワン賞の費用の例に使う残り本数
+const LAST_ONE_EXAMPLE_REMAINING = 10
+
+// 平均回数の表示。整数ならそのまま、端数があれば小数第1位まで（/calc の formatTimes と同じ）。
+function formatDraws(value: number): string {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1)
+}
 
 export type MonthRank = { rank: number; total: number }
 
@@ -94,10 +100,8 @@ export default function ExpectedValueSection({
   // ラストワン賞は抽選ではなく「最後の1本を引いた人」に渡る。残り2本以上の時点で1回引いて
   // 当たる確率は0%なので、確率では表せない（以前の1/残り本数の表示は誤りだった）。
   // 確定的に言えるのは「残りを全部自分で引けば確実に取れる＝残り本数×1回の価格」。
+  // 以前は残り本数ごとの5行の表（価格×80・40・20・10・5）だったが、掛け算を並べただけなので1文にした（2026-11）。
   const lastOne = prizes.find(p => p.grade === 'ラストワン賞')
-  const lastOneLadder = lastOne
-    ? Array.from(new Set(LAST_ONE_LADDER_FRACTIONS.map(f => Math.max(1, Math.round(totalCount * f))))).sort((a, b) => b - a)
-    : []
 
   // --- 賞構成の分析（金額に依存しない。種数比率と価格ランキングのみ） ---
   const topDesignCount = topPrizes.reduce((s, p) => s + (p.total || 0), 0)
@@ -130,42 +134,42 @@ export default function ExpectedValueSection({
         期待値を計算する →
       </Link>
 
-      {(topPrizes.length > 0 || topPrizesWithValue.length > 0 || lastOneLadder.length > 0 || topDesignCount > 0 || lastOne || monthRank) && (
-        <CollapsibleSection label="本数別の平均回数・相場・ラストワン賞の費用を見る">
-          {topPrizes.length > 0 && (
+      {(prizes.length > 0 || monthRank) && (
+        <CollapsibleSection label={lastOne ? '平均回数・相場・ラストワン賞の費用を見る' : '平均回数・相場を見る'}>
+          {/* 平均回数は「総本数」と「目当ての賞の本数」だけで決まり、どの賞かには依存しない。
+              以前は A・B・C賞ごとに同じ数字の表を3つ並べていたため、1つの表にまとめた（2026-11）。 */}
+          {prizes.length > 0 && (
             <div className="mb-4">
-              <p className="text-xs font-bold text-stone-500 mb-2">本数別の平均回数</p>
-              <div className="space-y-4">
-                {topPrizes.map(prize => (
-                  <div key={`${prize.grade}-${prize.name}`}>
-                    <p className="text-xs font-bold text-stone-700 mb-2">【{prize.grade}】{prize.name}</p>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-xs border-collapse" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                        <thead>
-                          <tr className="text-stone-400 border-b border-stone-200">
-                            <th className="text-left font-bold py-1.5 pr-2">本数の仮定</th>
-                            <th className="text-right font-bold py-1.5 pr-2">平均</th>
-                            <th className="text-right font-bold py-1.5">目安金額</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {ASSUMED_COUNTS.map(k => {
-                            const avg = expectedDraws(totalCount, k)
-                            const cost = Math.round(avg * price)
-                            return (
-                              <tr key={k} className="border-b border-stone-100 last:border-0">
-                                <td className="py-1.5 pr-2 text-stone-600 whitespace-nowrap">{prize.grade}が{k}本の場合</td>
-                                <td className="py-1.5 pr-2 text-right font-bold text-stone-800 whitespace-nowrap">平均 {avg.toFixed(1)}回目</td>
-                                <td className="py-1.5 text-right text-stone-500 whitespace-nowrap">約{cost.toLocaleString()}円</td>
-                              </tr>
-                            )
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                ))}
+              <p className="text-xs font-bold text-stone-500 mb-2">目当ての賞が出るまでの平均回数</p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs border-collapse" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                  <thead>
+                    <tr className="text-stone-400 border-b border-stone-200">
+                      <th className="text-left font-bold py-1.5 pr-2">目当ての賞の本数（仮定）</th>
+                      <th className="text-right font-bold py-1.5 pr-2">平均</th>
+                      <th className="text-right font-bold py-1.5">目安金額</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ASSUMED_COUNTS.map(k => {
+                      const avg = expectedDraws(totalCount, k)
+                      const cost = Math.round(avg * price)
+                      return (
+                        <tr key={k} className="border-b border-stone-100 last:border-0">
+                          <td className="py-1.5 pr-2 text-stone-600 whitespace-nowrap">目当ての賞が{k}本入っている場合</td>
+                          <td className="py-1.5 pr-2 text-right font-bold text-stone-800 whitespace-nowrap">平均 {formatDraws(avg)}回目</td>
+                          <td className="py-1.5 text-right text-stone-500 whitespace-nowrap">約{cost.toLocaleString()}円</td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
               </div>
+              <p className="text-[11px] text-stone-400 mt-2 leading-relaxed">
+                {assumed
+                  ? `総本数を${totalCount}本と仮定した場合、目当ての賞の本数が同じなら、どの賞でも平均回数は同じです。`
+                  : `総本数${totalCount}本のくじでは、目当ての賞の本数が同じなら、どの賞でも平均回数は同じです。`}
+              </p>
             </div>
           )}
 
@@ -192,33 +196,20 @@ export default function ExpectedValueSection({
 
           <PriceSparkline series={sparklineSeries} />
 
-          {lastOneLadder.length > 0 && (
-            <div className="mb-4">
-              <p className="text-xs font-bold text-stone-500 mb-2">ラストワン賞を確実に取る費用（残り本数ごと）</p>
-              <div className="bg-stone-50 border border-stone-200 rounded-xl p-3">
-                <div className="space-y-1.5">
-                  {lastOneLadder.map(n => (
-                    <div key={n} className="flex items-center justify-between px-1 py-1">
-                      <span className="text-[11px] text-stone-600">残り{n}本</span>
-                      <span className="text-xs font-bold text-stone-800" style={{ fontVariantNumeric: 'tabular-nums' }}>{(n * price).toLocaleString()}円</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <p className="text-[11px] text-stone-400 mt-2 leading-relaxed">
-                ラストワン賞は抽選ではなく、最後の1本を引いた人がもらえる賞です。残りを自分ですべて引けば確実に手に入り、そのぶんの通常の賞品も受け取れます。途中で他の人が引けば、もっと少ない回数で済むこともあります。
-              </p>
-            </div>
+          {lastOne && (
+            <p className="text-xs text-stone-600 leading-relaxed mb-4">
+              ラストワン賞は最後の1本を引いた人がもらえる賞で、残りを全部引けば確実に取れます（費用＝残り本数×{price.toLocaleString()}円。例：残り{LAST_ONE_EXAMPLE_REMAINING}本なら{(LAST_ONE_EXAMPLE_REMAINING * price).toLocaleString()}円）。
+              <Link href="/blog/ichiban-kuji-last-one" className="text-shu hover:underline ml-1">ラストワン賞の狙い方</Link>
+            </p>
           )}
 
-          {(topDesignCount > 0 || lastOne || monthRank) && (
+          {((topDesignCount > 0 && totalDesignCount > 0) || monthRank) && (
             <div className="mb-4">
               <p className="text-xs font-bold text-stone-500 mb-2">賞の構成</p>
               <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 space-y-2 text-xs text-stone-600 leading-relaxed">
                 {topDesignCount > 0 && totalDesignCount > 0 && (
                   <p>上位賞（{TOP_GRADES.join('・')}）は全{totalDesignCount}種のうち{topDesignCount}種（{Math.round((topDesignCount / totalDesignCount) * 100)}%）を占めます。</p>
                 )}
-                {lastOne && <p>ラストワン賞が設定されています。最後の1本を引いた人がもらえる特別賞です。</p>}
                 {monthRank && (
                   <p>同じ月発売の{monthRank.total}弾の中で、1回あたりの価格は{monthRank.rank}番目に高い商品です。</p>
                 )}
@@ -228,7 +219,7 @@ export default function ExpectedValueSection({
         </CollapsibleSection>
       )}
 
-      <Disclaimer hasMarketData={topPrizesWithValue.length > 0} totalCountSource={totalCountSource} pageLastUpdated={pageLastUpdated} />
+      <Disclaimer hasMarketData={topPrizesWithValue.length > 0} assumed={assumed} totalCount={totalCount} pageLastUpdated={pageLastUpdated} />
     </div>
   )
 }

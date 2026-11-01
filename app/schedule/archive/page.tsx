@@ -6,7 +6,7 @@ import KujiCard, { type ScheduleKuji } from '../KujiCard'
 
 // 発売済みの一番くじを月別に並べるページ。/schedule は「これから」に集中させるために分けた。
 // 発売後のくじページ（相場・ラインナップ）は検索流入の中心なので、全件へのリンクをここに残す。
-// 再生成は1日1回（毎朝9時台のcronで更新）。
+// 再生成は1日1回（毎日12時台のcronで更新）。
 export const revalidate = 86400
 
 const title = '発売済みの一番くじ一覧（月別）'

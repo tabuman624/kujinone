@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import fs from 'fs'
-import path from 'path'
 import { notFound } from 'next/navigation'
 import { supabase } from '../../lib/supabase'
 import PrizeList from './PrizeList'
@@ -50,6 +48,19 @@ function buildKujiTitle(kujiTitle: string): string {
   }
   return kujiTitle
 }
+
+// 関連コラムは発売前後で読者の関心が違うので出し分ける（全ページ共通の7本固定から変更、2026-11）。
+// タイトルは posts/*.md の frontmatter title と同じ文言にしている（記事タイトルを変えたらここも直す）。
+const RELATED_POSTS_RELEASED = [
+  { href: '/blog/kuji-vs-mercari', title: '一番くじはメルカリで買った方が安い？相場の調べ方と期待値で比較' },
+  { href: '/blog/ichiban-kuji-sell-where', title: '一番くじの賞品を売るには？駿河屋・メルカリ・ヤフオク比較と高く売るコツ' },
+  { href: '/blog/ichiban-kuji-price-drop', title: '一番くじ景品の相場はいつ下がる？値下がりのタイミングと賢い活用術' },
+]
+const RELATED_POSTS_UPCOMING = [
+  { href: '/blog/ichiban-kuji-toha', title: '一番くじとは？仕組み・1回の値段・ハズレの有無を解説' },
+  { href: '/blog/ichiban-kuji-last-one', title: '一番くじラストワン賞の狙い方とは？残り本数と費用の目安' },
+  { href: '/blog/kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説' },
+]
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
@@ -137,10 +148,6 @@ export default async function KujiDetail({
   const priceRangeText = pricePoints.length > 0
     ? `現在の相場は約¥${Math.min(...pricePoints).toLocaleString()}〜¥${Math.max(...pricePoints).toLocaleString()}です。`
     : ''
-
-  // 対応する新作速報記事の有無を確認
-  const newsSlug = `kuji-${kuji.product_id}`
-  const newsExists = fs.existsSync(path.join(process.cwd(), 'news-posts', `${newsSlug}.md`))
 
   const availableStores: string[] = Array.isArray(kuji.available_stores) ? kuji.available_stores : []
 
@@ -305,32 +312,9 @@ export default async function KujiDetail({
         )}
 
         <div className="mt-8 pt-6 border-t border-stone-100">
-          {newsExists && (
-            <div className="mb-6 anim-fade-up">
-              <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">新作速報 / NEWS</h2>
-              <Link
-                href={`/news/${newsSlug}`}
-                className="flex items-center gap-3 p-3 border rounded-xl bg-shu-bg border-shu text-shu-dark press"
-              >
-                <div className="flex-1">
-                  <p className="text-sm font-bold">このくじの賞品・期待値まとめ記事</p>
-                  <p className="text-xs opacity-70">発売日・全賞品・期待値の目安を解説</p>
-                </div>
-                <span className="text-sm">↗</span>
-              </Link>
-            </div>
-          )}
           <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">関連コラム / COLUMN</h2>
           <div className="space-y-0">
-            {[
-              { href: '/blog/kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説' },
-              { href: '/blog/ichiban-kuji-toha', title: '一番くじとは？仕組み・1回の値段・ハズレの有無を解説' },
-              { href: '/blog/ichiban-kuji-probability', title: '一番くじの確率の計算方法｜A賞〜D賞・ラストワン賞の当たる確率を解説' },
-              { href: '/blog/ichiban-kuji-last-one', title: '一番くじラストワン賞の狙い方とは？残り本数と費用の目安' },
-              { href: '/blog/kuji-vs-mercari', title: '一番くじはメルカリで買った方が安い？相場の調べ方と期待値で比較' },
-              { href: '/blog/ichiban-kuji-sell-where', title: '一番くじの賞品を売るには？駿河屋・メルカリ・ヤフオク比較と高く売るコツ' },
-              { href: '/blog/ichiban-kuji-price-drop', title: '一番くじ景品の相場はいつ下がる？値下がりのタイミングと賢い活用術' },
-            ].map((post, i) => (
+            {(isReleased ? RELATED_POSTS_RELEASED : RELATED_POSTS_UPCOMING).map((post, i) => (
               <Link
                 key={post.href}
                 href={post.href}
