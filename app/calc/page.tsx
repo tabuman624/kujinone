@@ -8,6 +8,7 @@ import { supabase } from "../lib/supabase"
 import AffiliateLink from "../components/AffiliateLink"
 import XIcon from "../components/XIcon"
 import { buildTitleKeyword, buildPrizeKeyword } from "../lib/searchKeyword"
+import { expectedDraws } from "../lib/ev"
 
 type Kuji = {
   id: number; title: string; price: number; release_at: string; image_url: string | null
@@ -199,6 +200,11 @@ function MarketPriceSection({ prizes, loading, kujiTitle }: { prizes: PrizeWithI
   )
 }
 
+// 平均回数の表示。整数ならそのまま、端数があれば小数第1位まで（40.5回など）。
+function formatTimes(value: number, final: number): string {
+  return Number.isInteger(final) ? String(Math.round(value)) : value.toFixed(1)
+}
+
 function ResultCard({ expected, times, detail }: { expected: number; times: number; detail: string }) {
   const animExp = useCountUp(expected, 800)
   const animTimes = useCountUp(times, 700)
@@ -219,7 +225,7 @@ function ResultCard({ expected, times, detail }: { expected: number; times: numb
           <div className="text-right">
             <p className="text-xs text-stone-400 mb-1">平均回数</p>
             <p className="text-3xl font-black text-stone-800" style={{ fontVariantNumeric: "tabular-nums" }}>
-              {Math.round(animTimes)}<span className="text-sm text-stone-500 ml-1">回</span>
+              {formatTimes(animTimes, times)}<span className="text-sm text-stone-500 ml-1">回</span>
             </p>
           </div>
         </div>
@@ -415,8 +421,9 @@ function CalcContent() {
     if (checked.length === 0) return null
     const targetCount = checked.reduce((sum, p) => { const v = parseInt(p.remaining); return sum + (isNaN(v) ? p.total : v) }, 0)
     if (targetCount === 0 || totalRemaining === 0) return null
-    const times = Math.round((totalRemaining + 1) / (targetCount + 1))
-    const expected = times * kuji.price
+    // 平均回数は丸めずに使う（例: 80本中1本なら40.5回）。丸めると記事・くじページの数字とずれるため。
+    const times = expectedDraws(totalRemaining, targetCount)
+    const expected = Math.round(times * kuji.price)
     return { expected, times, targetCount, gradeStr: checked.map(p => p.grade).join("・") }
   }, [prizes, kuji, totalRemaining])
 
@@ -425,8 +432,8 @@ function CalcContent() {
     const target = parseInt(manualTarget)
     const price = parseInt(manualPrice)
     if (isNaN(total) || isNaN(target) || isNaN(price) || target <= 0 || total <= 0 || target > total) return null
-    const times = Math.round((total + 1) / (target + 1))
-    const expected = times * price
+    const times = expectedDraws(total, target)
+    const expected = Math.round(times * price)
     return { expected, times, total, target, price }
   }, [manualTotal, manualTarget, manualPrice])
 
@@ -516,7 +523,7 @@ function CalcContent() {
               <ResultCard
                 expected={liveResult.expected}
                 times={liveResult.times}
-                detail={`総本数${totalRemaining}本 / ${liveResult.gradeStr}残${liveResult.targetCount}本 / ${kuji.price}円 × ${liveResult.times}回`}
+                detail={`総本数${totalRemaining}本 / ${liveResult.gradeStr}残${liveResult.targetCount}本 / ${kuji.price}円 × ${formatTimes(liveResult.times, liveResult.times)}回`}
               />
               <ShareResultButton
                 kujiId={kuji.id}
@@ -606,7 +613,7 @@ function CalcContent() {
             <ResultCard
               expected={manualLive.expected}
               times={manualLive.times}
-              detail={`総数${manualLive.total}本 / 目当ての賞${manualLive.target}本 / ${manualLive.price}円 × ${manualLive.times}回`}
+              detail={`総数${manualLive.total}本 / 目当ての賞${manualLive.target}本 / ${manualLive.price}円 × ${formatTimes(manualLive.times, manualLive.times)}回`}
             />
             <AffiliateLinks title="一番くじ 景品" />
           </>

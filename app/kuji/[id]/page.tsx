@@ -268,7 +268,7 @@ export default async function KujiDetail({
           <div className="mb-6 anim-fade-up" style={{ animationDelay: `${260 + (prizes?.length || 0) * 60}ms` }}>
             <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">相場を確認・購入する / MARKET</h2>
             <p className="text-xs text-stone-500 mb-3 leading-relaxed">
-              『{kuji.title}』の中古相場はメルカリ・駿河屋などで確認できます。{priceRangeText}発売直後は定価に近い価格で取引されることが多く、時間が経つにつれて相場が下がっていく傾向があります。
+              『{kuji.title}』の中古相場はメルカリ・駿河屋などで確認できます。{priceRangeText}景品によって差はありますが、発売後1週間ほどで値下がりするものが多い一方、値上がりするものもあります（くじのねの集計では、発売1週間後の落札相場は中央値で発売日の約9割）。
             </p>
             <div className="space-y-2">
               {[
