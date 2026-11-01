@@ -21,6 +21,8 @@ export default function BlogTabs({ featured, posts }: { featured: Post; posts: P
   const [selected, setSelected] = useState<string>('すべて')
 
   const filtered = selected === 'すべて' ? posts : posts.filter(p => p.category === selected)
+  // 記事が0件のカテゴリはタブを出さない（記事統合でカテゴリが空になっても空タブを見せないため）
+  const visibleCategories = CATEGORIES.filter(cat => cat === 'すべて' || posts.some(p => p.category === cat))
 
   return (
     <>
@@ -65,7 +67,7 @@ export default function BlogTabs({ featured, posts }: { featured: Post; posts: P
 
       {/* Category tabs */}
       <div className="flex border-b border-stone-200 px-4 sticky top-0 bg-white z-10 select-none mt-4">
-        {CATEGORIES.map(cat => (
+        {visibleCategories.map(cat => (
           <button
             key={cat}
             onClick={() => setSelected(cat)}
