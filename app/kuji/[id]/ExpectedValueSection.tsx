@@ -1,11 +1,9 @@
 import Link from 'next/link'
-import { supabase } from '../../lib/supabase'
 // 注: ../../lib は app/lib を指す（ルート直下の lib/ とは別の実体）
 import { expectedDraws } from '../../lib/ev'
 import { freshValue } from '../../lib/priceFreshness'
 import Disclaimer from './Disclaimer'
 import CollapsibleSection from './CollapsibleSection'
-import PriceSparkline, { type SparklineSeries } from './PriceSparkline'
 
 type Prize = {
   grade: string
@@ -28,25 +26,6 @@ function formatDraws(value: number): string {
   return Number.isInteger(value) ? String(value) : value.toFixed(1)
 }
 
-export type MonthRank = { rank: number; total: number }
-
-// 同月発売の中での価格順位。データ取得はページ側でまとめて行う（PriceSparklineのコメント参照）。
-// 同価格の並びが応答順で揺れないよう、id順で取得してから安定ソートする。
-export async function loadMonthRank(kujiId: number, releaseAt: string | null): Promise<MonthRank | null> {
-  if (!releaseAt) return null
-  const month = releaseAt.slice(0, 7)
-  const { data: sameMonth } = await supabase
-    .from('kuji')
-    .select('id, price')
-    .gte('release_at', `${month}-01`)
-    .lt('release_at', `${month}-32`)
-    .order('id', { ascending: true })
-  if (!sameMonth || sameMonth.length <= 1) return null
-  const sorted = [...sameMonth].sort((a, b) => b.price - a.price)
-  const idx = sorted.findIndex(k => k.id === kujiId)
-  return idx !== -1 ? { rank: idx + 1, total: sorted.length } : null
-}
-
 export default function ExpectedValueSection({
   kujiId,
   isReleased,
@@ -55,8 +34,6 @@ export default function ExpectedValueSection({
   totalCountSource,
   kujiUpdatedAt,
   prizes,
-  monthRank,
-  sparklineSeries,
 }: {
   kujiId: number
   isReleased: boolean
@@ -65,8 +42,6 @@ export default function ExpectedValueSection({
   totalCountSource: 'measured' | 'default' | null
   kujiUpdatedAt: string | null
   prizes: Prize[]
-  monthRank: MonthRank | null
-  sparklineSeries: SparklineSeries[]
 }) {
   if (!totalCount || totalCount <= 0) return null
 
@@ -134,7 +109,7 @@ export default function ExpectedValueSection({
         期待値を計算する →
       </Link>
 
-      {(prizes.length > 0 || monthRank) && (
+      {prizes.length > 0 && (
         <CollapsibleSection label={lastOne ? '平均回数・相場・ラストワン賞の費用を見る' : '平均回数・相場を見る'}>
           {/* 平均回数は「総本数」と「目当ての賞の本数」だけで決まり、どの賞かには依存しない。
               以前は A・B・C賞ごとに同じ数字の表を3つ並べていたため、1つの表にまとめた（2026-11）。 */}
@@ -194,8 +169,6 @@ export default function ExpectedValueSection({
             </div>
           )}
 
-          <PriceSparkline series={sparklineSeries} />
-
           {lastOne && (
             <p className="text-xs text-stone-600 leading-relaxed mb-4">
               ラストワン賞は最後の1本を引いた人がもらえる賞で、残りを全部引けば確実に取れます（費用＝残り本数×{price.toLocaleString()}円。例：残り{LAST_ONE_EXAMPLE_REMAINING}本なら{(LAST_ONE_EXAMPLE_REMAINING * price).toLocaleString()}円）。
@@ -203,16 +176,11 @@ export default function ExpectedValueSection({
             </p>
           )}
 
-          {((topDesignCount > 0 && totalDesignCount > 0) || monthRank) && (
+          {topDesignCount > 0 && totalDesignCount > 0 && (
             <div className="mb-4">
               <p className="text-xs font-bold text-stone-500 mb-2">賞の構成</p>
               <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 space-y-2 text-xs text-stone-600 leading-relaxed">
-                {topDesignCount > 0 && totalDesignCount > 0 && (
-                  <p>上位賞（{TOP_GRADES.join('・')}）は全{totalDesignCount}種のうち{topDesignCount}種（{Math.round((topDesignCount / totalDesignCount) * 100)}%）を占めます。</p>
-                )}
-                {monthRank && (
-                  <p>同じ月発売の{monthRank.total}弾の中で、1回あたりの価格は{monthRank.rank}番目に高い商品です。</p>
-                )}
+                <p>上位賞（{TOP_GRADES.join('・')}）は全{totalDesignCount}種のうち{topDesignCount}種（{Math.round((topDesignCount / totalDesignCount) * 100)}%）を占めます。</p>
               </div>
             </div>
           )}

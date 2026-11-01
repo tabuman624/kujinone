@@ -44,3 +44,21 @@ export function freshValue(p: PriceSource): { value: number; updatedAt: string }
   }
   return null
 }
+
+// 鮮度を問わず「最後に取得できた相場」を取得日つきで返す（発売90日超で自動更新が止まったくじの記録表示用）。
+// 期待値の計算には使わない（freshValueだけを使う）。両方の値に取得日があり5倍以上食い違う場合は、
+// freshValueと同じくデータ不備として扱う。取得日が無い値（レガシーデータ）は日付を示せないので使わない。
+// 両方あるときは取得日が新しい方を、同じ日ならfreshValueと同じくmarket_priceを優先する。
+export function lastDatedValue(p: PriceSource): { value: number; updatedAt: string } | null {
+  const market = p.market_price != null && p.market_price_updated_at
+    ? { value: p.market_price, updatedAt: p.market_price_updated_at } : null
+  const auction = p.auction_price_min != null && p.auction_price_updated_at
+    ? { value: p.auction_price_min, updatedAt: p.auction_price_updated_at } : null
+  if (market && auction) {
+    const bigger = Math.max(market.value, auction.value)
+    const smaller = Math.min(market.value, auction.value)
+    if (smaller > 0 && bigger / smaller >= DIVERGENCE_RATIO) return null
+    return auction.updatedAt > market.updatedAt ? auction : market
+  }
+  return market ?? auction
+}

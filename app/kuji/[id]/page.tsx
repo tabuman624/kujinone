@@ -5,8 +5,9 @@ import { notFound } from 'next/navigation'
 import { supabase } from '../../lib/supabase'
 import PrizeList from './PrizeList'
 import PrizePopularity, { loadPopularityFlags } from './PrizePopularity'
-import ExpectedValueSection, { loadMonthRank } from './ExpectedValueSection'
+import ExpectedValueSection from './ExpectedValueSection'
 import { loadSparklineSeries } from './PriceSparkline'
+import KujiDataSection, { loadKujiData, robustTrendSummary } from './KujiDataSection'
 import KujiViewTracker from './KujiViewTracker'
 import AffiliateLink from '../../components/AffiliateLink'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
@@ -64,8 +65,15 @@ const RELATED_POSTS_UPCOMING = [
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
-  const { data: kuji } = await supabase.from('kuji').select('title, price, release_at, banner_url, image_url').eq('id', id).single()
+  const [{ data: kuji }, { count: prizeCount, error: prizeCountError }] = await Promise.all([
+    supabase.from('kuji').select('title, price, release_at, banner_url, image_url').eq('id', id).single(),
+    supabase.from('prizes').select('id', { count: 'exact', head: true }).eq('kuji_id', id),
+  ])
   if (!kuji) return {}
+  // 賞品が1件も登録されていないページ（発表直後で公式にまだラインナップが無いもの）は中身が薄いので noindex。
+  // 賞品が登録されると revalidate-changed（prizes.created_at を監視）がこのページを再生成し、自動で外れる。
+  // 件数の取得に失敗したときは noindex にしない（誤って検索から外さないため）。
+  const noPrizes = !prizeCountError && prizeCount === 0
   const ogImage = kuji.banner_url || kuji.image_url || '/logo.png'
   const title = buildKujiTitle(kuji.title)
   const releaseJa = kuji.release_at
@@ -76,6 +84,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     title,
     description,
     alternates: { canonical: `/kuji/${id}` },
+    ...(noPrizes ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       title,
       description,
@@ -107,11 +116,16 @@ export default async function KujiDetail({
   // 子が個別にawaitすると、HTML内の出力順がSupabaseの応答順で毎回入れ替わり、
   // 内容が同じでもISR再生成のたびに「変更あり」と判定されWritesが発生するため。
   const isReleased = kuji.release_at <= today
-  const [monthRank, sparklineSeries, popularityFlags] = await Promise.all([
-    loadMonthRank(Number(id), kuji.release_at),
-    loadSparklineSeries(prizes ?? [], isReleased),
+  const [kujiData, sparklineSeries, popularityFlags] = await Promise.all([
+    loadKujiData(
+      { id: Number(id), price: kuji.price, release_at: kuji.release_at, product_id: kuji.product_id },
+      (prizes ?? []).map(p => p.grade),
+    ),
+    loadSparklineSeries(prizes ?? [], isReleased, kuji.release_at),
     loadPopularityFlags(Number(id), (prizes ?? []).map(p => p.id)),
   ])
+  // MARKET段落：このくじ自身の頑健な変化率が出せればそれを、無ければサイト全体の集計を書く
+  const ownTrendText = robustTrendSummary(sparklineSeries)
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -255,6 +269,16 @@ export default async function KujiDetail({
           </div>
         )}
 
+        <KujiDataSection
+          data={kujiData}
+          prizes={prizes ?? []}
+          price={kuji.price}
+          releaseAt={kuji.release_at}
+          isReleased={isReleased}
+          today={today}
+          sparklineSeries={sparklineSeries}
+        />
+
         <ExpectedValueSection
           kujiId={Number(id)}
           isReleased={isReleased}
@@ -263,8 +287,6 @@ export default async function KujiDetail({
           totalCountSource={kuji.total_count_source}
           kujiUpdatedAt={kuji.updated_at}
           prizes={prizes ?? []}
-          monthRank={monthRank}
-          sparklineSeries={sparklineSeries}
         />
 
         {prizes && prizes.length > 0 && (
@@ -275,7 +297,7 @@ export default async function KujiDetail({
           <div className="mb-6 anim-fade-up" style={{ animationDelay: `${260 + (prizes?.length || 0) * 60}ms` }}>
             <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">相場を確認・購入する / MARKET</h2>
             <p className="text-xs text-stone-500 mb-3 leading-relaxed">
-              『{kuji.title}』の中古相場はメルカリ・駿河屋などで確認できます。{priceRangeText}景品によって差はありますが、発売後1週間ほどで値下がりするものが多い一方、値上がりするものもあります（くじのねの集計では、発売1週間後の落札相場は中央値で発売日の約9割）。
+              『{kuji.title}』の中古相場はメルカリ・駿河屋などで確認できます。{priceRangeText}景品によって差はありますが、発売後1週間ほどで値下がりするものが多い一方、値上がりするものもあります{ownTrendText ? `（${ownTrendText}）。` : '（くじのねの集計では、発売1週間後の落札相場は中央値で発売日の約9割）。'}
             </p>
             <div className="space-y-2">
               {[
