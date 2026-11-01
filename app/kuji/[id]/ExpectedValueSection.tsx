@@ -65,6 +65,8 @@ export default function ExpectedValueSection({
   if (!totalCount || totalCount <= 0) return null
 
   const lotTotal = price * totalCount
+  // 実測でない総本数（仮置きの80本）は、事実と誤解されないよう「仮定」と明記する
+  const assumed = totalCountSource !== 'measured'
   const topPrizes = prizes.filter(p => TOP_GRADES.includes(p.grade))
 
   // このページのデータ最終更新 = 商品データ・相場データ（全賞対象）のうち最新のタイムスタンプ。
@@ -111,11 +113,11 @@ export default function ExpectedValueSection({
           <p className="text-base font-black text-stone-800" style={{ fontVariantNumeric: 'tabular-nums' }}>{price.toLocaleString()}円</p>
         </div>
         <div className="bg-stone-50 border border-stone-200 rounded-xl p-3 text-center">
-          <p className="text-[10px] text-stone-400 font-bold mb-1">総本数</p>
+          <p className="text-[10px] text-stone-400 font-bold mb-1">{assumed ? '総本数（仮定）' : '総本数'}</p>
           <p className="text-base font-black text-stone-800" style={{ fontVariantNumeric: 'tabular-nums' }}>{totalCount.toLocaleString()}本</p>
         </div>
         <div className="bg-stone-50 border border-shu-bg rounded-xl p-3 text-center">
-          <p className="text-[10px] text-stone-400 font-bold mb-1">ロット総額</p>
+          <p className="text-[10px] text-stone-400 font-bold mb-1">{assumed ? 'ロット総額（仮定）' : 'ロット総額'}</p>
           <p className="text-base font-black text-shu" style={{ fontVariantNumeric: 'tabular-nums' }}>{lotTotal.toLocaleString()}円</p>
         </div>
       </div>

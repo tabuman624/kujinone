@@ -8,7 +8,7 @@ import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
 // （app/kuji/[id]/PriceSparkline.tsx と同じ対応）。
 export type SameIpData = {
   ipName: string
-  others: Array<{ id: number; title: string; price: number; release_at: string | null; total_count: number | null }>
+  others: Array<{ id: number; title: string; price: number; release_at: string | null; }>
 }
 
 export async function loadSameIpComparison(kujiId: number): Promise<SameIpData | null> {
@@ -23,7 +23,7 @@ export async function loadSameIpComparison(kujiId: number): Promise<SameIpData |
 
   const { data: all } = await supabase
     .from('kuji')
-    .select('id, title, price, release_at, total_count, product_id')
+    .select('id, title, price, release_at, product_id')
     .eq('is_active', true)
     .order('id', { ascending: true })
 
@@ -31,7 +31,7 @@ export async function loadSameIpComparison(kujiId: number): Promise<SameIpData |
     .filter(k => k.id !== kujiId && ipSlugFor(k.product_id as string) === slug)
     .sort((a, b) => (b.release_at ?? '').localeCompare(a.release_at ?? ''))
     .slice(0, 5)
-    .map(k => ({ id: k.id, title: k.title, price: k.price, release_at: k.release_at, total_count: k.total_count }))
+    .map(k => ({ id: k.id, title: k.title, price: k.price, release_at: k.release_at }))
 
   return { ipName, others }
 }
@@ -60,7 +60,6 @@ export default function SameIpComparison({ data }: { data: SameIpData | null }) 
               <p className="text-xs text-stone-500 mt-0.5">
                 {k.release_at ? `${k.release_at.slice(0, 7).replace('-', '年')}月発売` : '発売日未定'}
                 ・{k.price.toLocaleString()}円/回
-                {k.total_count ? `・全${k.total_count}本` : ''}
               </p>
             </div>
             <span className="text-shu text-sm flex-shrink-0">→</span>

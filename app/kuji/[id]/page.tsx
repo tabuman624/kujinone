@@ -174,7 +174,8 @@ export default async function KujiDetail({
         <h1 className="text-lg font-black leading-snug">{kuji.title}</h1>
         <div className="flex gap-2 mt-2">
           <span className="text-xs bg-white/10 text-stone-300 px-2 py-0.5 rounded-full">{kuji.price}円/回</span>
-          {kuji.total_count > 0 && <span className="text-xs bg-white/10 text-stone-300 px-2 py-0.5 rounded-full">全{kuji.total_count}本</span>}
+          {/* 総本数はほぼ全件が仮置きの80本なので、実際に確認できた場合だけ見出しに出す */}
+          {kuji.total_count > 0 && kuji.total_count_source === 'measured' && <span className="text-xs bg-white/10 text-stone-300 px-2 py-0.5 rounded-full">全{kuji.total_count}本</span>}
         </div>
       </div>
 
