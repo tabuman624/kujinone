@@ -78,10 +78,6 @@ export default function ExpectedValueSection({
   // 以前は残り本数ごとの5行の表（価格×80・40・20・10・5）だったが、掛け算を並べただけなので1文にした（2026-11）。
   const lastOne = prizes.find(p => p.grade === 'ラストワン賞')
 
-  // --- 賞構成の分析（金額に依存しない。種数比率と価格ランキングのみ） ---
-  const topDesignCount = topPrizes.reduce((s, p) => s + (p.total || 0), 0)
-  const totalDesignCount = prizes.reduce((s, p) => s + (p.total || 0), 0)
-
   return (
     <div className="mb-6 anim-fade-up">
       <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">この一番くじの期待値</h2>
@@ -174,15 +170,6 @@ export default function ExpectedValueSection({
               ラストワン賞は最後の1本を引いた人がもらえる賞で、残りを全部引けば確実に取れます（費用＝残り本数×{price.toLocaleString()}円。例：残り{LAST_ONE_EXAMPLE_REMAINING}本なら{(LAST_ONE_EXAMPLE_REMAINING * price).toLocaleString()}円）。
               <Link href="/blog/ichiban-kuji-last-one" className="text-shu hover:underline ml-1">ラストワン賞の狙い方</Link>
             </p>
-          )}
-
-          {topDesignCount > 0 && totalDesignCount > 0 && (
-            <div className="mb-4">
-              <p className="text-xs font-bold text-stone-500 mb-2">賞の構成</p>
-              <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 space-y-2 text-xs text-stone-600 leading-relaxed">
-                <p>上位賞（{TOP_GRADES.join('・')}）は全{totalDesignCount}種のうち{topDesignCount}種（{Math.round((topDesignCount / totalDesignCount) * 100)}%）を占めます。</p>
-              </div>
-            </div>
           )}
         </CollapsibleSection>
       )}

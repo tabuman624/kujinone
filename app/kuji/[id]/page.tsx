@@ -117,10 +117,7 @@ export default async function KujiDetail({
   // 内容が同じでもISR再生成のたびに「変更あり」と判定されWritesが発生するため。
   const isReleased = kuji.release_at <= today
   const [kujiData, sparklineSeries, popularityFlags] = await Promise.all([
-    loadKujiData(
-      { id: Number(id), price: kuji.price, release_at: kuji.release_at, product_id: kuji.product_id },
-      (prizes ?? []).map(p => p.grade),
-    ),
+    loadKujiData({ id: Number(id), price: kuji.price, release_at: kuji.release_at, product_id: kuji.product_id }),
     loadSparklineSeries(prizes ?? [], isReleased, kuji.release_at),
     loadPopularityFlags(Number(id), (prizes ?? []).map(p => p.id)),
   ])
