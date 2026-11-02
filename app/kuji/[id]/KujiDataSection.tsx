@@ -1,12 +1,17 @@
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
-import { freshValue, lastDatedValue, type PriceSource } from '../../lib/priceFreshness'
+import { freshValue, lastDatedValue } from '../../lib/priceFreshness'
 import { formatPct } from '../../lib/priceTrend'
 import { monthLabel } from '../../lib/jst'
 import PriceSparkline, { type SparklineSeries } from './PriceSparkline'
+import CollapsibleSection from './CollapsibleSection'
+import Disclaimer from './Disclaimer'
+import { EvSummary, AverageDraws, TopMarketPrices, LastOneCost, topPrizeValues, pageLastUpdated, type EvPrize } from './ExpectedValueSection'
 
 // 「このくじのデータ」: DBから決まる事実だけを、数値・短い定型文・小さな表で出す（文章は生成しない）。
+// 期待値（価格・総本数・計算ボタン）は常に見せ、相場・平均回数・ラストワン賞・過去弾は折りたたむ。
+// 折りたたんだ中身も初期HTMLには入っている（CollapsibleSection は見た目だけ隠す）。
 // データ取得はページ側でまとめて行い、このコンポーネントは同期描画にする（PriceSparklineのコメント参照）。
 // 取得はid順・並べ替えは安定ソートにして、同じデータなら毎回同じHTMLになるようにしている。
 
@@ -116,20 +121,26 @@ function ymLabel(date: string | null): string {
   return date ? monthLabel(date.slice(0, 7)) : '発売日未定'
 }
 
-type OwnPrize = { grade: string; name: string } & PriceSource
-
 export default function KujiDataSection({
+  kujiId,
   data,
   prizes,
   price,
+  totalCount,
+  totalCountSource,
+  kujiUpdatedAt,
   releaseAt,
   isReleased,
   today,
   sparklineSeries,
 }: {
+  kujiId: number
   data: KujiData
-  prizes: OwnPrize[]
+  prizes: EvPrize[]
   price: number
+  totalCount: number | null
+  totalCountSource: 'measured' | 'default' | null
+  kujiUpdatedAt: string | null
   releaseAt: string | null
   isReleased: boolean
   today: string
@@ -140,7 +151,14 @@ export default function KujiDataSection({
   const daysSinceRelease = isReleased && releaseAt ? daysBetween(releaseAt, today) : null
   const trackingEnded = daysSinceRelease != null && daysSinceRelease > MARKET_TRACKING_DAYS
 
-  // 5. 自動更新が終わった古いくじの「最後に取れた相場」。新しい値（freshValue）が出ている賞は上位賞の相場欄に任せる。
+  // 期待値の部品は総本数があるときだけ出す（今は全件に実測か仮置きの80本が入っている）
+  const total = totalCount && totalCount > 0 ? totalCount : null
+  const assumed = totalCountSource !== 'measured'
+  const topValues = total ? topPrizeValues(prizes, isReleased) : []
+  const lastOne = total ? prizes.find(p => p.grade === 'ラストワン賞') : undefined
+  const showDraws = total != null && prizes.length > 0
+
+  // 自動更新が終わった古いくじの「最後に取れた相場」。新しい値（freshValue）が出ている賞は上位賞の相場欄に任せる。
   const anyFresh = isReleased && prizes.some(p => freshValue(p) != null)
   const lastValues = trackingEnded
     ? [...prizes]
@@ -149,14 +167,23 @@ export default function KujiDataSection({
         .map(p => ({ grade: p.grade, name: p.name, last: lastDatedValue(p) }))
         .filter((p): p is { grade: string; name: string; last: { value: number; updatedAt: string } } => p.last != null)
     : []
-  // 6b. 古いくじで、相場を何も示せないもの
+  // 古いくじで、相場を何も示せないもの
   const noMarketAtAll = trackingEnded && !anyFresh && lastValues.length === 0
 
   const { series } = data
   const prev = series?.past[0] ?? null
 
-  const hasAnything = partial || noMarketAtAll || series || sparklineSeries.length > 0 || lastValues.length > 0
-  if (!hasAnything) return null
+  // 折りたたむ中身。ボタンの文言は、実際に入っているものだけを並べる。
+  const hasMarket = topValues.length > 0 || sparklineSeries.length > 0 || lastValues.length > 0
+  const labelParts = [
+    hasMarket && '相場',
+    showDraws && '平均回数',
+    lastOne && 'ラストワン賞',
+    series && '過去弾',
+  ].filter((s): s is string => !!s)
+  const showNotes = partial || noMarketAtAll
+
+  if (!showNotes && !total && labelParts.length === 0) return null
 
   const sub = 'text-xs font-bold text-stone-500 mb-2'
   const box = 'bg-stone-50 border border-stone-200 rounded-xl'
@@ -165,78 +192,100 @@ export default function KujiDataSection({
   return (
     <div className="mb-6 anim-fade-up">
       <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">このくじのデータ / DATA</h2>
-      <div className="space-y-5">
-        {(partial || noMarketAtAll) && (
-          <div className={`${box} px-4 py-3 text-xs text-stone-600 leading-relaxed space-y-1`}>
-            {partial && <p>現在発表されているのは{grades.join('・')}です。残りの賞は公式発表後に自動で追加されます。</p>}
-            {noMarketAtAll && <p>相場の自動取得は発売後{MARKET_TRACKING_DAYS}日までです。</p>}
-          </div>
-        )}
 
-        {series && (
-          <div>
-            <p className={sub}>{series.ipName}の過去弾</p>
-            {prev && (
-              <p className="text-xs text-stone-600 mb-2" style={num}>
-                {prev.price === price
-                  ? `前の弾（${ymLabel(prev.release_at)}）と同じ1回${price.toLocaleString()}円です。`
-                  : `前の弾（${ymLabel(prev.release_at)}）は${prev.price.toLocaleString()}円 → 今回${price.toLocaleString()}円（${price > prev.price ? '+' : '−'}${Math.abs(price - prev.price).toLocaleString()}円）`}
-              </p>
-            )}
-            {series.past.length > 0 && (
-              <div className="border border-stone-200 rounded-xl overflow-hidden">
-                {series.past.map((k, i) => (
-                  <Link
-                    key={k.id}
-                    href={`/kuji/${k.id}`}
-                    className={`flex items-center justify-between gap-3 px-3 py-2.5 press hover:bg-stone-50 transition-colors ${i !== series.past.length - 1 ? 'border-b border-stone-100' : ''}`}
-                  >
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold text-stone-800 truncate">{k.title}</p>
-                      <p className="text-[11px] text-stone-500 mt-0.5" style={num}>
-                        {ymLabel(k.release_at)}発売・{k.price.toLocaleString()}円/回
-                      </p>
-                    </div>
-                    <span className="text-shu text-sm flex-shrink-0">→</span>
-                  </Link>
-                ))}
+      {showNotes && (
+        <div className={`${box} px-4 py-3 mb-4 text-xs text-stone-600 leading-relaxed space-y-1`}>
+          {partial && <p>現在発表されているのは{grades.join('・')}です。残りの賞は公式発表後に自動で追加されます。</p>}
+          {noMarketAtAll && <p>相場の自動取得は発売後{MARKET_TRACKING_DAYS}日までです。</p>}
+        </div>
+      )}
+
+      {total && <EvSummary kujiId={kujiId} price={price} totalCount={total} assumed={assumed} />}
+
+      {labelParts.length > 0 && (
+        <CollapsibleSection label={`${labelParts.join('・')}を見る`}>
+          <div className="space-y-5 mb-4">
+            {topValues.length > 0 && <TopMarketPrices items={topValues} />}
+
+            {sparklineSeries.length > 0 && (
+              <div>
+                <p className={sub}>発売後の落札相場の変化</p>
+                <PriceSparkline series={sparklineSeries} />
               </div>
             )}
-            {series.latest && (
-              <p className="text-xs text-stone-600 mt-2" style={num}>
-                このシリーズの最新弾：
-                <Link href={`/kuji/${series.latest.id}`} className="text-shu hover:underline">{series.latest.title}</Link>
-                （{series.latest.release_at ? `${ymLabel(series.latest.release_at)}${series.latest.release_at > today ? '発売予定' : '発売'}` : '発売日未定'}・{series.latest.price.toLocaleString()}円/回）
-              </p>
+
+            {lastValues.length > 0 && (
+              <div>
+                <p className={sub}>最後に取得できた相場</p>
+                <div className={`${box} p-3 space-y-1.5`}>
+                  {lastValues.map(p => (
+                    <div key={p.grade} className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-stone-600 truncate">【{p.grade}】{p.name}</span>
+                      <span className="text-xs text-stone-800 whitespace-nowrap" style={num}>
+                        <span className="text-[10px] text-stone-400 mr-1.5">最終取得 {p.last.updatedAt.slice(0, 10)} 時点</span>
+                        <span className="font-bold">¥{p.last.value.toLocaleString()}</span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] text-stone-400 mt-1.5">発売から{MARKET_TRACKING_DAYS}日を過ぎたため、相場の自動更新は終了しています。期待値の計算には使っていません。</p>
+              </div>
+            )}
+
+            {showDraws && total && <AverageDraws price={price} totalCount={total} assumed={assumed} />}
+
+            {lastOne && <LastOneCost price={price} />}
+
+            {series && (
+              <div>
+                <p className={sub}>{series.ipName}の過去弾</p>
+                {prev && (
+                  <p className="text-xs text-stone-600 mb-2" style={num}>
+                    {prev.price === price
+                      ? `前の弾（${ymLabel(prev.release_at)}）と同じ1回${price.toLocaleString()}円です。`
+                      : `前の弾（${ymLabel(prev.release_at)}）は${prev.price.toLocaleString()}円 → 今回${price.toLocaleString()}円（${price > prev.price ? '+' : '−'}${Math.abs(price - prev.price).toLocaleString()}円）`}
+                  </p>
+                )}
+                {series.past.length > 0 && (
+                  <div className="border border-stone-200 rounded-xl overflow-hidden">
+                    {series.past.map((k, i) => (
+                      <Link
+                        key={k.id}
+                        href={`/kuji/${k.id}`}
+                        className={`flex items-center justify-between gap-3 px-3 py-2.5 press hover:bg-stone-50 transition-colors ${i !== series.past.length - 1 ? 'border-b border-stone-100' : ''}`}
+                      >
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-stone-800 truncate">{k.title}</p>
+                          <p className="text-[11px] text-stone-500 mt-0.5" style={num}>
+                            {ymLabel(k.release_at)}発売・{k.price.toLocaleString()}円/回
+                          </p>
+                        </div>
+                        <span className="text-shu text-sm flex-shrink-0">→</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+                {series.latest && (
+                  <p className="text-xs text-stone-600 mt-2" style={num}>
+                    このシリーズの最新弾：
+                    <Link href={`/kuji/${series.latest.id}`} className="text-shu hover:underline">{series.latest.title}</Link>
+                    （{series.latest.release_at ? `${ymLabel(series.latest.release_at)}${series.latest.release_at > today ? '発売予定' : '発売'}` : '発売日未定'}・{series.latest.price.toLocaleString()}円/回）
+                  </p>
+                )}
+              </div>
             )}
           </div>
-        )}
+        </CollapsibleSection>
+      )}
 
-        {sparklineSeries.length > 0 && (
-          <div>
-            <p className={sub}>発売後の落札相場の変化</p>
-            <PriceSparkline series={sparklineSeries} />
-          </div>
-        )}
-
-        {lastValues.length > 0 && (
-          <div>
-            <p className={sub}>最後に取得できた相場</p>
-            <div className={`${box} p-3 space-y-1.5`}>
-              {lastValues.map(p => (
-                <div key={p.grade} className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-stone-600 truncate">【{p.grade}】{p.name}</span>
-                  <span className="text-xs text-stone-800 whitespace-nowrap" style={num}>
-                    <span className="text-[10px] text-stone-400 mr-1.5">最終取得 {p.last.updatedAt.slice(0, 10)} 時点</span>
-                    <span className="font-bold">¥{p.last.value.toLocaleString()}</span>
-                  </span>
-                </div>
-              ))}
-            </div>
-            <p className="text-[10px] text-stone-400 mt-1.5">発売から{MARKET_TRACKING_DAYS}日を過ぎたため、相場の自動更新は終了しています。期待値の計算には使っていません。</p>
-          </div>
-        )}
-      </div>
+      {total && (
+        <Disclaimer
+          hasMarketData={topValues.length > 0}
+          assumed={assumed}
+          totalCount={total}
+          pageLastUpdated={pageLastUpdated(kujiUpdatedAt, prizes)}
+        />
+      )}
     </div>
   )
 }

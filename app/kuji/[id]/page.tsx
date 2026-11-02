@@ -5,7 +5,6 @@ import { notFound } from 'next/navigation'
 import { supabase } from '../../lib/supabase'
 import PrizeList from './PrizeList'
 import PrizePopularity, { loadPopularityFlags } from './PrizePopularity'
-import ExpectedValueSection from './ExpectedValueSection'
 import { loadSparklineSeries } from './PriceSparkline'
 import KujiDataSection, { loadKujiData, robustTrendSummary } from './KujiDataSection'
 import KujiViewTracker from './KujiViewTracker'
@@ -267,23 +266,17 @@ export default async function KujiDetail({
         )}
 
         <KujiDataSection
+          kujiId={Number(id)}
           data={kujiData}
           prizes={prizes ?? []}
-          price={kuji.price}
-          releaseAt={kuji.release_at}
-          isReleased={isReleased}
-          today={today}
-          sparklineSeries={sparklineSeries}
-        />
-
-        <ExpectedValueSection
-          kujiId={Number(id)}
-          isReleased={isReleased}
           price={kuji.price}
           totalCount={kuji.total_count}
           totalCountSource={kuji.total_count_source}
           kujiUpdatedAt={kuji.updated_at}
-          prizes={prizes ?? []}
+          releaseAt={kuji.release_at}
+          isReleased={isReleased}
+          today={today}
+          sparklineSeries={sparklineSeries}
         />
 
         {prizes && prizes.length > 0 && (
