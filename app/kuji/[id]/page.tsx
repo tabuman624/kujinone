@@ -7,11 +7,13 @@ import PrizeList from './PrizeList'
 import PrizePopularity, { loadPopularityFlags } from './PrizePopularity'
 import { loadSparklineSeries } from './PriceSparkline'
 import KujiDataSection, { loadKujiData, robustTrendSummary } from './KujiDataSection'
+import { topPrizeValues, type EvPrize } from './ExpectedValueSection'
 import KujiViewTracker from './KujiViewTracker'
 import AffiliateLink from '../../components/AffiliateLink'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
 import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
 import { freshValue } from '../../lib/priceFreshness'
+import { jaMonthDay } from '../../lib/jst'
 
 // revalidateを1日にしている理由は app/api/cron/revalidate-changed/route.ts を参照。
 // データ変化があったページはそのcronが個別に更新する。
@@ -62,23 +64,52 @@ const RELATED_POSTS_UPCOMING = [
   { href: '/blog/kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説' },
 ]
 
+// 検索結果の説明文。以前は全ページ同じ定型文だったので、発売済みで中古相場（freshValue、60日以内）が
+// 取れているくじは、上位賞とラストワン賞の相場を先頭に入れてページごとに違う中身にする（2026-11）。
+// 数字はページ内の「上位賞の中古相場」「ラストワン賞」の表示と同じ値。
+function buildDescription(
+  kuji: { title: string; price: number; release_at: string | null },
+  prizes: EvPrize[],
+  isReleased: boolean,
+): string {
+  const prefix = kuji.release_at ? `${jaMonthDay(kuji.release_at)}発売『${kuji.title}』の` : `『${kuji.title}』の`
+  const top = topPrizeValues(prizes, isReleased)[0] ?? null
+  const lastOne = isReleased ? prizes.find(p => p.grade === 'ラストワン賞') : undefined
+  const lastOneFresh = lastOne ? freshValue(lastOne) : null
+  const items = [
+    ...(top ? [{ grade: top.grade, ...top.fresh }] : []),
+    ...(lastOneFresh ? [{ grade: 'ラストワン賞', ...lastOneFresh }] : []),
+  ]
+  if (items.length === 0) {
+    return `${prefix}全賞品ラインナップと、1回${kuji.price}円で目当ての賞が当たるまでの平均費用、ロット買いの費用の目安。メルカリ・駿河屋の中古相場もあわせてチェックできます。`
+  }
+  const latest = items.map(i => i.updatedAt).sort().at(-1)!
+  const prices = items
+    .map((i, n) => `${i.grade}${n === 0 ? 'の中古相場' : ''}は約${i.value.toLocaleString()}円`)
+    .join('、')
+  return `${prefix}${prices}（${jaMonthDay(latest)}時点）。全賞品ラインナップ、目当ての賞が出るまでの平均回数、ロット買いの費用も掲載しています。`
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
-  const [{ data: kuji }, { count: prizeCount, error: prizeCountError }] = await Promise.all([
+  const [{ data: kuji }, { data: prizeRows, error: prizesError }] = await Promise.all([
     supabase.from('kuji').select('title, price, release_at, banner_url, image_url').eq('id', id).single(),
-    supabase.from('prizes').select('id', { count: 'exact', head: true }).eq('kuji_id', id),
+    supabase
+      .from('prizes')
+      .select('grade, name, total, market_price, market_price_updated_at, auction_price_min, auction_price_updated_at')
+      .eq('kuji_id', id)
+      .order('sort_order', { ascending: true }),
   ])
   if (!kuji) return {}
   // 賞品が1件も登録されていないページ（発表直後で公式にまだラインナップが無いもの）は中身が薄いので noindex。
   // 賞品が登録されると revalidate-changed（prizes.created_at を監視）がこのページを再生成し、自動で外れる。
-  // 件数の取得に失敗したときは noindex にしない（誤って検索から外さないため）。
-  const noPrizes = !prizeCountError && prizeCount === 0
+  // 賞品の取得に失敗したときは noindex にしない（誤って検索から外さないため）。
+  const noPrizes = !prizesError && prizeRows != null && prizeRows.length === 0
   const ogImage = kuji.banner_url || kuji.image_url || '/logo.png'
   const title = buildKujiTitle(kuji.title)
-  const releaseJa = kuji.release_at
-    ? `${Number(kuji.release_at.slice(5, 7))}月${Number(kuji.release_at.slice(8, 10))}日`
-    : null
-  const description = `${releaseJa ? `${releaseJa}発売『${kuji.title}』の` : `『${kuji.title}』の`}全賞品ラインナップと、1回${kuji.price}円で目当ての賞が当たるまでの平均費用。メルカリ・駿河屋の中古相場もあわせてチェックできます。`
+  // 発売済みかどうかはページ本体と同じ判定（UTCの日付）にする
+  const isReleased = !!kuji.release_at && kuji.release_at <= new Date().toISOString().slice(0, 10)
+  const description = buildDescription(kuji, prizeRows ?? [], isReleased)
   return {
     title,
     description,

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
-import { freshValue, lastDatedValue } from '../../lib/priceFreshness'
+import { freshValue, lastDatedValue, lowerFreshValue } from '../../lib/priceFreshness'
 import { formatPct } from '../../lib/priceTrend'
 import { monthLabel } from '../../lib/jst'
 import PriceSparkline, { type SparklineSeries } from './PriceSparkline'
@@ -156,6 +156,8 @@ export default function KujiDataSection({
   const assumed = totalCountSource !== 'measured'
   const topValues = total ? topPrizeValues(prizes, isReleased) : []
   const lastOne = total ? prizes.find(p => p.grade === 'ラストワン賞') : undefined
+  // 相場は発売済みのくじだけ（topPrizeValues と同じ方針）。分かれ目の本数に使うので低い方の値を取る
+  const lastOneMarket = lastOne && isReleased ? lowerFreshValue(lastOne) : null
   const showDraws = total != null && prizes.length > 0
 
   // 自動更新が終わった古いくじの「最後に取れた相場」。新しい値（freshValue）が出ている賞は上位賞の相場欄に任せる。
@@ -234,7 +236,7 @@ export default function KujiDataSection({
 
             {showDraws && total && <AverageDraws price={price} totalCount={total} assumed={assumed} />}
 
-            {lastOne && <LastOneCost price={price} />}
+            {lastOne && total && <LastOneCost price={price} totalCount={total} market={lastOneMarket} />}
 
             {series && (
               <div>

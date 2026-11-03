@@ -31,6 +31,11 @@ export function weekdayLabel(date: string): string {
   return WEEKDAYS[weekdayOf(date)]
 }
 
+/** 'YYYY-MM-DD'（またはISO日時の先頭10文字）→ '11月13日' */
+export function jaMonthDay(date: string): string {
+  return `${Number(date.slice(5, 7))}月${Number(date.slice(8, 10))}日`
+}
+
 /** 'YYYY-MM-DD' → '11/13' */
 export function shortDate(date: string): string {
   return `${Number(date.slice(5, 7))}/${Number(date.slice(8, 10))}`

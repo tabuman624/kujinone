@@ -62,3 +62,18 @@ export function lastDatedValue(p: PriceSource): { value: number; updatedAt: stri
   }
   return market ?? auction
 }
+
+// 「この金額までなら」の目安（ラストワン賞の分かれ目など）に使う値。両方の相場が新鮮なら低い方を返す。
+// market_price（販売価格＝希望価格）は実際の取引より高めに出やすく、そのまま使うと「この本数まで引いても
+// 相場以下」の本数を大きく見せてしまうため（2026-11、ヒロアカのラストワン賞で販売価格35,800円・落札13,000円の例）。
+// 食い違いのガードと鮮度の条件は freshValue と同じ。
+export function lowerFreshValue(p: PriceSource): { value: number; updatedAt: string; source: 'market' | 'auction' } | null {
+  const fresh = freshValue(p)
+  if (!fresh) return null
+  const auctionFresh = p.auction_price_min != null && !!p.auction_price_updated_at && daysSince(p.auction_price_updated_at) <= STALE_DAYS
+  if (auctionFresh && (p.auction_price_min as number) <= fresh.value) {
+    return { value: p.auction_price_min as number, updatedAt: p.auction_price_updated_at as string, source: 'auction' }
+  }
+  // ここに来るのは、販売価格が新鮮で、落札価格より低いか落札価格が使えないとき（freshValue は販売価格を優先する）
+  return { ...fresh, source: 'market' }
+}
