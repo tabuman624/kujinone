@@ -239,16 +239,31 @@ function ResultCard({ expected, times, detail }: { expected: number; times: numb
 // liveResultのtimesは「選んだ賞の残数を合算した母集団のうち、いずれか1つが
 // 最初に出るまでの平均回数」(負の超幾何分布)なので、複数選択時は「のいずれか」
 // を明示しないと「両方当たるまで」と誤読される。
+// X の文字数の数え方：日本語などは1文字2、URLは長さに関係なく23、上限280（tools/x-posts/build.py の xw と同じ）。
+// 末尾に X が付ける「via @kujinone」（intent の via）の分も残しておく。
+const X_LIMIT = 280
+const VIA = "kujinone"
+function xWeight(s: string): number {
+  let t = 0
+  for (const ch of s.replace(/https?:\/\/\S+/g, "x".repeat(23))) {
+    const c = ch.codePointAt(0)!
+    t += c <= 4351 || (8192 <= c && c <= 8205) || (8208 <= c && c <= 8223) || (8242 <= c && c <= 8247) ? 1 : 2
+  }
+  return t
+}
+
 function buildShareText(kujiTitle: string, kujiId: number, targetGrade: string, expected: number): string {
   const isMultiple = targetGrade.includes("・")
   const verb = isMultiple ? "のいずれかが当たるまでの平均費用" : "が当たるまでの平均費用"
   const amount = `約${expected.toLocaleString()}円`
-  const url = `https://kujinone.com/kuji/${kujiId}`
+  // シェアされた投稿から来た人を GA4 で数えるための印（X の週次投稿と同じ utm_source/medium）
+  const url = `https://kujinone.com/kuji/${kujiId}?utm_source=x&utm_medium=social&utm_campaign=share&utm_content=calc`
   const build = (title: string) => `【${title}】\n${targetGrade}${verb}：${amount}\n\n#一番くじ\n${url}`
+  const budget = X_LIMIT - xWeight(` via @${VIA}`)
 
   let title = kujiTitle
   let text = build(title)
-  while (text.length > 140 && title.length > 0) {
+  while (xWeight(text) > budget && title.length > 0) {
     title = title.slice(0, -1)
     text = build(`${title}…`)
   }
@@ -256,7 +271,7 @@ function buildShareText(kujiTitle: string, kujiId: number, targetGrade: string, 
 }
 
 function ShareResultButton({ kujiId, kujiTitle, targetGrade, expected }: { kujiId: number; kujiTitle: string; targetGrade: string; expected: number }) {
-  const intentUrl = `https://x.com/intent/post?text=${encodeURIComponent(buildShareText(kujiTitle, kujiId, targetGrade, expected))}`
+  const intentUrl = `https://x.com/intent/post?text=${encodeURIComponent(buildShareText(kujiTitle, kujiId, targetGrade, expected))}&via=${VIA}`
   return (
     <a
       href={intentUrl}

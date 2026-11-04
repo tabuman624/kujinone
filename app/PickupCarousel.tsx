@@ -74,6 +74,9 @@ export default function PickupCarousel({ items }: { items: PickupKuji[] }) {
                   className="object-cover"
                   sizes="85vw"
                   unoptimized
+                  // 1枚目は最初の画面に入る最大の画像（LCP）なので、すぐ・優先して読む。2枚目以降は後回し（既定の lazy）。
+                  // Next.js 16 では priority は非推奨で、loading と fetchPriority を使う（docs: Image の preload）。
+                  {...(i === 0 ? { loading: 'eager' as const, fetchPriority: 'high' as const } : {})}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">

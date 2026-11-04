@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import XFollowCTA from '../components/XFollowCTA'
 import { supabase } from '../lib/supabase'
 import { currentMonthJst, monthLabel, shortDate, todayJst, weekdayOf, weekdayLabel } from '../lib/jst'
 import KujiCard, { type ScheduleKuji } from './KujiCard'
@@ -123,10 +124,14 @@ export default async function SchedulePage() {
       <div className="bg-stone-800 px-5 pt-6 pb-5 text-white">
         <p className="text-[10px] font-bold tracking-widest text-stone-400">SCHEDULE</p>
         <h1 className="text-lg font-black mt-0.5">一番くじ 発売スケジュール</h1>
-        <p className="text-[11px] text-stone-400 mt-1.5">{monthLabel(currentMonth)}以降の発売予定表です。発売日・価格・取扱店を毎朝更新しています。</p>
+        <p className="text-[11px] text-stone-400 mt-1.5">{monthLabel(currentMonth)}以降の発売予定表です。発売日・価格・取扱店を毎日更新しています。</p>
       </div>
 
       <NextReleases items={nextItems} topPrizeByKuji={topPrizeByKuji} />
+
+      <div className="px-4 mt-3">
+        <XFollowCTA compact title="新作の発売前日のお知らせはXで" />
+      </div>
 
       <div className="mt-4">
         {tabs.length > 0 && <ScheduleControls months={tabs} defaultMonth={tabs[0].key} />}

@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { todayJst, jaMonthDay } from '../lib/jst'
 import { computeKujiStats, pyRound, type Bar, type StatKuji, type StatPrize, type StatPricePoint } from '../lib/kujiStats'
 import { expectedDraws } from '../lib/ev'
-import { OG_BASE, OG_IMAGE, X_HANDLE, X_URL } from '../lib/siteMeta'
+import { OG_BASE, X_HANDLE, X_URL } from '../lib/siteMeta'
 
 // くじのねが集めたデータの集計（X の水曜の豆知識と同じ計算。app/lib/kujiStats.ts）。
 // 再生成は1日1回。日付の切り替わり後の更新は /api/cron/revalidate-changed（毎日12時台）が行う。
@@ -18,7 +18,8 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: '/data' },
-  openGraph: { title: `${title} | くじのね`, description, url: 'https://kujinone.com/data', ...OG_BASE, images: [OG_IMAGE] },
+  // 画像は同じフォルダの opengraph-image.tsx。ここで images を書くとそちらが使われなくなる
+  openGraph: { title: `${title} | くじのね`, description, url: 'https://kujinone.com/data', ...OG_BASE },
 }
 
 // X の投稿の返信リンクがこの id を指す（tools/x-posts/build.py の TRIVIA_ANCHORS）。変えるときは両方直す。

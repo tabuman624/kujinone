@@ -10,6 +10,7 @@ import KujiDataSection, { loadKujiData, robustTrendSummary } from './KujiDataSec
 import { topPrizeValues, type EvPrize } from './ExpectedValueSection'
 import KujiViewTracker from './KujiViewTracker'
 import AffiliateLink from '../../components/AffiliateLink'
+import XFollowCTA from '../../components/XFollowCTA'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
 import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
 import { freshValue } from '../../lib/priceFreshness'
@@ -349,6 +350,11 @@ export default async function KujiDetail({
             </div>
           </div>
         )}
+
+        {/* 発売前のくじは、前日の「明日発売」の投稿（tools/x-posts）があることを伝える */}
+        <div className="mt-8">
+          <XFollowCTA title={!isReleased && kuji.release_at ? '発売の前日に、Xでお知らせを投稿しています' : undefined} />
+        </div>
 
         <div className="mt-8 pt-6 border-t border-stone-100">
           <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">関連コラム / COLUMN</h2>
