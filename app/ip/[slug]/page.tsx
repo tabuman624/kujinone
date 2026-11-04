@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { getIpGroups, IP_NAMES } from '../../lib/ipGroups'
 import IpStats from './IpStats'
 import IpPrizeRankings from './IpPrizeRankings'
+import { OG_BASE, OG_IMAGE } from '../../lib/siteMeta'
 
 // revalidateを1日にしている理由は app/api/cron/revalidate-changed/route.ts を参照。
 // データ変化があったページはそのcronが個別に更新する。
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title,
     description,
     alternates: { canonical: `/ip/${slug}` },
-    openGraph: { title, description, url: `https://kujinone.com/ip/${slug}` },
+    openGraph: { title, description, url: `https://kujinone.com/ip/${slug}`, ...OG_BASE, images: [OG_IMAGE] },
   }
 }
 

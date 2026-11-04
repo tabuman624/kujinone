@@ -14,6 +14,7 @@ import { buildTitleKeyword } from '../../lib/searchKeyword'
 import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
 import { freshValue } from '../../lib/priceFreshness'
 import { jaMonthDay } from '../../lib/jst'
+import { OG_BASE } from '../../lib/siteMeta'
 
 // revalidateを1日にしている理由は app/api/cron/revalidate-changed/route.ts を参照。
 // データ変化があったページはそのcronが個別に更新する。
@@ -119,13 +120,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       title,
       description,
       url: `https://kujinone.com/kuji/${id}`,
+      ...OG_BASE,
       images: [{ url: ogImage, alt: kuji.title }],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: [ogImage],
     },
   }
 }

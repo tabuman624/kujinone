@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getStoreGroups, STORE_NAMES } from '../../lib/storeGroups'
+import { OG_BASE, OG_IMAGE } from '../../lib/siteMeta'
 
 // revalidateを1日にしている理由は app/api/cron/revalidate-changed/route.ts を参照。
 // データ変化があったページはそのcronが個別に更新する。
@@ -30,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title,
     description,
     alternates: { canonical: `/store/${slug}` },
-    openGraph: { title, description, url: `https://kujinone.com/store/${slug}` },
+    openGraph: { title, description, url: `https://kujinone.com/store/${slug}`, ...OG_BASE, images: [OG_IMAGE] },
     // 3か月表示0、/scheduleの部分集合でしかない（ADSENSE_SPEC「薄いページのnoindex化」判断）。
     // followは維持し、/kuji/[id]へのリンクのクロール価値は残す。
     robots: { index: false, follow: true },

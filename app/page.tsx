@@ -6,6 +6,7 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { supabase } from './lib/supabase'
+import { OG_BASE, OG_IMAGE } from './lib/siteMeta'
 import PickupCarousel from './PickupCarousel'
 
 // Vercelは再生成のたびに（内容が同じでも）ISR Writeを計上するため、再生成は1日1回に抑える。
@@ -20,13 +21,8 @@ export const metadata: Metadata = {
     title: 'くじのね | 一番くじ期待値計算',
     description: '一番くじの期待値を無料で計算。狙う賞を選ぶだけ、登録不要です。',
     url: 'https://kujinone.com',
-    images: [{ url: '/ogp.png', width: 1200, height: 630, alt: 'くじのね' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'くじのね | 一番くじ期待値計算',
-    description: '一番くじの期待値を無料で計算。狙う賞を選ぶだけ、登録不要です。',
-    images: ['/ogp.png'],
+    ...OG_BASE,
+    images: [OG_IMAGE],
   },
 }
 

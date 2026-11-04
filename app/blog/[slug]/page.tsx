@@ -8,8 +8,9 @@ import { notFound } from 'next/navigation'
 import ReadingProgress from './ReadingProgress'
 import { CompareCTA, SellCTA } from '../../components/BlogAffiliateCTA'
 import XIcon from '../../components/XIcon'
-import LatestKujiTable from './LatestKujiTable'
+import LatestKujiTable, { loadLatestKujiRows } from './LatestKujiTable'
 import PriceDistribution from './PriceDistribution'
+import { OG_BASE } from '../../lib/siteMeta'
 
 // 記事本文は静的だが、LatestKujiTable/PriceDistributionが「直近N日」の実データを
 // 動的に集計している。revalidateが無いとビルド時点の値で凍結されてしまうため指定する。
@@ -44,13 +45,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: String(data.title),
       description,
       url: `https://kujinone.com/blog/${slug}`,
+      ...OG_BASE,
+      type: 'article',
       images: [{ url: '/logo.png', alt: 'くじのね' }],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: String(data.title),
-      description,
-      images: ['/logo.png'],
     },
   }
 }
@@ -123,6 +120,7 @@ export default async function BlogDetailPage({
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { data, content } = matter(raw)
   const html = await renderArticleMarkdown(content)
+  const latestKujiRows = slug === 'ichiban-kuji-last-one' ? await loadLatestKujiRows() : []
   const date = fmt(String(data.date))
   const updatedDate = data.updated ? fmt(String(data.updated)) : null
   const readMins = Math.max(1, Math.round(content.length / 600))
@@ -207,7 +205,7 @@ export default async function BlogDetailPage({
         />
       </div>
 
-      {slug === 'ichiban-kuji-last-one' && <LatestKujiTable />}
+      {slug === 'ichiban-kuji-last-one' && <LatestKujiTable rows={latestKujiRows} />}
       {slug === 'ichiban-kuji-toha' && <PriceDistribution />}
 
       <XFollowCTA />

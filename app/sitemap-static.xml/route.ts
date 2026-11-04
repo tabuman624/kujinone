@@ -7,6 +7,8 @@ export const revalidate = 86400
 
 const BASE = 'https://kujinone.com'
 const STATIC_DATE = new Date('2026-05-01')
+// 内容を書き換えた固定ページの更新日
+const ABOUT_DATE = new Date('2026-11-05')
 
 export async function GET() {
   // データ連動ページのlastmodは、レンダー時刻ではくじデータの最終更新日時を使う
@@ -26,9 +28,10 @@ export async function GET() {
     { url: `${BASE}/calc`, lastModified: dataUpdatedAt, changeFrequency: 'weekly' as const, priority: 0.9 },
     { url: `${BASE}/schedule/archive`, lastModified: dataUpdatedAt, changeFrequency: 'daily' as const, priority: 0.6 },
     { url: `${BASE}/ranking/wanted`, lastModified: dataUpdatedAt, changeFrequency: 'daily' as const, priority: 0.6 },
-    { url: `${BASE}/about`, lastModified: STATIC_DATE, changeFrequency: 'yearly' as const, priority: 0.3 },
+    { url: `${BASE}/data`, lastModified: dataUpdatedAt, changeFrequency: 'daily' as const, priority: 0.6 },
+    { url: `${BASE}/about`, lastModified: ABOUT_DATE, changeFrequency: 'yearly' as const, priority: 0.3 },
     { url: `${BASE}/method`, lastModified: dataUpdatedAt, changeFrequency: 'monthly' as const, priority: 0.4 },
-    { url: `${BASE}/howto`, lastModified: STATIC_DATE, changeFrequency: 'monthly' as const, priority: 0.5 },
+    { url: `${BASE}/howto`, lastModified: ABOUT_DATE, changeFrequency: 'monthly' as const, priority: 0.5 },
     { url: `${BASE}/privacy`, lastModified: STATIC_DATE, changeFrequency: 'yearly' as const, priority: 0.3 },
     { url: `${BASE}/terms`, lastModified: STATIC_DATE, changeFrequency: 'yearly' as const, priority: 0.3 },
     { url: `${BASE}/contact`, lastModified: STATIC_DATE, changeFrequency: 'yearly' as const, priority: 0.3 },

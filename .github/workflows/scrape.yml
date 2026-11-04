@@ -40,3 +40,16 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           YAHOO_APP_ID: ${{ secrets.YAHOO_APP_ID }}
         run: python scripts/fetch_prize_prices.py
+
+      # 予定は10:00 JSTだが、GitHubの混雑で実際には毎日14〜16時台に動く。サイトの定時の更新（12時台）より後になり、
+      # 新作が翌日まで載らなかったため、取り込みが終わったらすぐ、増えたくじのページと一覧・サイトマップだけを更新する
+      # （app/api/cron/revalidate-changed/route.ts の scope=scrape）。相場取得が失敗しても①の分は反映したいので常に実行する。
+      # CRON_SECRET は Vercel の環境変数と同じ値を、このリポジトリの Secrets に登録する。
+      - name: ④ 新しく登録したくじのページを更新
+        if: ${{ !cancelled() }}
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl --fail-with-body -sS --max-time 120 \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "https://kujinone.com/api/cron/revalidate-changed?scope=scrape"

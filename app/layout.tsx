@@ -7,6 +7,7 @@ import SideNav from "./components/SideNav";
 import A8Script from "./components/A8Script";
 import XIcon from "./components/XIcon";
 import Link from "next/link";
+import { OG_BASE, OG_IMAGE, X_HANDLE, X_URL } from "./lib/siteMeta";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,16 +26,13 @@ export const metadata: Metadata = {
     title: "くじのね | 一番くじ期待値計算",
     description: "一番くじの期待値を無料で計算。狙う賞を選ぶだけ、登録不要です。",
     url: "https://kujinone.com",
-    siteName: "くじのね",
-    images: [{ url: "/ogp.png", width: 1200, height: 630, alt: "くじのね" }],
-    locale: "ja_JP",
-    type: "website",
+    ...OG_BASE,
+    images: [OG_IMAGE],
   },
+  // タイトル・説明・画像は各ページの openGraph から Next.js が自動で補う（app/lib/siteMeta.ts）
   twitter: {
     card: "summary_large_image",
-    title: "くじのね | 一番くじ期待値計算",
-    description: "一番くじの期待値を無料で計算。狙う賞を選ぶだけ、登録不要です。",
-    images: ["/ogp.png"],
+    site: X_HANDLE,
   },
   robots: {
     index: true,
@@ -59,6 +57,8 @@ const organizationJsonLd = {
   url: 'https://kujinone.com',
   logo: 'https://kujinone.com/logo.png',
   description: '一番くじの期待値計算・発売スケジュール・相場情報サイト',
+  // サイトと X アカウントが同じ運営者であることを検索エンジンに伝える
+  sameAs: [X_URL],
 };
 
 const websiteJsonLd = {
@@ -100,6 +100,7 @@ export default function RootLayout({
             {children}
             <div className="flex flex-col items-center gap-2 py-4 px-6">
               <nav className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-stone-400">
+                <Link href="/data" className="hover:text-shu transition-colors">データで見る一番くじ</Link>
                 <Link href="/method" className="hover:text-shu transition-colors">期待値の計算方法</Link>
                 <Link href="/about" className="hover:text-shu transition-colors">このサイトについて</Link>
                 <Link href="/contact" className="hover:text-shu transition-colors">お問い合わせ</Link>
@@ -107,7 +108,7 @@ export default function RootLayout({
                 <Link href="/privacy" className="hover:text-shu transition-colors">プライバシー</Link>
               </nav>
               <a
-                href="https://x.com/kujinone"
+                href={X_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="くじのねのXアカウント"
