@@ -273,7 +273,7 @@ export default async function Home() {
             { href: '/store', label: '取扱店から探す' },
             { href: '/privacy', label: 'プライバシーポリシー' },
             { href: '/terms', label: '利用規約' },
-            { href: '/howto', label: '使い方' },
+            { href: '/calc#howto', label: '使い方' },
             { href: '/contact', label: 'お問い合わせ' },
           ].map(item => (
             <Link key={item.href} href={item.href} className="text-xs text-stone-400 hover:text-shu transition-colors">

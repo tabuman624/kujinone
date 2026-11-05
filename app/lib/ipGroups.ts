@@ -52,6 +52,10 @@ export const IP_NAMES: Record<string, string> = {
   lilalamode: 'Lil ala mode',
 }
 
+// くじが2つ以下の作品ページは、中身が2件の一覧と1文だけで薄いため、検索に出さない（noindex, follow）。
+// サイトマップからも外す。3つ目が出れば自動で検索に戻る。2026-11-06、AdSense 再申請の前にオーナーと決めた。
+export const IP_INDEX_MIN_KUJI = 3
+
 export function ipSlugFor(productId: string): string {
   const base = productId.split(/[_-]/)[0].replace(/\d+$/, '')
   return IP_ALIASES[base] ?? base

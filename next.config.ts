@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
         destination: '/schedule',
         permanent: true,
       },
+      // /howto（使い方の3ステップ）は、計算ページの説明欄（/calc の「使い方」）に統合した（2026-11）。
+      { source: '/howto', destination: '/calc', permanent: true },
       // ichiban-kuji-store は conveni と重複していたため以前 conveni に統合した。conveni も
       // Batch 4 で /store に転送したので、リダイレクトが連鎖しないよう直接 /store へ向ける。
       {

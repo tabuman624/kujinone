@@ -44,7 +44,7 @@ const footerLinks = [
   { href: '/store', label: '取扱店から探す' },
   { href: '/about', label: 'このサイトについて' },
   { href: '/method', label: '期待値の計算方法' },
-  { href: '/howto', label: '使い方' },
+  { href: '/calc#howto', label: '使い方' },
   { href: '/terms', label: '利用規約' },
   { href: '/privacy', label: 'プライバシー' },
   { href: '/contact', label: 'お問い合わせ' },

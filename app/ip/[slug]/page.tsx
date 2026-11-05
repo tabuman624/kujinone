@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getIpGroups, IP_NAMES } from '../../lib/ipGroups'
+import { getIpGroups, IP_INDEX_MIN_KUJI, IP_NAMES } from '../../lib/ipGroups'
 import IpStats from './IpStats'
 import IpPrizeRankings from './IpPrizeRankings'
 import { OG_BASE, OG_IMAGE } from '../../lib/siteMeta'
@@ -30,11 +30,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const title = `一番くじ ${name} 一覧｜発売日・価格まとめ`
   const description = `一番くじ「${name}」シリーズ全${kujiList.length}種の発売日・価格をまとめてチェック。${avgPrice ? `1回あたり平均${avgPrice}円。` : ''}各回の賞品一覧・期待値・相場は各くじの詳細ページで確認できます。`
 
+  // 取得に失敗して0件のときは noindex にしない（誤って検索から外さないため）。
+  const thin = kujiList.length > 0 && kujiList.length < IP_INDEX_MIN_KUJI
+
   return {
     title,
     description,
     alternates: { canonical: `/ip/${slug}` },
     openGraph: { title, description, url: `https://kujinone.com/ip/${slug}`, ...OG_BASE, images: [OG_IMAGE] },
+    ...(thin ? { robots: { index: false, follow: true } } : {}),
   }
 }
 
