@@ -95,6 +95,13 @@ export default async function StoreDetailPage({
         <span className="inline-block text-xs bg-white/10 text-stone-300 px-2 py-0.5 rounded-full mt-2">全{kujiList.length}種</span>
       </div>
 
+      {slug === 'online' && (
+        <p className="px-5 pt-6 -mb-2 text-xs text-stone-500 leading-relaxed">
+          一番くじONLINEで引く手順と注意点：
+          <Link href="/blog/ichiban-kuji-online" className="text-shu font-bold hover:underline">一番くじオンラインのラストワン賞の狙い方と売り切れ対策</Link>
+        </p>
+      )}
+
       <div className="px-5 py-6 space-y-3">
         {kujiList.map((kuji, i) => {
           const isReleased = kuji.release_at != null && kuji.release_at < today

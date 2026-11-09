@@ -66,6 +66,11 @@ const RELATED_POSTS_UPCOMING = [
   { href: '/blog/kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説' },
 ]
 
+// 一番くじONLINEで売られるくじだけに出す、オンライン記事への導線。
+// オンライン系の検索でラストワン記事が代わりに出ていて、オンライン記事は3か月表示0だったため（2026-11）。
+const ONLINE_STORE_NAME = '一番くじONLINE'
+const ONLINE_POST = { href: '/blog/ichiban-kuji-online', title: '一番くじオンラインのラストワン賞の狙い方と売り切れ対策' }
+
 // 検索結果の説明文。以前は全ページ同じ定型文だったので、発売済みで中古相場（freshValue、60日以内）が
 // 取れているくじは、上位賞とラストワン賞の相場を先頭に入れてページごとに違う中身にする（2026-11）。
 // 数字はページ内の「上位賞の中古相場」「ラストワン賞」の表示と同じ値。
@@ -235,6 +240,12 @@ export default async function KujiDetail({
                 </span>
               ))}
             </div>
+            {availableStores.includes(ONLINE_STORE_NAME) && (
+              <p className="mt-3 text-xs text-stone-500 leading-relaxed">
+                一番くじONLINEで引くなら：
+                <Link href={ONLINE_POST.href} className="text-shu font-bold hover:underline">{ONLINE_POST.title}</Link>
+              </p>
+            )}
           </div>
         )}
 

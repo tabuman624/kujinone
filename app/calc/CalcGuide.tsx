@@ -127,6 +127,11 @@ export default function CalcGuide() {
             <Link href="/blog/ichiban-kuji-last-one" className="text-shu hover:underline">ラストワン賞の狙い方</Link>
             ）。
           </Bullet>
+          <Bullet>
+            一番くじONLINEで引く場合の手順や、1回の決済で引ける回数の上限・送料は
+            <Link href="/blog/ichiban-kuji-online" className="text-shu hover:underline mx-1">一番くじオンラインのラストワン賞の狙い方と売り切れ対策</Link>
+            にまとめています。
+          </Bullet>
         </ul>
       </section>
 
