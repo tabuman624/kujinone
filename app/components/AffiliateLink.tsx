@@ -20,7 +20,7 @@ export default function AffiliateLink({
   className: string
   style?: React.CSSProperties
   label: string
-  sub: string
+  sub?: string
   eventLabel: string
 }) {
   return (
@@ -39,7 +39,7 @@ export default function AffiliateLink({
     >
       <div className="flex-1">
         <p className="text-sm font-bold">{label}</p>
-        <p className="text-xs opacity-70">{sub}</p>
+        {sub && <p className="text-xs opacity-70">{sub}</p>}
       </div>
       <span className="text-sm">↗</span>
     </a>

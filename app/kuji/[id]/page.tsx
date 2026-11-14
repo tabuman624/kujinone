@@ -272,9 +272,7 @@ export default async function KujiDetail({
       <div className="px-5 py-6">
         <MarketSummary
           prizes={prizes ?? []}
-          price={kuji.price}
           isReleased={isReleased}
-          sparklineSeries={sparklineSeries}
           mercariHref={mercariHref}
           eventLabel={`相場まとめ_メルカリ_${kuji.title}`}
         />
