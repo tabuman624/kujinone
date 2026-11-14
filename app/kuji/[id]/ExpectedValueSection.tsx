@@ -2,7 +2,7 @@ import Link from 'next/link'
 // 注: ../../lib は app/lib を指す（ルート直下の lib/ とは別の実体）
 import { expectedDraws } from '../../lib/ev'
 import { freshValue } from '../../lib/priceFreshness'
-import { jaMonthDay } from '../../lib/jst'
+import { shortDate } from '../../lib/jst'
 
 // 期待値まわりの部品。並べ方と開閉は「このくじのデータ」（KujiDataSection）が決める
 // （2026-11、「このくじのデータ」と「この一番くじの期待値」の2つの欄を1つにまとめた）。
@@ -22,8 +22,6 @@ export type TopPrizeValue = { grade: string; name: string; fresh: { value: numbe
 // 目当ての賞が何本入っているかは公表されないため、1〜3本の場合を示す。
 const ASSUMED_COUNTS = [1, 2, 3]
 const TOP_GRADES = ['A賞', 'B賞', 'C賞']
-// ラストワン賞の費用の例に使う残り本数
-const LAST_ONE_EXAMPLE_REMAINING = 10
 
 const num = { fontVariantNumeric: 'tabular-nums' as const }
 
@@ -84,11 +82,9 @@ export function EvSummary({
       </div>
 
       {/* 「〇〇 一番くじ ロット」「ロット数」で検索されているが、ページに答えが無かった（GSC 2026-10）。
-          ロットの本数は公表されないので、仮定であることをそのまま書く。 */}
+          ロットの本数は公表されないので、仮定であることをそのまま書く。ロット買いの費用は上の箱にあるので書かない（2026-11-15に短くした）。 */}
       <p className="text-[11px] text-stone-500 leading-relaxed mb-4" style={num}>
-        {assumed
-          ? `ロット数（1ロットの総本数）は公表されていないため、${totalCount}本と仮定しています。仮定どおりなら、ロット買い（全部買い）の費用は${(price * totalCount).toLocaleString()}円です。`
-          : `このくじのロット数（総本数）は${totalCount}本で、ロット買い（全部買い）の費用は${(price * totalCount).toLocaleString()}円です。`}
+        {assumed ? `ロット数は非公表のため、${totalCount}本と仮定しています。` : `このくじのロット数は${totalCount}本です。`}
         <Link href="/blog/ichiban-kuji-all-buy" className="text-shu hover:underline ml-1">全部買いの費用と注意点</Link>
       </p>
 
@@ -108,7 +104,8 @@ export function EvSummary({
 export function AverageDraws({ price, totalCount, assumed }: { price: number; totalCount: number; assumed: boolean }) {
   return (
     <div>
-      <p className="text-xs font-bold text-stone-500 mb-2">目当ての賞が出るまでの平均回数</p>
+      {/* 平均回数は総本数で決まるので、仮定の総本数を見出しに書く（以前の表の下の補足とページ下の※の注意書きの代わり、2026-11-15） */}
+      <p className="text-xs font-bold text-stone-500 mb-2">目当ての賞が出るまでの平均回数{assumed ? `（総本数${totalCount}本と仮定）` : ''}</p>
       <div className="overflow-x-auto">
         <table className="w-full text-xs border-collapse" style={num}>
           <thead>
@@ -133,11 +130,6 @@ export function AverageDraws({ price, totalCount, assumed }: { price: number; to
           </tbody>
         </table>
       </div>
-      <p className="text-[11px] text-stone-400 mt-2 leading-relaxed">
-        {assumed
-          ? `総本数を${totalCount}本と仮定した場合、目当ての賞の本数が同じなら、どの賞でも平均回数は同じです。`
-          : `総本数${totalCount}本のくじでは、目当ての賞の本数が同じなら、どの賞でも平均回数は同じです。`}
-      </p>
     </div>
   )
 }
@@ -168,10 +160,10 @@ export function TopMarketPrices({ items }: { items: TopPrizeValue[] }) {
 // ラストワン賞は抽選ではなく「最後の1本を引いた人」に渡る。残り2本以上の時点で1回引いて
 // 当たる確率は0%なので、確率では表せない（以前の1/残り本数の表示は誤りだった）。
 // 確定的に言えるのは「残りを全部自分で引けば確実に取れる＝残り本数×1回の価格」。
-// 以前は残り本数ごとの5行の表（価格×80・40・20・10・5）だったが、掛け算を並べただけなので1文にした（2026-11）。
-// ラストワン賞の相場が取れているくじでは、「残りを全部引く費用がその金額以下になる本数」を添える
-// （店頭で残り本数を見たときの目安。引くべきかどうかは書かない）。
+// ラストワン賞の相場が取れているくじでは、「残りを全部引く費用がその金額以下になる本数」（分かれ目）だけを1行で出す
+// （店頭で残り本数を見たときの目安。引くべきかどうかは書かない）。仕組みの説明は記事に任せる（2026-11-15に短くした）。
 // 金額は lowerFreshValue（販売価格と落札価格の低い方）。高めに出やすい販売価格で本数を大きく見せないため。
+// 上の「相場のまとめ」（freshValue）と値が違うことがあるので、どちらの相場かを書く。
 export function LastOneCost({
   price,
   totalCount,
@@ -181,28 +173,27 @@ export function LastOneCost({
   totalCount: number
   market: { value: number; updatedAt: string; source: 'market' | 'auction' } | null
 }) {
-  const breakEven = market ? Math.floor(market.value / price) : null
-  return (
-    <div className="text-xs text-stone-600 leading-relaxed space-y-1" style={num}>
-      <p>
-        ラストワン賞は最後の1本を引いた人がもらえる賞で、残りを全部引けば確実に取れます（費用＝残り本数×{price.toLocaleString()}円
-        {market ? '）。' : `。例：残り${LAST_ONE_EXAMPLE_REMAINING}本なら${(LAST_ONE_EXAMPLE_REMAINING * price).toLocaleString()}円）。`}
-        {!market && <Link href="/blog/ichiban-kuji-last-one" className="text-shu hover:underline ml-1">ラストワン賞の狙い方</Link>}
+  const link = <Link href="/blog/ichiban-kuji-last-one" className="text-shu hover:underline ml-1">ラストワン賞の狙い方</Link>
+  if (!market) {
+    return (
+      <p className="text-xs text-stone-600 leading-relaxed" style={num}>
+        ラストワン賞を確実に取る費用：残り本数×{price.toLocaleString()}円。{link}
       </p>
-      {market && breakEven != null && (
-        <p>
-          {/* auction_price_min はヤフオク落札価格の中央値（update-prices の fetchAuctionMedian） */}
-          このくじのラストワン賞の{market.source === 'auction' ? 'ヤフオクでの落札相場' : '中古相場'}は約¥{market.value.toLocaleString()}です（{jaMonthDay(market.updatedAt)}時点）。
-          {breakEven < 1
-            ? `1回の価格（${price.toLocaleString()}円）より低い金額です。`
-            : breakEven === 1
-              ? `残りを全部引く費用がこの金額以下になるのは、最後の1本（${price.toLocaleString()}円）のときだけです。`
-              : breakEven < totalCount
-                ? `残りを全部引く費用がこの金額以下になるのは、残り${breakEven}本（${(breakEven * price).toLocaleString()}円）以下のときです。`
-                : ''}
-          <Link href="/blog/ichiban-kuji-last-one" className="text-shu hover:underline ml-1">ラストワン賞の狙い方</Link>
-        </p>
-      )}
-    </div>
+    )
+  }
+  const breakEven = Math.floor(market.value / price)
+  // auction_price_min はヤフオク落札価格の中央値（update-prices の fetchAuctionMedian）
+  const marketText = `${market.source === 'auction' ? '落札相場' : '中古相場'}（約¥${market.value.toLocaleString()}、${shortDate(market.updatedAt)}時点）`
+  return (
+    <p className="text-xs text-stone-600 leading-relaxed" style={num}>
+      {breakEven < 1
+        ? `ラストワン賞の${marketText}は、1回の価格（${price.toLocaleString()}円）より低い金額です。`
+        : breakEven === 1
+          ? `ラストワン賞の分かれ目：最後の1本（${price.toLocaleString()}円）のときだけ、全部引く費用が${marketText}以下。`
+          : breakEven < totalCount
+            ? `ラストワン賞の分かれ目：残り${breakEven}本（${(breakEven * price).toLocaleString()}円）以下なら、全部引く費用が${marketText}以下。`
+            : `ラストワン賞の${marketText}は、ロット総額以上です。`}
+      {link}
+    </p>
   )
 }

@@ -281,12 +281,7 @@ export default function KujiDataSection({
       )}
 
       {total && (
-        <Disclaimer
-          hasMarketData={topValues.length > 0}
-          assumed={assumed}
-          totalCount={total}
-          pageLastUpdated={pageLastUpdated(kujiUpdatedAt, prizes)}
-        />
+        <Disclaimer pageLastUpdated={pageLastUpdated(kujiUpdatedAt, prizes)} />
       )}
     </div>
   )
