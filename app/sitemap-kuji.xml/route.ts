@@ -10,13 +10,13 @@ const BASE = 'https://kujinone.com'
 export async function GET() {
   const { data: kujiList, error } = await supabase
     .from('kuji')
-    .select('id, updated_at')
+    .select('id, updated_at, release_at')
     .eq('is_active', true)
     .order('id', { ascending: true })
   if (error) throw new Error(`sitemap-kuji: kuji取得に失敗しました: ${error.message}`)
 
-  // 賞品が0件のくじページは noindex にしている（app/kuji/[id]/page.tsx の generateMetadata）ので、
-  // sitemap にも載せない。賞品が登録されると、毎日の revalidate-changed でこの sitemap も再生成され自動で戻る。
+  // 発売済みで賞品が0件のくじページは noindex にしている（app/kuji/[id]/page.tsx の generateMetadata）ので、
+  // sitemap にも載せない。発売前のくじは賞品が0件でも載せる（ラインナップの発表前から検索されるため、2026-11-15）。
   // prizes は1000行を超えるので id 順に区切って取る。
   const kujiWithPrizes = new Set<number>()
   for (let from = 0; ; from += 1000) {
@@ -30,7 +30,11 @@ export async function GET() {
     if (!data || data.length < 1000) break
   }
 
-  const entries = (kujiList ?? []).filter(k => kujiWithPrizes.has(k.id)).map(k => ({
+  // 発売済みかどうかはページと同じ判定（UTCの日付）。発売日が未定のくじは発売前として扱う
+  const today = new Date().toISOString().slice(0, 10)
+  const isReleased = (k: { release_at: string | null }) => !!k.release_at && k.release_at <= today
+
+  const entries = (kujiList ?? []).filter(k => kujiWithPrizes.has(k.id) || !isReleased(k)).map(k => ({
     url: `${BASE}/kuji/${k.id}`,
     lastModified: k.updated_at ? new Date(k.updated_at) : undefined,
     changeFrequency: 'weekly' as const,

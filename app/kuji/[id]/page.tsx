@@ -14,7 +14,7 @@ import XFollowCTA from '../../components/XFollowCTA'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
 import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
 import { freshValue } from '../../lib/priceFreshness'
-import { jaMonthDay } from '../../lib/jst'
+import { jaMonthDay, shortDate } from '../../lib/jst'
 import { OG_BASE } from '../../lib/siteMeta'
 
 // revalidateを1日にしている理由は app/api/cron/revalidate-changed/route.ts を参照。
@@ -44,13 +44,29 @@ const TITLE_SUFFIXES = ['｜ラインナップ・相場・期待値', '｜ライ
 const TITLE_MAX_WEIGHTED_LENGTH = 64 // 全角32文字相当
 
 // 商品名は公式の表記をそのまま優先し、削るのは後ろに付ける修飾語（suffix）から。
-// 長いsuffixから順に試し、収まるものを使う。どれも収まらなければ商品名のみにする。
-function buildKujiTitle(kujiTitle: string): string {
-  for (const suffix of TITLE_SUFFIXES) {
+// 長いsuffixから順に試し、収まるものを使う。どれも収まらなければ fallback にする。
+function fitTitle(kujiTitle: string, suffixes: string[], fallback: string): string {
+  for (const suffix of suffixes) {
     const t = `${kujiTitle}${suffix}`
     if (weightedLength(t) <= TITLE_MAX_WEIGHTED_LENGTH) return t
   }
-  return kujiTitle
+  return fallback
+}
+
+function buildKujiTitle(kujiTitle: string): string {
+  return fitTitle(kujiTitle, TITLE_SUFFIXES, kujiTitle)
+}
+
+// 発売前のくじは、タイトルに発売日を入れる（2026-11）。
+// 発売前は「作品名 一番くじ 2026」のように時期を含めて検索され、その検索は旧 /news（タイトル末尾が「｜10/17発売」）が
+// 受けていた。/news を廃止したあと、くじページには発売日が無かった（GLAY：/news 167クリック、/kuji 3クリック、3か月）。
+// 発売前は相場が無いので「相場」は付けない。賞品がまだ無いページは「ラインナップ」も付けない。
+// 発売日になると revalidate-changed が再生成し、通常のタイトルに戻る。
+function buildUpcomingTitle(kujiTitle: string, releaseAt: string, hasPrizes: boolean): string {
+  const date = `｜${shortDate(releaseAt)}発売`
+  const suffixes = hasPrizes ? [`${date}・ラインナップ・期待値`, `${date}・ラインナップ`, date] : [date]
+  // 発売日だけは、長さを超えても付ける（見切れても検索の対象には入る）
+  return fitTitle(kujiTitle, suffixes, `${kujiTitle}${date}`)
 }
 
 // 関連コラムは発売前後で読者の関心が違うので出し分ける（全ページ共通の7本固定から変更、2026-11）。
@@ -75,10 +91,11 @@ const ONLINE_POST = { href: '/blog/ichiban-kuji-online', title: '一番くじオ
 // 取れているくじは、上位賞とラストワン賞の相場を先頭に入れてページごとに違う中身にする（2026-11）。
 // 数字はページ内の「上位賞の中古相場」「ラストワン賞」の表示と同じ値。
 function buildDescription(
-  kuji: { title: string; price: number; release_at: string | null },
+  kuji: { title: string; price: number; release_at: string | null; available_stores: unknown },
   prizes: EvPrize[],
   isReleased: boolean,
 ): string {
+  if (!isReleased) return buildUpcomingDescription(kuji, prizes.length > 0)
   const prefix = kuji.release_at ? `${jaMonthDay(kuji.release_at)}発売『${kuji.title}』の` : `『${kuji.title}』の`
   const top = topPrizeValues(prizes, isReleased)[0] ?? null
   const lastOne = isReleased ? prizes.find(p => p.grade === 'ラストワン賞') : undefined
@@ -97,10 +114,25 @@ function buildDescription(
   return `${prefix}${prices}（${jaMonthDay(latest)}時点）。全賞品ラインナップ、目当ての賞が出るまでの平均回数、ロット買いの費用も掲載しています。`
 }
 
+// 発売前の説明文。旧 /news と同じく年から書く（「2026年12月19日発売」）。
+// 発売前は相場が出ないので、相場には触れない。賞品がまだ無いときは、そう書く（ページの中身と合わせる）。
+function buildUpcomingDescription(
+  kuji: { title: string; price: number; release_at: string | null; available_stores: unknown },
+  hasPrizes: boolean,
+): string {
+  const dated = kuji.release_at ? `${kuji.release_at.slice(0, 4)}年${jaMonthDay(kuji.release_at)}発売` : ''
+  const stores: string[] = Array.isArray(kuji.available_stores) ? kuji.available_stores : []
+  const storesText = stores.length > 0 ? `取扱店は${stores.slice(0, 3).join('・')}${stores.length > 3 ? 'など' : ''}。` : ''
+  if (hasPrizes) {
+    return `${dated}『${kuji.title}』の全賞品ラインナップと、1回${kuji.price}円で目当ての賞が当たるまでの平均回数・費用の目安。${storesText}`
+  }
+  return `${dated}『${kuji.title}』は1回${kuji.price}円。${storesText}賞品のラインナップは、公式の発表後にこのページへ追加します。`
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
   const [{ data: kuji }, { data: prizeRows, error: prizesError }] = await Promise.all([
-    supabase.from('kuji').select('title, price, release_at, banner_url, image_url').eq('id', id).single(),
+    supabase.from('kuji').select('title, price, release_at, banner_url, image_url, available_stores').eq('id', id).single(),
     supabase
       .from('prizes')
       .select('grade, name, total, market_price, market_price_updated_at, auction_price_min, auction_price_updated_at')
@@ -108,20 +140,24 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       .order('sort_order', { ascending: true }),
   ])
   if (!kuji) return {}
-  // 賞品が1件も登録されていないページ（発表直後で公式にまだラインナップが無いもの）は中身が薄いので noindex。
-  // 賞品が登録されると revalidate-changed（prizes.created_at を監視）がこのページを再生成し、自動で外れる。
-  // 賞品の取得に失敗したときは noindex にしない（誤って検索から外さないため）。
   const noPrizes = !prizesError && prizeRows != null && prizeRows.length === 0
   const ogImage = kuji.banner_url || kuji.image_url || '/logo.png'
-  const title = buildKujiTitle(kuji.title)
   // 発売済みかどうかはページ本体と同じ判定（UTCの日付）にする
   const isReleased = !!kuji.release_at && kuji.release_at <= new Date().toISOString().slice(0, 10)
+  const title = !isReleased && kuji.release_at
+    ? buildUpcomingTitle(kuji.title, kuji.release_at, !noPrizes)
+    : buildKujiTitle(kuji.title)
   const description = buildDescription(kuji, prizeRows ?? [], isReleased)
+  // 賞品が0件の発売前のくじは、検索に出す（2026-11-15、AdSense不承認のあと判断）。
+  // ミセスやハリー・ポッターのような大型くじは、ラインナップの発表前から作品名と発売日で検索されるため。
+  // 発売済みなのに賞品が0件のページは、データの取りこぼしで中身が埋まる見込みがないので、検索に出さない。
+  // sitemap-kuji.xml も同じ条件にしている。賞品の取得に失敗したときは noindex にしない（誤って検索から外さないため）。
+  const thin = noPrizes && isReleased
   return {
     title,
     description,
     alternates: { canonical: `/kuji/${id}` },
-    ...(noPrizes ? { robots: { index: false, follow: true } } : {}),
+    ...(thin ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       title,
       description,
@@ -301,6 +337,16 @@ export default async function KujiDetail({
               }))}
               isReleased={isReleased}
             />
+          </div>
+        )}
+
+        {/* 発売前で賞品がまだ無いとき。検索に出すようにしたので、ラインナップが無い理由をページに書く */}
+        {prizes && prizes.length === 0 && !isReleased && (
+          <div className="mb-6 anim-fade-up" style={{ animationDelay: '180ms' }}>
+            <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">賞一覧 / PRIZES</h2>
+            <p className="p-4 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-600 leading-relaxed">
+              賞品のラインナップは、公式サイトで発表されたあと、このページに載せます（毎日確認しています）。
+            </p>
           </div>
         )}
 
