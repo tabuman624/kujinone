@@ -9,6 +9,7 @@ import { loadSparklineSeries } from './PriceSparkline'
 import KujiDataSection, { loadKujiData, robustTrendSummary } from './KujiDataSection'
 import { topPrizeValues, type EvPrize } from './ExpectedValueSection'
 import KujiViewTracker from './KujiViewTracker'
+import MarketSummary from './MarketSummary'
 import AffiliateLink from '../../components/AffiliateLink'
 import XFollowCTA from '../../components/XFollowCTA'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
@@ -230,6 +231,9 @@ export default async function KujiDetail({
 
   const availableStores: string[] = Array.isArray(kuji.available_stores) ? kuji.available_stores : []
 
+  // メルカリの検索（A8経由）。上の「相場のまとめ」と下の「相場を確認・購入する」で同じリンクを使う
+  const mercariHref = `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM&a8ejpredirect=${encodeURIComponent(`https://jp.mercari.com/search?keyword=${encodeURIComponent(searchKeyword)}`)}`
+
   // 既知IP（2件以上のくじを持つ作品、/ip/[slug]参照）のみシリーズページへの導線を出す。
   const ipSlug = kuji.product_id ? ipSlugFor(kuji.product_id) : null
   const ipName = ipSlug ? IP_NAMES[ipSlug] : null
@@ -266,6 +270,15 @@ export default async function KujiDetail({
       </div>
 
       <div className="px-5 py-6">
+        <MarketSummary
+          prizes={prizes ?? []}
+          price={kuji.price}
+          isReleased={isReleased}
+          sparklineSeries={sparklineSeries}
+          mercariHref={mercariHref}
+          eventLabel={`相場まとめ_メルカリ_${kuji.title}`}
+        />
+
         {availableStores.length > 0 && (
           <div className="mb-6 anim-fade-up" style={{ animationDelay: '120ms' }}>
             <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">取扱店 / STORES</h2>
@@ -376,7 +389,7 @@ export default async function KujiDetail({
             </p>
             <div className="space-y-2">
               {[
-                { href: `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM&a8ejpredirect=${encodeURIComponent(`https://jp.mercari.com/search?keyword=${encodeURIComponent(searchKeyword)}`)}`, label: "メルカリで相場を見る【PR】", sub: "出品価格を確認", color: "bg-shu-bg border-shu text-shu", rel: "noopener noreferrer sponsored nofollow" },
+                { href: mercariHref, label: "メルカリで相場を見る【PR】", sub: "出品価格を確認", color: "bg-shu-bg border-shu text-shu", rel: "noopener noreferrer sponsored nofollow" },
                 { href: `https://affiliate.suruga-ya.jp/modules/af/af_jump.php?user_id=5303&goods_url=https%3A%2F%2Fwww.suruga-ya.jp%2Fsearch%3Fsearch_word%3D${encodeURIComponent(searchKeyword)}`, label: "駿河屋で相場を見る【PR】", sub: "在庫あり最安値を確認", color: "bg-blue-50 border-blue-200 text-blue-600", rel: "nofollow noopener noreferrer" },
                 { href: `https://af.moshimo.com/af/c/click?a_id=5570999&p_id=1225&pc_id=1925&pl_id=18502&url=${encodeURIComponent(`https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(searchKeyword)}`)}`, label: "Yahoo!ショッピングで見る【PR】", sub: "新品・中古の価格を確認", color: "bg-amber-50 border-amber-200 text-amber-600", rel: "noopener noreferrer sponsored" },
                 { href: `https://af.moshimo.com/af/c/click?a_id=5570988&p_id=54&pc_id=54&pl_id=621&url=${encodeURIComponent(`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(searchKeyword)}`)}`, label: "楽天市場で見る【PR】", sub: "ポイントを使ってお得に購入", color: "bg-pink-50 border-pink-200 text-pink-600", rel: "noopener noreferrer sponsored" },
