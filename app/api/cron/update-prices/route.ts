@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { resaleBaseTitle } from '../../../lib/resale'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,6 +11,8 @@ const PRICE_MIN = 500
 const PRICE_MAX = 200_000
 const MID_KUJI_BATCH_SIZE = 20  // 発売8〜30日のくじの毎日ローテーション件数（タイムアウト対策。対象プール約150件を1〜2週間で一巡する想定）
 const OLD_KUJI_BATCH_SIZE = 15  // 発売31〜90日のくじの土曜ローテーション件数（タイムアウト対策）
+const RESALE_LOOKAHEAD_DAYS = 45      // 発売がこの日数以内の再販売のくじについて、元のくじの相場を取り直す
+const RESALE_ORIGINAL_BATCH_SIZE = 12 // ④の1日あたりの件数（タイムアウト対策。元のくじ2件＝約23賞なら2日で一巡）
 const CONCURRENCY = 5           // 並列リクエスト数
 
 // ─── ユーティリティ ──────────────────────────────────────────────────────────
@@ -205,7 +208,7 @@ export async function GET(req: Request) {
   const day30Str = day30.toISOString().slice(0, 10)
   const day90Str = day90.toISOString().slice(0, 10)
 
-  const stats = { newKuji: 0, midKuji: 0, oldKuji: 0, peakUpdated: 0, historyErrors: 0 }
+  const stats = { newKuji: 0, midKuji: 0, oldKuji: 0, resaleOriginal: 0, peakUpdated: 0, historyErrors: 0 }
   let firstHistoryError: string | null = null
 
   // ── ① 発売7日以内のくじ（毎日計測） ────────────────────────────────────────
@@ -293,6 +296,46 @@ export async function GET(req: Request) {
     }
   }
 
+  // ── ④ 発売が近い再販売のくじの、元のくじ（毎日・ローテーション） ─────────────
+  // 再販売のくじのページに、発売前から「初回販売の相場」を出すため（app/kuji/[id]/MarketSummary.tsx）。
+  // 元のくじは発売から90日を過ぎて①〜③の対象外になっていることが多いので、ここで取り直す。
+  // 再販売のくじ自身は発売前なので取らない（①のコメントの理由）。
+  const resaleUntil = new Date(today); resaleUntil.setDate(today.getDate() + RESALE_LOOKAHEAD_DAYS)
+  const { data: resaleList } = await supabase
+    .from('kuji')
+    .select('title')
+    .eq('is_active', true)
+    .like('title', '%再販売%')
+    .gt('release_at', todayStr)
+    .lte('release_at', resaleUntil.toISOString().slice(0, 10))
+  const baseTitles = [...new Set((resaleList ?? []).map(k => resaleBaseTitle(k.title as string)).filter((t): t is string => !!t))]
+
+  if (baseTitles.length) {
+    const { data: originalList } = await supabase
+      .from('kuji')
+      .select('id, title')
+      .in('title', baseTitles)
+      .lte('release_at', todayStr)
+
+    if (originalList?.length) {
+      const kujiTitleMap = Object.fromEntries(originalList.map(k => [k.id, k.title as string]))
+      const { data: originalPrizes } = await supabase
+        .from('prizes')
+        .select('id, name, grade, kuji_id, auction_price_peak')
+        .in('kuji_id', originalList.map(k => k.id))
+        .order('auction_price_updated_at', { ascending: true, nullsFirst: true })
+        .limit(RESALE_ORIGINAL_BATCH_SIZE)
+
+      if (originalPrizes?.length) {
+        const result = await processBatch(originalPrizes, kujiTitleMap, todayStr, nowIso)
+        stats.resaleOriginal = result.scanned
+        stats.peakUpdated += result.peakUpdated
+        stats.historyErrors += result.historyErrors
+        firstHistoryError ??= result.firstHistoryError
+      }
+    }
+  }
+
   if (stats.historyErrors > 0) {
     console.error(`price_historyへの書き込みが${stats.historyErrors}件失敗しました。例: ${firstHistoryError}`)
   }
@@ -305,6 +348,7 @@ export async function GET(req: Request) {
     newKujiPrizes: stats.newKuji,
     midKujiPrizes: stats.midKuji,
     oldKujiPrizes: stats.oldKuji,
+    resaleOriginalPrizes: stats.resaleOriginal,
     peakUpdated: stats.peakUpdated,
     historyErrors: stats.historyErrors,
     viewSnapshotted: viewSnapshot.snapshotted,

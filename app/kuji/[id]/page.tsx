@@ -9,7 +9,7 @@ import { loadSparklineSeries } from './PriceSparkline'
 import KujiDataSection, { loadKujiData, robustTrendSummary } from './KujiDataSection'
 import { topPrizeValues, type EvPrize } from './ExpectedValueSection'
 import KujiViewTracker from './KujiViewTracker'
-import MarketSummary from './MarketSummary'
+import MarketSummary, { loadFirstSale } from './MarketSummary'
 import AffiliateLink from '../../components/AffiliateLink'
 import XFollowCTA from '../../components/XFollowCTA'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
@@ -185,10 +185,12 @@ export default async function KujiDetail({
   // 子が個別にawaitすると、HTML内の出力順がSupabaseの応答順で毎回入れ替わり、
   // 内容が同じでもISR再生成のたびに「変更あり」と判定されWritesが発生するため。
   const isReleased = kuji.release_at <= today
-  const [kujiData, sparklineSeries, popularityFlags] = await Promise.all([
+  const [kujiData, sparklineSeries, popularityFlags, firstSale] = await Promise.all([
     loadKujiData({ id: Number(id), price: kuji.price, release_at: kuji.release_at, product_id: kuji.product_id }),
     loadSparklineSeries(prizes ?? [], isReleased, kuji.release_at),
     loadPopularityFlags(Number(id), (prizes ?? []).map(p => p.id)),
+    // 再販売のくじは、発売前だけ初回販売の相場を出す（MarketSummary.tsx 参照）
+    isReleased ? null : loadFirstSale({ id: Number(id), title: kuji.title, release_at: kuji.release_at }),
   ])
   // MARKET段落：このくじ自身の頑健な変化率が出せればそれを、無ければサイト全体の集計を書く
   const ownTrendText = robustTrendSummary(sparklineSeries)
@@ -270,12 +272,22 @@ export default async function KujiDetail({
       </div>
 
       <div className="px-5 py-6">
-        <MarketSummary
-          prizes={prizes ?? []}
-          isReleased={isReleased}
-          mercariHref={mercariHref}
-          eventLabel={`相場まとめ_メルカリ_${kuji.title}`}
-        />
+        {isReleased && (
+          <MarketSummary
+            prizes={prizes ?? []}
+            mercariHref={mercariHref}
+            eventLabel={`相場まとめ_メルカリ_${kuji.title}`}
+          />
+        )}
+        {firstSale && (
+          <MarketSummary
+            prizes={firstSale.prizes}
+            mercariHref={mercariHref}
+            eventLabel={`初回相場_メルカリ_${kuji.title}`}
+            heading="初回販売の相場 / PRICE"
+            source={{ href: `/kuji/${firstSale.id}`, label: `初回販売（${firstSale.release_at.slice(0, 4)}年${Number(firstSale.release_at.slice(5, 7))}月発売）のページ →` }}
+          />
+        )}
 
         {availableStores.length > 0 && (
           <div className="mb-6 anim-fade-up" style={{ animationDelay: '120ms' }}>
