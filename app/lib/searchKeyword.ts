@@ -38,3 +38,14 @@ export function buildPrizeKeyword(kujiTitle: string, grade: string, prizeName: s
   const itemName = cleanText(extractItemName(prizeName))
   return ['一番くじ', titleWord, grade, itemName].filter(Boolean).join(' ')
 }
+
+// 「A賞」「SP賞」「ラストワン賞」のように、出品のタイトルにもそのまま書かれやすい賞の名前。
+// hololive の「響咲リオナ賞」のようなキャラクター名の賞は出品のタイトルに書かれにくく、入れると検索に引っかからなくなる。
+const LISTED_GRADE_RE = /^([A-ZＡ-Ｚ]|SP|ラストワン)賞$/
+
+/** メルカリで賞を探すときのキーワード（作品名の先頭1語 + 賞の名前（A賞などのとき） + 景品名）。 */
+export function buildMercariPrizeKeyword(kujiTitle: string, grade: string, prizeName: string): string {
+  const titleWord = cleanText(stripTitlePrefix(kujiTitle)).split(' ').filter(Boolean)[0] ?? ''
+  const itemName = cleanText(extractItemName(prizeName))
+  return ['一番くじ', titleWord, LISTED_GRADE_RE.test(grade) ? grade : '', itemName].filter(Boolean).join(' ')
+}

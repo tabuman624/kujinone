@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
+import { todayJst } from '../../../lib/jst'
 import { supabase } from '../../../lib/supabase'
 import { IP_NAMES, ipSlugFor } from '../../../lib/ipGroups'
 
-// データが変わったくじページと、日付依存の一覧ページを再生成対象にする（毎日 12:00〜12:59 JST、vercel.json）。
+// データが変わったくじページと、日付依存の一覧ページを再生成対象にする（毎日 0:00〜0:59 JST、vercel.json）。
 // もう1つの呼び出し元は GitHub Actions のスクレイピングの最後（?scope=scrape、下の SCRAPE_* を参照）。
 //
 // 背景: Vercelでは、デプロイ後に各ページが初めて再生成されると、内容が同じでもISR Writeが
@@ -11,7 +12,9 @@ import { IP_NAMES, ipSlugFor } from '../../../lib/ipGroups'
 // 減らしている。新作速報（/news）の廃止（2026-11）で毎日のボットデプロイも無くなったため、
 // 価格更新・発売日の切り替えなどは、変化があったページだけをここで更新して反映する。
 //
-// 実行時刻の根拠: 価格cron（03:00 JST）と発売日判定（UTC日付で切り替わる＝09:00 JST）の後に置く。
+// 実行時刻の根拠: 発売日のくじページを、発売日の0時台に「発売後」の表示（相場・メルカリのボタン）へ切り替えるため（2026-11-15）。
+// 以前は12時台で、発売日の午前中はくじページが「発売前」の表示のままだった。発売日の判定は日本時間（todayJst）にそろえてある。
+// 価格cron（update-prices）は前日の22時台に動くので、その日の相場の変化もこの実行で拾う。
 // GitHub Actionsのスクレイピングは 10:00 JST の予定だが、実際には毎日 14〜16時台に始まる
 // （GitHubの混雑による遅れ。2026-10〜11の実行履歴で確認）。そのため新作の分は、スクレイピングの最後に
 // ?scope=scrape で呼んでその日のうちに反映し、ここでは翌日に価格の変化などとあわせて拾う（LOOKBACK_HOURS）。
@@ -25,7 +28,7 @@ const LOOKBACK_HOURS = 26 // 1日1回・実行時刻が最大59分ずれるた�
 const SCRAPE_LOOKBACK_HOURS = 6
 const SCRAPE_PATHS = ['/schedule', '/sitemap-kuji.xml', '/sitemap-ip.xml']
 
-// 日付（UTC）やくじ一覧全体に依存するページ。revalidateを1日にしているため、
+// 日付（日本時間）やくじ一覧全体に依存するページ。revalidateを1日にしているため、
 // 日付が切り替わった後のこの実行で毎日必ず更新する。
 const DAILY_PATHS = [
   '/',
@@ -55,7 +58,7 @@ export async function GET(req: Request) {
 
   const scrapeScope = new URL(req.url).searchParams.get('scope') === 'scrape'
   const since = new Date(Date.now() - (scrapeScope ? SCRAPE_LOOKBACK_HOURS : LOOKBACK_HOURS) * 3600_000).toISOString()
-  const todayStr = new Date().toISOString().slice(0, 10)
+  const todayStr = todayJst()
 
   const [kujiChanged, prizesChanged, releasedToday] = await Promise.all([
     // くじ本体の更新（updated_atはDBトリガーで実際の変更時のみ更新される）
@@ -67,7 +70,7 @@ export async function GET(req: Request) {
         .from('prizes')
         .select('kuji_id')
         .or(`created_at.gte.${since},market_price_updated_at.gte.${since},auction_price_updated_at.gte.${since}`),
-    // 発売日を迎えたくじ（相場表示などの切り替えがある）。scrape では見ない（12時の実行が拾う）
+    // 発売日を迎えたくじ（相場表示などの切り替えがある）。scrape では見ない（0時の実行が拾う）
     scrapeScope
       ? Promise.resolve({ data: [] as { id: number }[], error: null })
       : supabase.from('kuji').select('id').eq('release_at', todayStr),

@@ -7,7 +7,7 @@ import { expectedDraws } from '../lib/ev'
 import { OG_BASE, X_HANDLE, X_URL } from '../lib/siteMeta'
 
 // くじのねが集めたデータの集計（X の水曜の豆知識と同じ計算。app/lib/kujiStats.ts）。
-// 再生成は1日1回。日付の切り替わり後の更新は /api/cron/revalidate-changed（毎日12時台）が行う。
+// 再生成は1日1回。日付の切り替わり後の更新は /api/cron/revalidate-changed（毎日0時台）が行う。
 export const revalidate = 86400
 
 const title = 'データで見る一番くじ｜発売曜日・販売店・相場の集計'

@@ -1,6 +1,7 @@
 import { supabase } from '../../lib/supabase'
 import { freshValue } from '../../lib/priceFreshness'
 import type { IpKuji } from '../../lib/ipGroups'
+import { todayJst } from '../../lib/jst'
 
 const TOP_GRADES = ['A賞', 'B賞', 'C賞']
 
@@ -11,7 +12,7 @@ function fmtDate(d: string) {
 
 export default async function IpStats({ kujiList }: { kujiList: IpKuji[] }) {
   if (kujiList.length === 0) return null
-  const today = new Date().toISOString().slice(0, 10)
+  const today = todayJst()
 
   const prices = kujiList.map(k => k.price)
   const minPrice = Math.min(...prices)

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 import { ipSlugFor, IP_NAMES } from '../lib/ipGroups'
+import { todayJst } from '../lib/jst'
 
 const RANK_LIMIT = 5
 
@@ -32,7 +33,7 @@ export default async function IpCadenceRanking() {
     .not('release_at', 'is', null)
 
   if (!data) return null
-  const today = new Date().toISOString().slice(0, 10)
+  const today = todayJst()
 
   // 未発売弾は「実測間隔」に含めない（予測にしないため、過去に実際に発売された
   // 日付どうしの間隔だけを使う）。

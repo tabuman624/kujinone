@@ -1,5 +1,8 @@
 import Link from 'next/link'
 import AffiliateLink from '../../components/AffiliateLink'
+import AffiliateAnchor from '../../components/AffiliateAnchor'
+import { mercariSearchUrl } from '../../lib/affiliate'
+import { buildMercariPrizeKeyword } from '../../lib/searchKeyword'
 import { supabase } from '../../lib/supabase'
 import { freshValue, type PriceSource } from '../../lib/priceFreshness'
 import { shortDate } from '../../lib/jst'
@@ -49,43 +52,66 @@ export async function loadFirstSale(kuji: { id: number; title: string; release_a
   return { id: original.id, release_at: original.release_at, prizes: prizes ?? [] }
 }
 
+// 各行は、その賞のメルカリ検索へのリンク（2026-11-15）。くじ全体の検索より、目当ての賞を探している人に近い結果が出る。
+// アフィリエイトのリンクなので、行の下に【PR】を書く（ステマ規制）。
+// 相場がまだ無い発売直後のくじは、pendingNote を出してメルカリのボタンだけ置く（発売日はアクセスもメルカリの成果もいちばん多い）。
 export default function MarketSummary({
   prizes,
+  kujiTitle,
   mercariHref,
   eventLabel,
+  rowEventLabel,
   heading = '相場のまとめ / PRICE',
   source,
+  pendingNote,
 }: {
   prizes: Prize[] // 賞一覧と同じ並び（sort_order 順）
+  kujiTitle: string // 賞ごとのメルカリ検索のキーワードに使う
   mercariHref: string
   eventLabel: string
+  rowEventLabel: string
   heading?: string
   source?: { href: string; label: string } // 相場の出どころのくじ（初回販売の相場のとき）
+  pendingNote?: string // 相場がまだ無いときに出す一言。無ければ欄ごと出さない
 }) {
   const top = prizes.filter(p => !NOT_TOP.includes(p.grade)).slice(0, TOP_COUNT)
   const lastOne = prizes.find(p => p.grade === LAST_ONE)
   const items = [...top, ...(lastOne ? [lastOne] : [])]
     .map(p => ({ grade: p.grade, name: p.name, fresh: freshValue(p) }))
     .filter((p): p is { grade: string; name: string; fresh: { value: number; updatedAt: string } } => p.fresh != null)
-  if (items.length === 0) return null
+  if (items.length === 0 && !pendingNote) return null
 
-  const latest = items.map(p => p.fresh.updatedAt).sort().at(-1)!
+  const latest = items.length > 0 ? items.map(p => p.fresh.updatedAt).sort().at(-1)! : null
 
   return (
     <div className="mb-6 anim-fade-up" style={{ animationDelay: '100ms' }}>
       <div className="flex items-baseline justify-between gap-2 mb-3">
         <h2 className="text-xs font-black text-stone-400 tracking-wider">{heading}</h2>
-        <span className="text-[11px] text-stone-400" style={num}>{shortDate(latest)}時点</span>
+        {latest && <span className="text-[11px] text-stone-400" style={num}>{shortDate(latest)}時点</span>}
       </div>
       <div className="bg-stone-50 border border-stone-200 rounded-xl p-4">
-        <div className="space-y-1.5">
-          {items.map((p, i) => (
-            <div key={`${p.grade}-${i}`} className="flex items-center justify-between gap-2">
-              <span className="text-xs text-stone-600 truncate">【{p.grade}】{p.name}</span>
-              <span className="text-sm font-bold text-stone-800 whitespace-nowrap" style={num}>約¥{p.fresh.value.toLocaleString()}</span>
+        {items.length > 0 ? (
+          <>
+            <div className="space-y-1.5">
+              {items.map((p, i) => (
+                <AffiliateAnchor
+                  key={`${p.grade}-${i}`}
+                  href={mercariSearchUrl(buildMercariPrizeKeyword(kujiTitle, p.grade, p.name))}
+                  eventLabel={rowEventLabel}
+                  className="flex items-center justify-between gap-2 group"
+                >
+                  <span className="text-xs text-stone-600 truncate group-hover:text-shu">【{p.grade}】{p.name}</span>
+                  <span className="text-sm font-bold text-stone-800 whitespace-nowrap" style={num}>
+                    約¥{p.fresh.value.toLocaleString()}<span className="text-shu text-xs font-normal ml-1">↗</span>
+                  </span>
+                </AffiliateAnchor>
+              ))}
             </div>
-          ))}
-        </div>
+            <p className="text-[10px] text-stone-400 mt-2">賞を押すとメルカリで探せます【PR】</p>
+          </>
+        ) : (
+          <p className="text-xs text-stone-500">{pendingNote}</p>
+        )}
         {source && (
           <Link href={source.href} className="inline-block mt-2 text-xs text-shu hover:underline">{source.label}</Link>
         )}

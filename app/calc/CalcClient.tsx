@@ -9,6 +9,7 @@ import AffiliateLink from "../components/AffiliateLink"
 import XIcon from "../components/XIcon"
 import { buildTitleKeyword, buildPrizeKeyword } from "../lib/searchKeyword"
 import { expectedDraws } from "../lib/ev"
+import { todayJst } from "../lib/jst"
 
 type Kuji = {
   id: number; title: string; price: number; release_at: string; image_url: string | null
@@ -540,7 +541,7 @@ function CalcContent() {
   if (kujiId && kuji) {
     const selectedCount = prizes.filter(p => p.checked).length
     // 未発売のくじには二次流通が存在しないため、相場データを表示しない
-    const isReleased = kuji.release_at <= new Date().toISOString().slice(0, 10)
+    const isReleased = kuji.release_at <= todayJst()
     return (
       <div>
         <div className="px-6 pt-6 pb-5 bg-stone-800">

@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import { supabase } from '../../lib/supabase'
 import RankingTabs, { type PopularPrizeRankingItem, type WeeklyRankingItem, type UpcomingRankingItem } from './RankingTabs'
+import { todayJst } from '../../lib/jst'
 
 // Vercelは再生成のたびに（内容が同じでも）ISR Writeを計上するため、再生成は1日1回に抑える。
-// 日付の切り替わり後の更新は /api/cron/revalidate-changed（毎日12時台）が行う。
+// 日付の切り替わり後の更新は /api/cron/revalidate-changed（毎日0時台）が行う。
 export const revalidate = 86400
 
 export const metadata: Metadata = {
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 }
 
 export default async function WantedRankingPage() {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = todayJst()
   const thirtyDaysAgoDate = new Date()
   thirtyDaysAgoDate.setDate(thirtyDaysAgoDate.getDate() - 30)
   const thirtyDaysAgo = thirtyDaysAgoDate.toISOString().slice(0, 10)

@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { resaleBaseTitle } from '../../../lib/resale'
+import { todayJst, weekdayOf } from '../../../lib/jst'
+
+// 'YYYY-MM-DD' に日数を足す（日付だけを扱うのでUTCで計算してよい）
+function addDays(date: string, days: number): string {
+  return new Date(Date.parse(`${date}T00:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10)
+}
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,6 +19,10 @@ const MID_KUJI_BATCH_SIZE = 20  // 発売8〜30日のくじの毎日ローテー
 const OLD_KUJI_BATCH_SIZE = 15  // 発売31〜90日のくじの土曜ローテーション件数（タイムアウト対策）
 const RESALE_LOOKAHEAD_DAYS = 45      // 発売がこの日数以内の再販売のくじについて、元のくじの相場を取り直す
 const RESALE_ORIGINAL_BATCH_SIZE = 12 // ④の1日あたりの件数（タイムアウト対策。元のくじ2件＝約23賞なら2日で一巡）
+const POPULAR_VIEWS_WINDOW_DAYS = 14 // ⑤で「よく見られている」を数える期間
+const POPULAR_MIN_VIEWS = 10          // ⑤の対象にする、期間内の閲覧数の下限
+const POPULAR_KUJI_COUNT = 5          // ⑤の対象にするくじの数（閲覧数の多い順）
+const POPULAR_BATCH_SIZE = 12         // ⑤の1日あたりの件数（タイムアウト対策。5くじ×約10賞なら4〜5日で一巡）
 const CONCURRENCY = 5           // 並列リクエスト数
 
 // ─── ユーティリティ ──────────────────────────────────────────────────────────
@@ -195,20 +205,18 @@ export async function GET(req: Request) {
     }
   }
 
-  const today = new Date()
-  const todayStr = today.toISOString().slice(0, 10)
-  const nowIso = today.toISOString()
-  const isSaturday = today.getDay() === 6
+  // 日付は日本時間で数える（ページの発売日の判定と同じ。実行は毎日22時台、vercel.json）。
+  // 22時台に動かすのは、発売日の夜に最初の相場を取り、0時台の revalidate-changed で翌日0時から出すため（2026-11-15）。
+  const todayStr = todayJst()
+  const nowIso = new Date().toISOString()
+  const isSaturday = weekdayOf(todayStr) === 6
 
   // 日付境界を計算
-  const day7 = new Date(today); day7.setDate(today.getDate() - 7)
-  const day30 = new Date(today); day30.setDate(today.getDate() - 30)
-  const day90 = new Date(today); day90.setDate(today.getDate() - 90)
-  const day7Str = day7.toISOString().slice(0, 10)
-  const day30Str = day30.toISOString().slice(0, 10)
-  const day90Str = day90.toISOString().slice(0, 10)
+  const day7Str = addDays(todayStr, -7)
+  const day30Str = addDays(todayStr, -30)
+  const day90Str = addDays(todayStr, -90)
 
-  const stats = { newKuji: 0, midKuji: 0, oldKuji: 0, resaleOriginal: 0, peakUpdated: 0, historyErrors: 0 }
+  const stats = { newKuji: 0, midKuji: 0, oldKuji: 0, resaleOriginal: 0, popularOld: 0, peakUpdated: 0, historyErrors: 0 }
   let firstHistoryError: string | null = null
 
   // ── ① 発売7日以内のくじ（毎日計測） ────────────────────────────────────────
@@ -300,14 +308,13 @@ export async function GET(req: Request) {
   // 再販売のくじのページに、発売前から「初回販売の相場」を出すため（app/kuji/[id]/MarketSummary.tsx）。
   // 元のくじは発売から90日を過ぎて①〜③の対象外になっていることが多いので、ここで取り直す。
   // 再販売のくじ自身は発売前なので取らない（①のコメントの理由）。
-  const resaleUntil = new Date(today); resaleUntil.setDate(today.getDate() + RESALE_LOOKAHEAD_DAYS)
   const { data: resaleList } = await supabase
     .from('kuji')
     .select('title')
     .eq('is_active', true)
     .like('title', '%再販売%')
     .gt('release_at', todayStr)
-    .lte('release_at', resaleUntil.toISOString().slice(0, 10))
+    .lte('release_at', addDays(todayStr, RESALE_LOOKAHEAD_DAYS))
   const baseTitles = [...new Set((resaleList ?? []).map(k => resaleBaseTitle(k.title as string)).filter((t): t is string => !!t))]
 
   if (baseTitles.length) {
@@ -336,6 +343,58 @@ export async function GET(req: Request) {
     }
   }
 
+  // ── ⑤ よく見られている、発売31日以上のくじ（毎日・ローテーション） ─────────────
+  // ②が終わると相場の更新は③（土曜に15件だけ）になり、当たりのくじでもやがて相場が60日を超えて
+  // くじページの「相場のまとめ」とメルカリのボタンが消える。アフィリエイトのクリックは当たりのくじに集中するので
+  // （キン肉マン 超人血盟軍など、2026-11）、直近の閲覧が多いくじだけは毎日少しずつ取り直す。
+  // 閲覧数は kuji_views_daily（累積の閲覧数の毎日の記録）の差で数える。
+  const viewsFrom = addDays(todayStr, -POPULAR_VIEWS_WINDOW_DAYS)
+  const { data: viewRows } = await supabase
+    .from('kuji_views_daily')
+    .select('kuji_id, view_count, recorded_at')
+    .in('recorded_at', [viewsFrom, addDays(todayStr, -1)])
+  if (viewRows?.length) {
+    const startViews = new Map<number, number>()
+    const endViews = new Map<number, number>()
+    for (const r of viewRows) {
+      const target = String(r.recorded_at).slice(0, 10) === viewsFrom ? startViews : endViews
+      target.set(r.kuji_id as number, r.view_count as number)
+    }
+    const recentViews = new Map<number, number>()
+    for (const [id, end] of endViews) {
+      const start = startViews.get(id)
+      if (start != null && end - start >= POPULAR_MIN_VIEWS) recentViews.set(id, end - start)
+    }
+    if (recentViews.size) {
+      const { data: popularList } = await supabase
+        .from('kuji')
+        .select('id, title')
+        .eq('is_active', true)
+        .lt('release_at', day30Str)
+        .in('id', [...recentViews.keys()])
+      const top = (popularList ?? [])
+        .sort((a, b) => (recentViews.get(b.id) ?? 0) - (recentViews.get(a.id) ?? 0))
+        .slice(0, POPULAR_KUJI_COUNT)
+      if (top.length) {
+        const kujiTitleMap = Object.fromEntries(top.map(k => [k.id, k.title as string]))
+        const { data: popularPrizes } = await supabase
+          .from('prizes')
+          .select('id, name, grade, kuji_id, auction_price_peak')
+          .in('kuji_id', top.map(k => k.id))
+          .order('auction_price_updated_at', { ascending: true, nullsFirst: true })
+          .limit(POPULAR_BATCH_SIZE)
+
+        if (popularPrizes?.length) {
+          const result = await processBatch(popularPrizes, kujiTitleMap, todayStr, nowIso)
+          stats.popularOld = result.scanned
+          stats.peakUpdated += result.peakUpdated
+          stats.historyErrors += result.historyErrors
+          firstHistoryError ??= result.firstHistoryError
+        }
+      }
+    }
+  }
+
   if (stats.historyErrors > 0) {
     console.error(`price_historyへの書き込みが${stats.historyErrors}件失敗しました。例: ${firstHistoryError}`)
   }
@@ -349,6 +408,7 @@ export async function GET(req: Request) {
     midKujiPrizes: stats.midKuji,
     oldKujiPrizes: stats.oldKuji,
     resaleOriginalPrizes: stats.resaleOriginal,
+    popularOldPrizes: stats.popularOld,
     peakUpdated: stats.peakUpdated,
     historyErrors: stats.historyErrors,
     viewSnapshotted: viewSnapshot.snapshotted,

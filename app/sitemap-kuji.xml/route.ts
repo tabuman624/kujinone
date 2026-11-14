@@ -1,8 +1,9 @@
 import { supabase } from '../lib/supabase'
 import { buildUrlsetXml, xmlResponse } from '../lib/sitemapXml'
+import { todayJst } from '../lib/jst'
 
 // Vercelは再生成のたびに（内容が同じでも）ISR Writeを計上するため、再生成は1日1回に抑える。
-// 日付の切り替わり後の更新は /api/cron/revalidate-changed（毎日12時台）が行う。
+// 日付の切り替わり後の更新は /api/cron/revalidate-changed（毎日0時台）が行う。
 export const revalidate = 86400
 
 const BASE = 'https://kujinone.com'
@@ -30,8 +31,8 @@ export async function GET() {
     if (!data || data.length < 1000) break
   }
 
-  // 発売済みかどうかはページと同じ判定（UTCの日付）。発売日が未定のくじは発売前として扱う
-  const today = new Date().toISOString().slice(0, 10)
+  // 発売済みかどうかはページと同じ判定（日本時間の日付）。発売日が未定のくじは発売前として扱う
+  const today = todayJst()
   const isReleased = (k: { release_at: string | null }) => !!k.release_at && k.release_at <= today
 
   const entries = (kujiList ?? []).filter(k => kujiWithPrizes.has(k.id) || !isReleased(k)).map(k => ({

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getStoreGroups, STORE_NAMES } from '../../lib/storeGroups'
 import { OG_BASE, OG_IMAGE } from '../../lib/siteMeta'
+import { todayJst } from '../../lib/jst'
 
 // revalidateを1日にしている理由は app/api/cron/revalidate-changed/route.ts を参照。
 // データ変化があったページはそのcronが個別に更新する。
@@ -55,7 +56,7 @@ export default async function StoreDetailPage({
 
   const groups = await getStoreGroups()
   const kujiList = [...(groups[slug] ?? [])].reverse() // 新しい順
-  const today = new Date().toISOString().slice(0, 10)
+  const today = todayJst()
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',

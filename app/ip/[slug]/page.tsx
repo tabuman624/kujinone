@@ -6,6 +6,7 @@ import { getIpGroups, IP_INDEX_MIN_KUJI, IP_NAMES } from '../../lib/ipGroups'
 import IpStats from './IpStats'
 import IpPrizeRankings from './IpPrizeRankings'
 import { OG_BASE, OG_IMAGE } from '../../lib/siteMeta'
+import { todayJst } from '../../lib/jst'
 
 // revalidateを1日にしている理由は app/api/cron/revalidate-changed/route.ts を参照。
 // データ変化があったページはそのcronが個別に更新する。
@@ -60,7 +61,7 @@ export default async function IpDetailPage({
   const groups = await getIpGroups()
   const kujiList = [...(groups[slug] ?? [])].reverse() // 新しい順
 
-  const today = new Date().toISOString().slice(0, 10)
+  const today = todayJst()
   const avgPrice = kujiList.length > 0 ? Math.round(kujiList.reduce((s, k) => s + k.price, 0) / kujiList.length) : null
   const nextUpcoming = kujiList.find(k => k.release_at != null && k.release_at >= today)
 

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import { freshValue } from '../../lib/priceFreshness'
 import type { IpKuji } from '../../lib/ipGroups'
+import { todayJst } from '../../lib/jst'
 
 const RANK_LIMIT = 3
 
@@ -31,7 +32,7 @@ function RankBadge({ i }: { i: number }) {
 // 賞単位（1弾あたり数〜十数件）ならどのシリーズでもランキングに足るデータがある。
 export default async function IpPrizeRankings({ kujiList }: { kujiList: IpKuji[] }) {
   if (kujiList.length === 0) return null
-  const today = new Date().toISOString().slice(0, 10)
+  const today = todayJst()
   const kujiMap = new Map(kujiList.map(k => [k.id, k]))
   const kujiIds = kujiList.map(k => k.id)
 

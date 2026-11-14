@@ -6,16 +6,17 @@ import { supabase } from '../../lib/supabase'
 import PrizeList from './PrizeList'
 import PrizePopularity, { loadPopularityFlags } from './PrizePopularity'
 import { loadSparklineSeries } from './PriceSparkline'
-import KujiDataSection, { loadKujiData, robustTrendSummary } from './KujiDataSection'
+import KujiDataSection, { loadKujiData, robustTrendSummary, daysBetween } from './KujiDataSection'
 import { topPrizeValues, type EvPrize } from './ExpectedValueSection'
 import KujiViewTracker from './KujiViewTracker'
 import MarketSummary, { loadFirstSale } from './MarketSummary'
 import AffiliateLink from '../../components/AffiliateLink'
 import XFollowCTA from '../../components/XFollowCTA'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
+import { mercariSearchUrl } from '../../lib/affiliate'
 import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
 import { freshValue } from '../../lib/priceFreshness'
-import { jaMonthDay, shortDate } from '../../lib/jst'
+import { jaMonthDay, shortDate, todayJst } from '../../lib/jst'
 import { OG_BASE } from '../../lib/siteMeta'
 
 // revalidateを1日にしている理由は app/api/cron/revalidate-changed/route.ts を参照。
@@ -85,6 +86,9 @@ const RELATED_POSTS_UPCOMING = [
 
 // 一番くじONLINEで売られるくじだけに出す、オンライン記事への導線。
 // オンライン系の検索でラストワン記事が代わりに出ていて、オンライン記事は3か月表示0だったため（2026-11）。
+// 相場のまとめで「集計中」と出す期間（発売日から何日目まで）。update-prices の①（発売7日以内は毎日）に合わせる
+const PENDING_MARKET_DAYS = 7
+
 const ONLINE_STORE_NAME = '一番くじONLINE'
 const ONLINE_POST = { href: '/blog/ichiban-kuji-online', title: '一番くじオンラインのラストワン賞の狙い方と売り切れ対策' }
 
@@ -143,8 +147,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!kuji) return {}
   const noPrizes = !prizesError && prizeRows != null && prizeRows.length === 0
   const ogImage = kuji.banner_url || kuji.image_url || '/logo.png'
-  // 発売済みかどうかはページ本体と同じ判定（UTCの日付）にする
-  const isReleased = !!kuji.release_at && kuji.release_at <= new Date().toISOString().slice(0, 10)
+  // 発売済みかどうかはページ本体と同じ判定（日本時間の日付）にする。発売日の0時台に revalidate-changed が切り替える
+  const isReleased = !!kuji.release_at && kuji.release_at <= todayJst()
   const title = !isReleased && kuji.release_at
     ? buildUpcomingTitle(kuji.title, kuji.release_at, !noPrizes)
     : buildKujiTitle(kuji.title)
@@ -177,7 +181,7 @@ export default async function KujiDetail({
   const { id } = await params
   const { data: kuji } = await supabase.from('kuji').select('*').eq('id', id).single()
   const { data: prizes } = await supabase.from('prizes').select('*').eq('kuji_id', id).order('sort_order', { ascending: true })
-  const today = new Date().toISOString().slice(0, 10)
+  const today = todayJst()
 
   if (!kuji) notFound()
 
@@ -234,7 +238,7 @@ export default async function KujiDetail({
   const availableStores: string[] = Array.isArray(kuji.available_stores) ? kuji.available_stores : []
 
   // メルカリの検索（A8経由）。上の「相場のまとめ」と下の「相場を確認・購入する」で同じリンクを使う
-  const mercariHref = `https://px.a8.net/svt/ejp?a8mat=4B3MEQ+DIF6SA+5LNQ+5YJRM&a8ejpredirect=${encodeURIComponent(`https://jp.mercari.com/search?keyword=${encodeURIComponent(searchKeyword)}`)}`
+  const mercariHref = mercariSearchUrl(searchKeyword)
 
   // 既知IP（2件以上のくじを持つ作品、/ip/[slug]参照）のみシリーズページへの導線を出す。
   const ipSlug = kuji.product_id ? ipSlugFor(kuji.product_id) : null
@@ -275,15 +279,21 @@ export default async function KujiDetail({
         {isReleased && (
           <MarketSummary
             prizes={prizes ?? []}
+            kujiTitle={kuji.title}
             mercariHref={mercariHref}
             eventLabel={`相場まとめ_メルカリ_${kuji.title}`}
+            rowEventLabel={`相場まとめ_賞_メルカリ_${kuji.title}`}
+            // 発売から1週間は相場を毎日取っているので、まだ無ければ「集計中」と出してボタンだけ置く
+            pendingNote={daysBetween(kuji.release_at, today) <= PENDING_MARKET_DAYS ? '相場は集計中です。' : undefined}
           />
         )}
         {firstSale && (
           <MarketSummary
             prizes={firstSale.prizes}
+            kujiTitle={kuji.title}
             mercariHref={mercariHref}
             eventLabel={`初回相場_メルカリ_${kuji.title}`}
+            rowEventLabel={`初回相場_賞_メルカリ_${kuji.title}`}
             heading="初回販売の相場 / PRICE"
             source={{ href: `/kuji/${firstSale.id}`, label: `初回販売（${firstSale.release_at.slice(0, 4)}年${Number(firstSale.release_at.slice(5, 7))}月発売）のページ →` }}
           />
