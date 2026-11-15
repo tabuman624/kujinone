@@ -12,6 +12,8 @@ import KujiViewTracker from './KujiViewTracker'
 import MarketSummary, { loadFirstSale } from './MarketSummary'
 import AffiliateLink from '../../components/AffiliateLink'
 import XFollowCTA from '../../components/XFollowCTA'
+import { CalendarLink } from '../../components/CalendarLink'
+import { kujiGoogleHref, kujiIcsHref } from '../../lib/ics'
 import { buildTitleKeyword } from '../../lib/searchKeyword'
 import { mercariSearchUrl } from '../../lib/affiliate'
 import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
@@ -278,6 +280,15 @@ export default async function KujiDetail({
           {/* 総本数はほぼ全件が仮置きの80本なので、実際に確認できた場合だけ見出しに出す */}
           {kuji.total_count > 0 && kuji.total_count_source === 'measured' && <span className="text-xs bg-white/10 text-stone-300 px-2 py-0.5 rounded-full">全{kuji.total_count}本</span>}
         </div>
+        {/* 発売前のくじは、発売日をカレンダーに入れられるようにする（予定のメモにこのページへのリンクが入る） */}
+        {!isReleased && kuji.release_at && (
+          <p className="mt-3 text-xs text-stone-400">
+            発売日をカレンダーに追加：
+            <CalendarLink href={kujiGoogleHref(Number(id))} label="カレンダー_くじ_Google" className="text-white font-bold hover:text-shu press" newTab>Google</CalendarLink>
+            <span className="mx-2 text-stone-600">|</span>
+            <CalendarLink href={kujiIcsHref(Number(id))} label="カレンダー_くじ_iPhone" className="text-white font-bold hover:text-shu press">iPhone・Mac</CalendarLink>
+          </p>
+        )}
       </div>
 
       <div className="px-5 py-6">

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import XFollowCTA from '../components/XFollowCTA'
+import { CalendarLink, CopyCalendarUrl } from '../components/CalendarLink'
+import { CALENDAR_FEED_GOOGLE, CALENDAR_FEED_HTTPS, CALENDAR_FEED_WEBCAL } from '../lib/ics'
 import { supabase } from '../lib/supabase'
 import { currentMonthJst, monthLabel, shortDate, todayJst, weekdayOf, weekdayLabel } from '../lib/jst'
 import KujiCard, { type ScheduleKuji } from './KujiCard'
@@ -17,6 +19,8 @@ import { storeFilterKeys } from './stores'
 export const revalidate = 86400
 
 const NEXT_COUNT = 5
+
+const calendarLink = 'text-shu font-bold hover:underline'
 
 // SERPで「スケジュール」系クエリが5位前後なのにCTRが低かったため（SEO監査v2 2-5）、
 // 当月を入れて鮮度が伝わるタイトルにし、og:titleがトップページのものを継承していた誤りも直す。
@@ -165,7 +169,7 @@ export default async function SchedulePage() {
                     <RelDays date={d} variant="header" />
                   </div>
                   <div className="space-y-2 pb-3">
-                    {days.get(d)!.map(k => <KujiCard key={k.id} kuji={k} />)}
+                    {days.get(d)!.map(k => <KujiCard key={k.id} kuji={k} calendar />)}
                   </div>
                 </div>
               )
@@ -188,6 +192,21 @@ export default async function SchedulePage() {
       {kujiList.length === 0 && (
         <p className="px-5 py-10 text-sm text-stone-500 text-center">現在、発売予定の一番くじは登録されていません。</p>
       )}
+
+      {/* 発売予定の全部をカレンダーで購読する（2026-11-15）。全部を入れたい人は少ないので、くじごとの追加（各カードの右端）を主にし、
+          こちらはページの下に小さく置く。新しく発表されたくじも、カレンダーの側で読み直したときに入る。
+          Google カレンダーはURLでの登録をパソコンのブラウザでしかできないので、そう書く */}
+      <div className="px-4 pt-4">
+        <p className="text-[11px] text-stone-500 leading-relaxed">
+          発売予定をすべてカレンダーで購読する：
+          <CalendarLink href={CALENDAR_FEED_WEBCAL} label="カレンダー_予定表_iPhone" className={calendarLink}>iPhone・Mac</CalendarLink>
+          <span className="mx-1 text-stone-300">|</span>
+          <CalendarLink href={CALENDAR_FEED_GOOGLE} label="カレンダー_予定表_Google" className={calendarLink} newTab>Googleカレンダー（パソコン）</CalendarLink>
+          <span className="mx-1 text-stone-300">|</span>
+          <CopyCalendarUrl url={CALENDAR_FEED_HTTPS} label="カレンダー_予定表_URLコピー" className={calendarLink} />
+        </p>
+        <p className="text-[10px] text-stone-400 mt-0.5">新しいくじも自動で追加されます（反映までの時間はアプリによります）。</p>
+      </div>
 
       <div className="px-4 pt-4">
         <Link

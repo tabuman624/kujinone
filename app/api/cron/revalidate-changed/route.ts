@@ -27,7 +27,7 @@ const LOOKBACK_HOURS = 26 // 1日1回・実行時刻が最大59分ずれるた�
 // ISR Writes が倍になるため（再生成は内容が同じでも Writes に数えられる。2026-11-01 確認）。
 // ワークフローは30分ほどで終わるので、6時間あれば手動の再実行にも足りる。
 const SCRAPE_LOOKBACK_HOURS = 6
-const SCRAPE_PATHS = ['/schedule', '/sitemap-kuji.xml', '/sitemap-ip.xml']
+const SCRAPE_PATHS = ['/schedule', '/schedule/calendar.ics', '/sitemap-kuji.xml', '/sitemap-ip.xml']
 
 // 日付（日本時間）やくじ一覧全体に依存するページ。revalidateを1日にしているため、
 // 日付が切り替わった後のこの実行で毎日必ず更新する。
@@ -35,6 +35,7 @@ const DAILY_PATHS = [
   '/',
   '/schedule',
   '/schedule/archive',
+  '/schedule/calendar.ics', // 発売予定のカレンダー（購読用）。新作も日付の切り替わりもここで入る
   '/ranking/wanted',
   '/data',
   '/ip',
