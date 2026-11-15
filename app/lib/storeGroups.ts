@@ -17,6 +17,29 @@ export const STORE_NAMES: Record<string, string> = {
   online: '一番くじONLINE',
 }
 
+// 公式の表記の揺れ（誤字）。2026-11時点で「ファミリマート」が1件（DEATH NOTE 2）。
+const STORE_ALIASES: Record<string, string> = {
+  'ファミリマート': 'familymart',
+}
+
+// 見出し・タイトル用の店名。検索では「イトーヨーカドー 一番くじ」のように「店舗」を付けずに探されるため。
+const STORE_LABELS: Record<string, string> = {
+  seveneleven: 'セブン-イレブン',
+  itoyokado: 'イトーヨーカドー',
+  yumetown: 'ゆめタウン',
+}
+
+export function storeLabel(slug: string): string {
+  return STORE_LABELS[slug] ?? STORE_NAMES[slug]
+}
+
+// 検索に出す取扱店ページ（2026-11-15）。10/22 に全店を noindex にしたが、その前の3か月で
+// イトーヨーカドー190表示・デイリーヤマザキ123表示（クリック率9.8%）など店名＋一番くじの検索があった。
+// 書店・ホビーショップ・公式ショップはほぼ全部のくじを扱い /schedule と変わらないので、検索には出さない。
+export const INDEXED_STORE_SLUGS = [
+  'lawson', 'familymart', 'seveneleven', 'ministop', 'itoyokado', 'yumetown', 'dailyyamazaki', 'online',
+]
+
 export type StoreKuji = {
   id: number
   title: string
@@ -26,9 +49,19 @@ export type StoreKuji = {
 }
 
 export function storeSlugsFor(availableStores: string[]): string[] {
-  return Object.entries(STORE_NAMES)
+  const slugs = Object.entries(STORE_NAMES)
     .filter(([, name]) => availableStores.includes(name))
     .map(([slug]) => slug)
+  for (const name of availableStores) {
+    const slug = STORE_ALIASES[name]
+    if (slug && !slugs.includes(slug)) slugs.push(slug)
+  }
+  return slugs
+}
+
+/** 取扱店の表記（available_stores の1件）→ 取扱店ページの slug。ページが無い店は null */
+export function storeSlugForName(name: string): string | null {
+  return storeSlugsFor([name])[0] ?? null
 }
 
 export async function getStoreGroups(): Promise<Record<string, StoreKuji[]>> {

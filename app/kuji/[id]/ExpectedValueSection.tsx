@@ -130,6 +130,8 @@ export function AverageDraws({ price, totalCount, assumed }: { price: number; to
           </tbody>
         </table>
       </div>
+      {/* 確率の記事への導線（発売前・発売後の両方。page.tsx の RELATED_POSTS_UPCOMING の説明を参照） */}
+      <Link href="/blog/ichiban-kuji-probability" className="inline-block mt-2 text-xs text-shu hover:underline">A賞などが当たる確率の早見表</Link>
     </div>
   )
 }

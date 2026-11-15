@@ -16,7 +16,8 @@ import { buildTitleKeyword } from '../../lib/searchKeyword'
 import { mercariSearchUrl } from '../../lib/affiliate'
 import { ipSlugFor, IP_NAMES } from '../../lib/ipGroups'
 import { freshValue } from '../../lib/priceFreshness'
-import { jaMonthDay, shortDate, todayJst } from '../../lib/jst'
+import { jaFullDate, jaMonthDay, shortDate, todayJst } from '../../lib/jst'
+import { INDEXED_STORE_SLUGS, storeSlugForName } from '../../lib/storeGroups'
 import { OG_BASE } from '../../lib/siteMeta'
 
 // revalidateを1日にしている理由は app/api/cron/revalidate-changed/route.ts を参照。
@@ -78,17 +79,20 @@ const RELATED_POSTS_RELEASED = [
   { href: '/blog/ichiban-kuji-sell-where', title: '一番くじの賞品を売るには？駿河屋・メルカリ・ヤフオク比較と高く売るコツ' },
   { href: '/blog/ichiban-kuji-price-drop', title: '一番くじ景品の相場はいつ下がる？値下がりのタイミングと賢い活用術' },
 ]
+// 確率の記事は、「一番くじ a賞 確率」などの検索（3か月で約950表示・8〜9位・クリックほぼ0）に対して
+// 表示0だった。くじページからリンクが無かったため、発売前のくじの関連コラムに入れる（2026-11-15）。
 const RELATED_POSTS_UPCOMING = [
   { href: '/blog/ichiban-kuji-toha', title: '一番くじとは？仕組み・1回の値段・ハズレの有無を解説' },
+  { href: '/blog/ichiban-kuji-probability', title: '一番くじの確率の計算方法｜A賞〜D賞・ラストワン賞の当たる確率を解説' },
   { href: '/blog/ichiban-kuji-last-one', title: '一番くじラストワン賞の狙い方とは？残り本数と費用の目安' },
   { href: '/blog/kitaichi-toha', title: '一番くじの期待値とは？計算方法をわかりやすく解説' },
 ]
 
-// 一番くじONLINEで売られるくじだけに出す、オンライン記事への導線。
-// オンライン系の検索でラストワン記事が代わりに出ていて、オンライン記事は3か月表示0だったため（2026-11）。
 // 相場のまとめで「集計中」と出す期間（発売日から何日目まで）。update-prices の①（発売7日以内は毎日）に合わせる
 const PENDING_MARKET_DAYS = 7
 
+// 一番くじONLINEで売られるくじだけに出す、オンライン記事への導線。
+// オンライン系の検索でラストワン記事が代わりに出ていて、オンライン記事は3か月表示0だったため（2026-11）。
 const ONLINE_STORE_NAME = '一番くじONLINE'
 const ONLINE_POST = { href: '/blog/ichiban-kuji-online', title: '一番くじオンラインのラストワン賞の狙い方と売り切れ対策' }
 
@@ -125,7 +129,7 @@ function buildUpcomingDescription(
   kuji: { title: string; price: number; release_at: string | null; available_stores: unknown },
   hasPrizes: boolean,
 ): string {
-  const dated = kuji.release_at ? `${kuji.release_at.slice(0, 4)}年${jaMonthDay(kuji.release_at)}発売` : ''
+  const dated = kuji.release_at ? `${jaFullDate(kuji.release_at)}発売` : ''
   const stores: string[] = Array.isArray(kuji.available_stores) ? kuji.available_stores : []
   const storesText = stores.length > 0 ? `取扱店は${stores.slice(0, 3).join('・')}${stores.length > 3 ? 'など' : ''}。` : ''
   if (hasPrizes) {
@@ -264,8 +268,9 @@ export default async function KujiDetail({
             <Image src={kuji.banner_url || kuji.image_url} alt={kuji.title} width={600} height={400} className="w-full h-auto" sizes="(max-width: 768px) 100vw, 640px" priority unoptimized />
           </div>
         )}
+        {/* 年も書く。「作品名 一番くじ 2026」のように年を入れた検索が多いため（3か月で約1,900表示、2026-11-15） */}
         {kuji.release_at && (
-          <span className="inline-block text-xs bg-shu text-white px-2 py-0.5 rounded-full font-semibold mb-2">{kuji.release_at.split('-').slice(1).map(Number).join('月')}日発売</span>
+          <span className="inline-block text-xs bg-shu text-white px-2 py-0.5 rounded-full font-semibold mb-2">{jaFullDate(kuji.release_at)}発売</span>
         )}
         <h1 className="text-lg font-black leading-snug">{kuji.title}</h1>
         <div className="flex gap-2 mt-2">
@@ -302,12 +307,20 @@ export default async function KujiDetail({
         {availableStores.length > 0 && (
           <div className="mb-6 anim-fade-up" style={{ animationDelay: '120ms' }}>
             <h2 className="text-xs font-black text-stone-400 tracking-wider mb-3">取扱店 / STORES</h2>
+            {/* 検索に出している取扱店ページ（INDEXED_STORE_SLUGS）がある店は、そのページへのリンクにする */}
             <div className="flex flex-wrap gap-2">
-              {availableStores.map((store) => (
-                <span key={store} className="text-xs bg-stone-100 text-stone-700 px-3 py-1.5 rounded-full font-semibold">
-                  {store}
-                </span>
-              ))}
+              {availableStores.map((store) => {
+                const slug = storeSlugForName(store)
+                return slug && INDEXED_STORE_SLUGS.includes(slug) ? (
+                  <Link key={store} href={`/store/${slug}`} className="text-xs bg-stone-100 text-stone-700 px-3 py-1.5 rounded-full font-semibold hover:text-shu press">
+                    {store} →
+                  </Link>
+                ) : (
+                  <span key={store} className="text-xs bg-stone-100 text-stone-700 px-3 py-1.5 rounded-full font-semibold">
+                    {store}
+                  </span>
+                )
+              })}
             </div>
             {availableStores.includes(ONLINE_STORE_NAME) && (
               <p className="mt-3 text-xs text-stone-500 leading-relaxed">

@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getIpGroups, IP_INDEX_MIN_KUJI, IP_NAMES } from '../../lib/ipGroups'
 import IpStats from './IpStats'
 import IpPrizeRankings from './IpPrizeRankings'
 import { OG_BASE, OG_IMAGE } from '../../lib/siteMeta'
-import { todayJst } from '../../lib/jst'
+import { jaFullDate, todayJst } from '../../lib/jst'
+import KujiRow from '../../components/KujiRow'
 
 // revalidateを1日にしている理由は app/api/cron/revalidate-changed/route.ts を参照。
 // データ変化があったページはそのcronが個別に更新する。
@@ -28,8 +28,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const kujiList = groups[slug] ?? []
   const avgPrice = kujiList.length > 0 ? Math.round(kujiList.reduce((s, k) => s + k.price, 0) / kujiList.length) : null
 
-  const title = `一番くじ ${name} 一覧｜発売日・価格まとめ`
-  const description = `一番くじ「${name}」シリーズ全${kujiList.length}種の発売日・価格をまとめてチェック。${avgPrice ? `1回あたり平均${avgPrice}円。` : ''}各回の賞品一覧・期待値・相場は各くじの詳細ページで確認できます。`
+  // 「ガンダム 一番くじ 予定」「ガンダム 一番くじ 歴代」「ホロライブ 一番くじ 最新」のように探されている（2026-11-15、3か月の検索データ）。
+  // 以前は「一番くじ ${name} 一覧｜発売日・価格まとめ」で、作品名が後ろにあり、予定・歴代の語が無かった。
+  const title = `${name}の一番くじ 歴代一覧と最新の発売予定`
+  const today = todayJst()
+  const next = kujiList.find(k => k.release_at != null && k.release_at > today) // kujiList は発売日の古い順
+  const latest = [...kujiList].reverse().find(k => k.release_at != null && k.release_at <= today)
+  const lead = next?.release_at
+    ? `次は${jaFullDate(next.release_at)}発売『${next.title}』。`
+    : latest?.release_at
+      ? `最新は${jaFullDate(latest.release_at)}発売『${latest.title}』。`
+      : ''
+  const description = `${name}の一番くじ全${kujiList.length}種を新しい順にまとめています。${lead}${avgPrice ? `1回あたり平均${avgPrice}円。` : ''}各回の賞品・期待値・相場は詳細ページで確認できます。`
 
   // 取得に失敗して0件のときは noindex にしない（誤って検索から外さないため）。
   const thin = kujiList.length > 0 && kujiList.length < IP_INDEX_MIN_KUJI
@@ -41,12 +51,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: { title, description, url: `https://kujinone.com/ip/${slug}`, ...OG_BASE, images: [OG_IMAGE] },
     ...(thin ? { robots: { index: false, follow: true } } : {}),
   }
-}
-
-function fmtRelease(d: string | null) {
-  if (!d) return '発売日未定'
-  const parts = d.split('-').slice(1).map(Number)
-  return `${parts[0]}月${parts[1]}日`
 }
 
 export default async function IpDetailPage({
@@ -63,7 +67,8 @@ export default async function IpDetailPage({
 
   const today = todayJst()
   const avgPrice = kujiList.length > 0 ? Math.round(kujiList.reduce((s, k) => s + k.price, 0) / kujiList.length) : null
-  const nextUpcoming = kujiList.find(k => k.release_at != null && k.release_at >= today)
+  // 発売日の当日からは発売済み（くじページと同じ判定。発売日の0時台に revalidate-changed が更新する）
+  const nextUpcoming = [...kujiList].reverse().find(k => k.release_at != null && k.release_at > today)
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -78,7 +83,7 @@ export default async function IpDetailPage({
   const itemListJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: `一番くじ ${name} 一覧`,
+    name: `${name}の一番くじ 歴代一覧`,
     numberOfItems: kujiList.length,
     itemListElement: kujiList.map((k, i) => ({
       '@type': 'ListItem',
@@ -99,50 +104,22 @@ export default async function IpDetailPage({
           <span className="mx-1">›</span>
           <Link href="/ip" className="hover:text-white transition-colors press">作品から探す</Link>
         </nav>
-        <h1 className="text-xl font-black leading-snug">一番くじ {name}</h1>
+        <h1 className="text-xl font-black leading-snug">{name}の一番くじ</h1>
         <div className="flex gap-2 mt-2">
           <span className="text-xs bg-white/10 text-stone-300 px-2 py-0.5 rounded-full">全{kujiList.length}種</span>
           {avgPrice && <span className="text-xs bg-white/10 text-stone-300 px-2 py-0.5 rounded-full">平均{avgPrice}円/回</span>}
         </div>
         {nextUpcoming && (
-          <p className="text-xs text-shu mt-3">次回は{fmtRelease(nextUpcoming.release_at)}発売予定</p>
+          <p className="text-xs text-shu mt-3">次回は{jaFullDate(nextUpcoming.release_at!)}発売予定</p>
         )}
       </div>
 
       <IpStats kujiList={kujiList} />
 
       <div className="px-5 py-6 space-y-3">
-        {kujiList.map((kuji, i) => {
-          const isReleased = kuji.release_at != null && kuji.release_at < today
-          return (
-            <Link
-              key={kuji.id}
-              href={`/kuji/${kuji.id}`}
-              className="flex items-center gap-4 p-4 bg-white border border-stone-200 rounded-xl card-hover hover:border-shu hover:shadow-md press anim-fade-up"
-              style={{ animationDelay: `${40 + i * 40}ms` }}
-            >
-              <div className="w-12 h-12 bg-shu-bg rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0">
-                {kuji.image_url ? (
-                  <Image src={kuji.image_url} alt={kuji.title} width={48} height={48} className="w-full h-full object-cover" sizes="48px" unoptimized />
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-shu" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                  </svg>
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${isReleased ? 'bg-stone-100 text-stone-500' : 'bg-shu-bg text-shu'}`}>
-                  {kuji.release_at ? `${fmtRelease(kuji.release_at)}${isReleased ? '発売済み' : '発売予定'}` : '発売日未定'}
-                </span>
-                <p className="text-sm font-bold text-stone-800 mt-0.5 truncate">{kuji.title}</p>
-                <p className="text-xs text-stone-500">{kuji.price}円/回</p>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-stone-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          )
-        })}
+        {kujiList.map((kuji, i) => (
+          <KujiRow key={kuji.id} kuji={kuji} isReleased={kuji.release_at != null && kuji.release_at <= today} index={i} />
+        ))}
       </div>
 
       <IpPrizeRankings kujiList={kujiList} />

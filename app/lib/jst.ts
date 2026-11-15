@@ -36,6 +36,11 @@ export function jaMonthDay(date: string): string {
   return `${Number(date.slice(5, 7))}月${Number(date.slice(8, 10))}日`
 }
 
+/** 'YYYY-MM-DD'（またはISO日時の先頭10文字）→ '2026年11月13日' */
+export function jaFullDate(date: string): string {
+  return `${date.slice(0, 4)}年${jaMonthDay(date)}`
+}
+
 /** 'YYYY-MM-DD' → '11/13' */
 export function shortDate(date: string): string {
   return `${Number(date.slice(5, 7))}/${Number(date.slice(8, 10))}`

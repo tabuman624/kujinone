@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { todayJst } from '../../../lib/jst'
 import { supabase } from '../../../lib/supabase'
 import { IP_NAMES, ipSlugFor } from '../../../lib/ipGroups'
+import { STORE_NAMES } from '../../../lib/storeGroups'
 
 // データが変わったくじページと、日付依存の一覧ページを再生成対象にする（毎日 0:00〜0:59 JST、vercel.json）。
 // もう1つの呼び出し元は GitHub Actions のスクレイピングの最後（?scope=scrape、下の SCRAPE_* を参照）。
@@ -38,6 +39,8 @@ const DAILY_PATHS = [
   '/data',
   '/ip',
   '/store',
+  // 取扱店ページは発売予定と発売済みを分けて出すので、日付が変わったら更新する（2026-11-15）
+  ...Object.keys(STORE_NAMES).map(slug => `/store/${slug}`),
   '/sitemap.xml',
   '/sitemap-kuji.xml',
   '/sitemap-blog.xml',
