@@ -225,17 +225,18 @@ export default async function Home() {
     <main>
       {/* Organization/WebSiteの構造化データはapp/layout.tsxで全ページ共通出力している。
           旧SearchActionはサイト内検索機能が存在せずurlTemplateも無効だったため削除済み。 */}
-      {/* 見出し。予定表へのボタンは下のメニューと今週の欄にあるので置かない。計算のボタンは「確率 計算」などで来た人のために残す */}
-      <div className="px-5 pt-5 pb-4">
-        <div className="flex items-center gap-3">
-          <img src="/logo-mark.svg" alt="" width={40} height={40} className="flex-shrink-0" />
-          <div className="min-w-0">
-            <h1 className="text-[17px] font-semibold leading-[1.4] text-stone-800">期待値でねらう、一番くじ</h1>
-            <p className="text-xs text-stone-500 leading-[1.6] mt-0.5">
-              商品を選ぶだけで、1回あたりの損得と<br />損益ラインがわかります。
-            </p>
-          </div>
-        </div>
+      {/* 見出し：上から マーク・KUJINONE・ひとこと（h1）（2026-11-15）。
+          ロゴのひらがなは外し、KUJINONE は小さな灰色の字にする。名前の「くじのね」はタイトル・構造化データ・フッターに文字で残る。
+          h1 の文は検索への影響を避けるため変えていない。字の間を空けた行は、最後の字のうしろの空きを左にも足して真ん中に見せる。
+          予定表へのボタンは下のメニューと今週の欄にあるので置かない。計算のボタンは「確率 計算」などで来た人のために残す */}
+      <div className="px-5 pt-5 pb-4 text-center">
+        <img src="/logo-mark.svg" alt="" width={40} height={40} className="block mx-auto" />
+        <p className="mt-2 text-[11px] font-bold leading-none text-stone-500" style={{ letterSpacing: '0.32em', paddingLeft: '0.32em' }}>
+          KUJINONE
+        </p>
+        <h1 className="mt-2 text-sm font-semibold leading-[1.4] text-stone-700" style={{ letterSpacing: '0.1em', paddingLeft: '0.1em' }}>
+          期待値でねらう、一番くじ
+        </h1>
         <Link
           href="/calc"
           className="block bg-shu text-white text-[15px] font-semibold text-center py-3 rounded-[10px] mt-3.5 press hover:bg-shu-dark transition-colors"
