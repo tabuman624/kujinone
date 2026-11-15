@@ -20,13 +20,18 @@ function daysUntil(date: string, today: string): number {
 /**
  * hero: カード画像の右上に重ねるバッジ（全ての日付で表示）
  * header: 日付見出し横のラベル（本日〜7日以内のみ表示）
+ * pill / pill-muted: ホームの行の右端に置く丸いラベル（全ての日付で表示）。pill は今週の発売、pill-muted はその先の発売
  */
-export default function RelDays({ date, variant }: { date: string; variant: 'hero' | 'header' }) {
+export default function RelDays({ date, variant }: { date: string; variant: 'hero' | 'header' | 'pill' | 'pill-muted' }) {
   const today = useTodayJst()
   if (!today) return null
   const n = daysUntil(date, today)
   const label = n === 0 ? '本日発売' : n === 1 ? '明日発売' : n > 1 ? `あと${n}日` : '発売中'
 
+  if (variant === 'pill' || variant === 'pill-muted') {
+    const tone = variant === 'pill' ? 'text-shu bg-shu-bg' : 'text-stone-600 bg-stone-100'
+    return <span className={`flex-shrink-0 text-[11px] font-bold px-2 py-1 rounded-full whitespace-nowrap ${tone}`}>{label}</span>
+  }
   if (variant === 'hero') {
     return (
       <span className="absolute top-2 right-2 text-[10px] font-bold text-white bg-black/60 px-1.5 py-0.5 rounded-full">
