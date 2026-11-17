@@ -17,9 +17,11 @@ export async function GET() {
     const slug = filename.replace('.md', '')
     const raw = fs.readFileSync(path.join(postsDir, filename), 'utf-8')
     const { data } = matter(raw)
+    // 書き直した日（updated）があればそれを出す。ページの dateModified と同じ日付にそろえる。
+    const modified = data.updated || data.date
     return {
       url: `${BASE}/blog/${slug}`,
-      lastModified: data.date ? new Date(String(data.date)) : undefined,
+      lastModified: modified ? new Date(String(modified)) : undefined,
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     }
